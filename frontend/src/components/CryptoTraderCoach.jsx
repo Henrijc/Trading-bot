@@ -562,6 +562,9 @@ const CryptoTraderCoach = () => {
                                 {holding.accounts > 1 && (
                                   <span className="ml-2 text-blue-400">({holding.accounts} accounts)</span>
                                 )}
+                                {holding.is_staked && (
+                                  <span className="ml-2 text-purple-400">• Earning Rewards</span>
+                                )}
                               </div>
                             </div>
                             <div className="text-right">
