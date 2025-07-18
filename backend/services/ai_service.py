@@ -178,7 +178,7 @@ class AICoachService:
             print(f"Error in AI service: {e}")
             return """I'm having trouble accessing real-time data right now. Please try again in a moment.
 
-Current portfolio value suggests taking profits on positions up 15-20% and reinvesting in underperforming assets with strong fundamentals."""
+With your current portfolio value, I'd suggest taking profits on any positions that are up 15-20% and consider reinvesting in underperforming assets with strong fundamentals. Happy to help you analyze specific positions once my connection is restored."""
     
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
