@@ -287,6 +287,11 @@ const CryptoTraderCoach = () => {
   };
 
   const currentMonthProgress = portfolio?.total_value || 0;
+  
+  // Debug logging
+  console.log('Portfolio state:', portfolio);
+  console.log('Portfolio total_value:', portfolio?.total_value);
+  console.log('currentMonthProgress:', currentMonthProgress);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
