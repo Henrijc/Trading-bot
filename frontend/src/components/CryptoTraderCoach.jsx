@@ -47,6 +47,14 @@ const CryptoTraderCoach = () => {
     loadInitialData();
   }, []);
 
+  // Load technical analysis when selected symbol changes
+  useEffect(() => {
+    if (selectedTechnicalSymbol) {
+      loadTechnicalAnalysis();
+      loadTechnicalIndicators(selectedTechnicalSymbol);
+    }
+  }, [selectedTechnicalSymbol]);
+
   const loadInitialData = async () => {
     try {
       await Promise.all([
