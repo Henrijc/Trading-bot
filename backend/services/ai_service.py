@@ -281,12 +281,35 @@ With your current portfolio value, I'd suggest taking profits on any positions t
             return {'error': str(e)}
     
     async def generate_daily_strategy(self, market_data: List[Dict], portfolio_data: Dict) -> Dict[str, Any]:
-        """Generate daily trading strategy based on real-time market data and portfolio"""
+        """Generate daily trading strategy based on real-time market data, portfolio, and technical analysis"""
         try:
             # Get current market sentiment through web research
             market_research = await self.web_search(f"cryptocurrency market analysis {datetime.now().strftime('%Y-%m-%d')}")
             
-            prompt = f"""Generate a comprehensive daily trading strategy using REAL-TIME data.
+            # Get technical analysis for major assets
+            technical_insights = []
+            major_assets = ['BTC', 'ETH', 'ADA', 'XRP', 'SOL']
+            
+            for asset in major_assets:
+                try:
+                    signals = await self.ta_service.generate_trading_signals(asset, 30)
+                    if 'error' not in signals:
+                        recommendation = signals.get('recommendation', {})
+                        trend = signals.get('trend_analysis', {})
+                        rsi = signals.get('technical_indicators', {}).get('rsi')
+                        
+                        insight = f"{asset}: {recommendation.get('action', 'HOLD')} "
+                        if rsi:
+                            insight += f"(RSI: {rsi:.1f}) "
+                        insight += f"Trend: {trend.get('trend', 'neutral')}"
+                        technical_insights.append(insight)
+                except Exception as e:
+                    print(f"Error getting TA for {asset}: {e}")
+                    continue
+            
+            technical_summary = "\n".join(technical_insights) if technical_insights else "Technical analysis unavailable"
+            
+            prompt = f"""Generate a comprehensive daily trading strategy using REAL-TIME data and technical analysis.
 
 **Current Portfolio:** R{portfolio_data.get('total_value', 0):,.2f}
 **Holdings:** {len(portfolio_data.get('holdings', []))} assets
@@ -294,17 +317,20 @@ With your current portfolio value, I'd suggest taking profits on any positions t
 **Real-Time Market Data:**
 {json.dumps(market_data[:5], indent=2)}
 
+**Technical Analysis Insights:**
+{technical_summary}
+
 **Latest Market Research:**
 {market_research}
 
 **Strategy Requirements:**
-1. **Main Recommendation** (based on real data)
+1. **Main Recommendation** (based on real data and technical analysis)
 2. **Risk Level** (Low/Medium/High)
 3. **Expected Return** (realistic percentage)
-4. **Key Levels** (actual support/resistance from real prices)
-5. **Specific Actions** (exact amounts and prices)
+4. **Key Levels** (actual support/resistance from technical analysis)
+5. **Specific Actions** (exact amounts and prices with technical rationale)
 
-Focus on achieving R100,000 monthly target through practical, data-driven steps."""
+Focus on achieving R100,000 monthly target through practical, data-driven steps supported by technical indicators."""
             
             chat = LlmChat(
                 api_key=self.api_key,
@@ -315,7 +341,7 @@ Focus on achieving R100,000 monthly target through practical, data-driven steps.
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
             
-            return {"strategy": response, "generated_at": datetime.now().isoformat()}
+            return {"strategy": response, "technical_analysis": technical_insights, "generated_at": datetime.now().isoformat()}
             
         except Exception as e:
             print(f"Error generating daily strategy: {e}")
