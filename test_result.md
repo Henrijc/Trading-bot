@@ -183,15 +183,18 @@ backend:
 frontend:
   - task: "Technical Analysis Frontend Interface"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
         - agent: "main"
         - comment: "Added Technical Analysis tab with market overview, symbol selector, technical indicators display, and trading signals. Tab is visible and functional."
+        - working: false
+        - agent: "testing"
+        - comment: "TESTED: Technical Analysis tab UI is implemented and functional, but has critical data loading issues. ✅ WORKING: Tab navigation, symbol selector buttons (BTC/ETH/ADA/XRP/SOL), responsive design, amber theme, API integration (18 technical API calls detected), refresh button. ❌ CRITICAL ISSUES: Current price shows 'RNaN' indicating data parsing problems, Market Technical Overview section is empty with no cryptocurrency data, technical indicators (RSI, MACD, Bollinger Bands, Support/Resistance) are not displaying, trading signals are minimal. The frontend structure is correct but backend data is not being properly processed and displayed."
 
 metadata:
   created_by: "main_agent"
