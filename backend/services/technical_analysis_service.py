@@ -384,20 +384,21 @@ class TechnicalAnalysisService:
             # RSI Signals
             if not rsi.empty:
                 current_rsi = rsi.iloc[-1]
-                if current_rsi < 30:
-                    signals.append({
-                        'type': 'BUY',
-                        'reason': f'RSI oversold at {current_rsi:.1f}',
-                        'strength': 'strong',
-                        'indicator': 'RSI'
-                    })
-                elif current_rsi > 70:
-                    signals.append({
-                        'type': 'SELL',
-                        'reason': f'RSI overbought at {current_rsi:.1f}',
-                        'strength': 'strong',
-                        'indicator': 'RSI'
-                    })
+                if not pd.isna(current_rsi):
+                    if current_rsi < 30:
+                        signals.append({
+                            'type': 'BUY',
+                            'reason': f'RSI oversold at {current_rsi:.1f}',
+                            'strength': 'strong',
+                            'indicator': 'RSI'
+                        })
+                    elif current_rsi > 70:
+                        signals.append({
+                            'type': 'SELL',
+                            'reason': f'RSI overbought at {current_rsi:.1f}',
+                            'strength': 'strong',
+                            'indicator': 'RSI'
+                        })
             
             # MACD Signals
             if not macd['macd'].empty and len(macd['macd']) >= 2:
@@ -406,41 +407,43 @@ class TechnicalAnalysisService:
                 current_signal = macd['signal'].iloc[-1]
                 prev_signal = macd['signal'].iloc[-2]
                 
-                # MACD crossover
-                if prev_macd <= prev_signal and current_macd > current_signal:
-                    signals.append({
-                        'type': 'BUY',
-                        'reason': 'MACD bullish crossover',
-                        'strength': 'medium',
-                        'indicator': 'MACD'
-                    })
-                elif prev_macd >= prev_signal and current_macd < current_signal:
-                    signals.append({
-                        'type': 'SELL',
-                        'reason': 'MACD bearish crossover',
-                        'strength': 'medium',
-                        'indicator': 'MACD'
-                    })
+                if not any(pd.isna([current_macd, prev_macd, current_signal, prev_signal])):
+                    # MACD crossover
+                    if prev_macd <= prev_signal and current_macd > current_signal:
+                        signals.append({
+                            'type': 'BUY',
+                            'reason': 'MACD bullish crossover',
+                            'strength': 'medium',
+                            'indicator': 'MACD'
+                        })
+                    elif prev_macd >= prev_signal and current_macd < current_signal:
+                        signals.append({
+                            'type': 'SELL',
+                            'reason': 'MACD bearish crossover',
+                            'strength': 'medium',
+                            'indicator': 'MACD'
+                        })
             
             # Bollinger Bands Signals
             if not bb['upper'].empty:
                 upper = bb['upper'].iloc[-1]
                 lower = bb['lower'].iloc[-1]
                 
-                if current_price <= lower:
-                    signals.append({
-                        'type': 'BUY',
-                        'reason': 'Price touching lower Bollinger Band',
-                        'strength': 'medium',
-                        'indicator': 'Bollinger Bands'
-                    })
-                elif current_price >= upper:
-                    signals.append({
-                        'type': 'SELL',
-                        'reason': 'Price touching upper Bollinger Band',
-                        'strength': 'medium',
-                        'indicator': 'Bollinger Bands'
-                    })
+                if not pd.isna(upper) and not pd.isna(lower):
+                    if current_price <= lower:
+                        signals.append({
+                            'type': 'BUY',
+                            'reason': 'Price touching lower Bollinger Band',
+                            'strength': 'medium',
+                            'indicator': 'Bollinger Bands'
+                        })
+                    elif current_price >= upper:
+                        signals.append({
+                            'type': 'SELL',
+                            'reason': 'Price touching upper Bollinger Band',
+                            'strength': 'medium',
+                            'indicator': 'Bollinger Bands'
+                        })
             
             # Support/Resistance Signals
             if sr['support'] > 0 and sr['resistance'] > 0:
@@ -459,27 +462,38 @@ class TechnicalAnalysisService:
                         'indicator': 'Support/Resistance'
                     })
             
+            # Helper function to safely convert pandas values to JSON-serializable
+            def safe_convert(value):
+                if pd.isna(value):
+                    return None
+                if isinstance(value, (pd.Series, pd.DataFrame)):
+                    return None
+                return float(value) if isinstance(value, (int, float)) else value
+            
             # Compile final analysis
             return {
                 'symbol': symbol,
-                'current_price': current_price,
+                'current_price': safe_convert(current_price),
                 'timestamp': datetime.now().isoformat(),
                 'trend_analysis': trend,
                 'technical_indicators': {
-                    'rsi': rsi.iloc[-1] if not rsi.empty else None,
+                    'rsi': safe_convert(rsi.iloc[-1] if not rsi.empty else None),
                     'macd': {
-                        'macd': macd['macd'].iloc[-1] if not macd['macd'].empty else None,
-                        'signal': macd['signal'].iloc[-1] if not macd['signal'].empty else None,
-                        'histogram': macd['histogram'].iloc[-1] if not macd['histogram'].empty else None
+                        'macd': safe_convert(macd['macd'].iloc[-1] if not macd['macd'].empty else None),
+                        'signal': safe_convert(macd['signal'].iloc[-1] if not macd['signal'].empty else None),
+                        'histogram': safe_convert(macd['histogram'].iloc[-1] if not macd['histogram'].empty else None)
                     },
                     'bollinger_bands': {
-                        'upper': bb['upper'].iloc[-1] if not bb['upper'].empty else None,
-                        'middle': bb['middle'].iloc[-1] if not bb['middle'].empty else None,
-                        'lower': bb['lower'].iloc[-1] if not bb['lower'].empty else None
+                        'upper': safe_convert(bb['upper'].iloc[-1] if not bb['upper'].empty else None),
+                        'middle': safe_convert(bb['middle'].iloc[-1] if not bb['middle'].empty else None),
+                        'lower': safe_convert(bb['lower'].iloc[-1] if not bb['lower'].empty else None)
                     },
-                    'support_resistance': sr,
+                    'support_resistance': {
+                        'support': safe_convert(sr['support']),
+                        'resistance': safe_convert(sr['resistance'])
+                    },
                     'moving_averages': {
-                        key: value.iloc[-1] if not value.empty else None
+                        key: safe_convert(value.iloc[-1] if not value.empty else None)
                         for key, value in ma.items()
                     }
                 },
