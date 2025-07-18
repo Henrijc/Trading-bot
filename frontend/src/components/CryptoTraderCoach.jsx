@@ -793,6 +793,256 @@ const CryptoTraderCoach = () => {
                 )}
               </TabsContent>
 
+              {/* Technical Analysis Tab */}
+              <TabsContent value="technical" className="space-y-6">
+                {/* Market Overview */}
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <Activity className="text-amber-500" size={24} />
+                      Market Technical Overview
+                      <Button
+                        onClick={loadMarketOverview}
+                        className="ml-auto bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold p-2 rounded-full"
+                        size="sm"
+                      >
+                        <RefreshCw size={16} />
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    {marketOverview ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {marketOverview.market_overview?.map((crypto) => (
+                          <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <div className="font-bold text-amber-300 text-lg">{crypto.symbol}</div>
+                                <div className="text-sm text-amber-400/70">{formatCurrency(crypto.price)}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className={`text-sm font-bold ${
+                                  crypto.trend === 'bullish' ? 'text-green-400' : 
+                                  crypto.trend === 'bearish' ? 'text-red-400' : 'text-amber-400'
+                                }`}>
+                                  {crypto.trend?.toUpperCase()}
+                                </div>
+                                <div className="text-xs text-amber-400/60">
+                                  Strength: {(crypto.trend_strength * 100).toFixed(0)}%
+                                </div>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span className="text-amber-400/70">RSI:</span>
+                                <span className="text-amber-100">{crypto.rsi?.toFixed(1) || 'N/A'}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-amber-400/70">Recommendation:</span>
+                                <span className={`font-bold ${
+                                  crypto.recommendation?.action === 'BUY' ? 'text-green-400' : 
+                                  crypto.recommendation?.action === 'SELL' ? 'text-red-400' : 'text-amber-400'
+                                }`}>
+                                  {crypto.recommendation?.action || 'HOLD'}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-amber-400/70">Signals:</span>
+                                <span className="text-amber-100">{crypto.signals_count || 0}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-amber-400/60">
+                        <Activity className="mx-auto mb-3" size={48} />
+                        <p>Loading market technical analysis...</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Symbol Selector */}
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <TrendingUpIcon className="text-amber-500" size={24} />
+                      Technical Analysis
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      {['BTC', 'ETH', 'ADA', 'XRP', 'SOL'].map((symbol) => (
+                        <Button
+                          key={symbol}
+                          onClick={() => {
+                            setSelectedTechnicalSymbol(symbol);
+                            loadTechnicalAnalysis();
+                            loadTechnicalIndicators(symbol);
+                          }}
+                          className={`${selectedTechnicalSymbol === symbol 
+                            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black' 
+                            : 'bg-gray-700 text-amber-300 hover:bg-gray-600'} font-semibold`}
+                        >
+                          {symbol}
+                        </Button>
+                      ))}
+                    </div>
+
+                    {technicalAnalysis && (
+                      <div className="space-y-6">
+                        {/* Current Price and Trend */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
+                            <div className="text-2xl font-bold font-mono text-blue-400">
+                              {formatCurrency(technicalAnalysis.current_price)}
+                            </div>
+                            <div className="text-sm text-blue-300/80">Current Price</div>
+                          </div>
+                          <div className="text-center p-4 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
+                            <div className="text-2xl font-bold text-green-400">
+                              {technicalAnalysis.trend_analysis?.trend?.toUpperCase()}
+                            </div>
+                            <div className="text-sm text-green-300/80">Trend Direction</div>
+                          </div>
+                          <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-amber-600/30">
+                            <div className="text-2xl font-bold text-amber-400">
+                              {technicalAnalysis.recommendation?.action}
+                            </div>
+                            <div className="text-sm text-amber-300/80">Recommendation</div>
+                          </div>
+                        </div>
+
+                        {/* Technical Indicators */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {technicalAnalysis.technical_indicators?.rsi && (
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-amber-400 font-medium">RSI</span>
+                                <span className="text-amber-100 font-mono font-bold">
+                                  {technicalAnalysis.technical_indicators.rsi.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-600 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full ${
+                                    technicalAnalysis.technical_indicators.rsi > 70 ? 'bg-red-500' :
+                                    technicalAnalysis.technical_indicators.rsi < 30 ? 'bg-green-500' : 'bg-amber-500'
+                                  }`}
+                                  style={{width: `${technicalAnalysis.technical_indicators.rsi}%`}}
+                                ></div>
+                              </div>
+                              <div className="text-xs text-amber-400/60 mt-1">
+                                {technicalAnalysis.technical_indicators.rsi > 70 ? 'Overbought' :
+                                 technicalAnalysis.technical_indicators.rsi < 30 ? 'Oversold' : 'Neutral'}
+                              </div>
+                            </div>
+                          )}
+
+                          {technicalAnalysis.technical_indicators?.macd && (
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                              <div className="text-amber-400 font-medium mb-2">MACD</div>
+                              <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">MACD:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {technicalAnalysis.technical_indicators.macd.macd?.toFixed(4) || 'N/A'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Signal:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {technicalAnalysis.technical_indicators.macd.signal?.toFixed(4) || 'N/A'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Histogram:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {technicalAnalysis.technical_indicators.macd.histogram?.toFixed(4) || 'N/A'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {technicalAnalysis.technical_indicators?.bollinger_bands && (
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                              <div className="text-amber-400 font-medium mb-2">Bollinger Bands</div>
+                              <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Upper:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.upper || 0)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Middle:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.middle || 0)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Lower:</span>
+                                  <span className="text-amber-100 font-mono">
+                                    {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.lower || 0)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {technicalAnalysis.technical_indicators?.support_resistance && (
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                              <div className="text-amber-400 font-medium mb-2">Support/Resistance</div>
+                              <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Support:</span>
+                                  <span className="text-green-400 font-mono">
+                                    {formatCurrency(technicalAnalysis.technical_indicators.support_resistance.support || 0)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-amber-400/70">Resistance:</span>
+                                  <span className="text-red-400 font-mono">
+                                    {formatCurrency(technicalAnalysis.technical_indicators.support_resistance.resistance || 0)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Trading Signals */}
+                        {technicalAnalysis.trading_signals && technicalAnalysis.trading_signals.length > 0 && (
+                          <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="text-amber-400 font-medium mb-3">Trading Signals</div>
+                            <div className="space-y-2">
+                              {technicalAnalysis.trading_signals.map((signal, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                                  <div className="flex items-center gap-2">
+                                    <Badge className={`${
+                                      signal.type === 'BUY' ? 'bg-green-600' : 
+                                      signal.type === 'SELL' ? 'bg-red-600' : 'bg-amber-600'
+                                    } text-white font-semibold`}>
+                                      {signal.type}
+                                    </Badge>
+                                    <span className="text-amber-100 text-sm">{signal.reason}</span>
+                                  </div>
+                                  <div className="text-xs text-amber-400/60">
+                                    {signal.indicator} • {signal.strength}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
             </Tabs>
           </div>
         </div>
