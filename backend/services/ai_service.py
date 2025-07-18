@@ -131,7 +131,7 @@ class AICoachService:
             return f"Web search temporarily unavailable. Using real-time market data for analysis of: {query}"
     
     async def send_message(self, session_id: str, message: str, context: Dict[str, Any] = None) -> str:
-        """Send a message to the AI coach and get a response"""
+        """Send a message to the AI coach and get a response with technical analysis"""
         try:
             # Create a new chat instance for each session
             chat = LlmChat(
@@ -140,12 +140,13 @@ class AICoachService:
                 system_message=self.system_message
             ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
             
-            # Enhance context with real-time data and web research
+            # Enhance context with real-time data and technical analysis
             enhanced_context = ""
             
             if context:
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
-                holdings_count = len(context.get('portfolio', {}).get('holdings', []))
+                holdings = context.get('portfolio', {}).get('holdings', [])
+                holdings_count = len(holdings)
                 
                 enhanced_context = f"""
 **Current Portfolio:**
@@ -156,10 +157,44 @@ class AICoachService:
 **Market Context:**
 - All prices are real-time from Luno and CoinGecko
 - USD pairs converted to ZAR at current rates
-- No mock data - everything is live
+- Technical analysis indicators available
 
 **User Question:** {message}
 """
+            
+            # Add technical analysis if user asks about specific cryptos or trading
+            crypto_keywords = ['bitcoin', 'btc', 'ethereum', 'eth', 'cardano', 'ada', 'solana', 'sol', 'xrp', 'ripple', 'trade', 'buy', 'sell', 'analysis', 'indicator', 'rsi', 'macd']
+            if any(keyword in message.lower() for keyword in crypto_keywords):
+                try:
+                    # Get portfolio holdings to analyze
+                    if context and context.get('portfolio', {}).get('holdings'):
+                        holdings = context['portfolio']['holdings']
+                        ta_insights = []
+                        
+                        # Analyze top holdings
+                        for holding in holdings[:3]:  # Top 3 holdings
+                            symbol = holding['symbol']
+                            try:
+                                signals = await self.ta_service.generate_trading_signals(symbol, 30)
+                                if 'error' not in signals:
+                                    recommendation = signals.get('recommendation', {})
+                                    trend = signals.get('trend_analysis', {})
+                                    rsi = signals.get('technical_indicators', {}).get('rsi')
+                                    
+                                    insight = f"{symbol}: {recommendation.get('action', 'HOLD')} "
+                                    if rsi:
+                                        insight += f"(RSI: {rsi:.1f}) "
+                                    insight += f"Trend: {trend.get('trend', 'neutral')}"
+                                    ta_insights.append(insight)
+                            except Exception as e:
+                                print(f"Error getting TA for {symbol}: {e}")
+                                continue
+                        
+                        if ta_insights:
+                            enhanced_context += f"\n**Technical Analysis:**\n" + "\n".join(f"- {insight}" for insight in ta_insights) + "\n"
+                
+                except Exception as e:
+                    print(f"Error adding technical analysis to context: {e}")
             
             # If the message contains requests for market research, do web searches
             if any(keyword in message.lower() for keyword in ['news', 'market', 'trend', 'analysis', 'research']):
@@ -167,8 +202,7 @@ class AICoachService:
                 web_results = await self.web_search(search_query)
                 enhanced_context += f"\n**Latest Market Research:**\n{web_results}\n"
             
-            # If asking about specific cryptos, get current prices
-            crypto_keywords = ['bitcoin', 'btc', 'ethereum', 'eth', 'cardano', 'ada', 'solana', 'sol', 'xrp', 'ripple']
+            # If asking about specific cryptos, get current prices and technical signals
             if any(keyword in message.lower() for keyword in crypto_keywords):
                 try:
                     market_data = await self.luno_service.get_market_data()
