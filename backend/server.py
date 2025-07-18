@@ -442,6 +442,10 @@ async def get_target_settings():
             await db.target_settings.insert_one(default_settings)
             return default_settings
         
+        # Remove ObjectId and convert to JSON serializable format
+        if '_id' in settings:
+            del settings['_id']
+        
         return settings
         
     except Exception as e:
