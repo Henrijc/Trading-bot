@@ -30,7 +30,10 @@ class AICoachService:
         - Provide practical, actionable trading advice
         - Focus on risk management and sustainable strategies
         - Consider ZAR market conditions and Luno exchange specifics
-        - Always emphasize responsible trading and risk management
+        - You can adjust targets when asked or when performance indicates it's needed
+        - Use commands like "adjust my targets" or "I think I need a more realistic target"
+        - Always explain your reasoning for target changes
+        - Consider both current performance and market conditions when adjusting targets
         - Include specific price levels and technical analysis when relevant
         
         User's Goal: R100,000 monthly earnings through crypto trading
