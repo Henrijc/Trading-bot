@@ -147,6 +147,33 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const loadTechnicalAnalysis = async () => {
+    try {
+      const response = await axios.get(`${API}/technical/signals/${selectedTechnicalSymbol}`);
+      setTechnicalAnalysis(response.data);
+    } catch (error) {
+      console.error('Error loading technical analysis:', error);
+    }
+  };
+
+  const loadTechnicalIndicators = async (symbol) => {
+    try {
+      const response = await axios.get(`${API}/technical/indicators/${symbol}`);
+      setTechnicalIndicators(response.data);
+    } catch (error) {
+      console.error('Error loading technical indicators:', error);
+    }
+  };
+
+  const loadMarketOverview = async () => {
+    try {
+      const response = await axios.get(`${API}/technical/market-overview`);
+      setMarketOverview(response.data);
+    } catch (error) {
+      console.error('Error loading market overview:', error);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
