@@ -56,6 +56,20 @@ const CryptoTraderCoach = () => {
     }
   }, [selectedTechnicalSymbol]);
 
+  // Debug effect to log portfolio changes
+  useEffect(() => {
+    console.log('Portfolio state changed:', portfolio);
+    if (portfolio) {
+      console.log('Portfolio total value:', portfolio.total_value);
+    }
+  }, [portfolio]);
+
+  // Debug effect to log market data changes
+  useEffect(() => {
+    console.log('Market data state changed:', marketData);
+    console.log('Market data length:', marketData.length);
+  }, [marketData]);
+
   const loadInitialData = async () => {
     try {
       setIsLoading(true);
