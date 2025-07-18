@@ -28,6 +28,7 @@ db = client[os.environ['DB_NAME']]
 # Initialize services AFTER loading environment variables
 ai_service = AICoachService()
 luno_service = LunoService()
+ta_service = TechnicalAnalysisService()
 
 # Create the main app without a prefix
 app = FastAPI(title="Crypto Trading Coach API", version="1.0.0")
