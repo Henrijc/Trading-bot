@@ -324,6 +324,101 @@ async def ai_research(request: dict):
         print(f"Error in AI research: {e}")
         raise HTTPException(status_code=500, detail="Failed to perform research")
 
+# Auto Trading endpoints
+@api_router.get("/autotrade/settings", response_model=AutoTradingSettings)
+async def get_autotrade_settings():
+    """Get auto trading settings"""
+    try:
+        settings = await db.autotrade_settings.find_one({"user_id": "default_user"})
+        
+        if not settings:
+            # Create default settings
+            default_settings = AutoTradingSettings(user_id="default_user")
+            await db.autotrade_settings.insert_one(default_settings.dict())
+            return default_settings
+        
+        return AutoTradingSettings(**settings)
+        
+    except Exception as e:
+        print(f"Error getting autotrade settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get autotrade settings")
+
+@api_router.put("/autotrade/settings")
+async def update_autotrade_settings(settings: AutoTradingSettingsCreate):
+    """Update auto trading settings"""
+    try:
+        settings_dict = settings.dict()
+        settings_dict["user_id"] = "default_user"
+        settings_dict["updated_at"] = datetime.utcnow()
+        
+        await db.autotrade_settings.update_one(
+            {"user_id": "default_user"},
+            {"$set": settings_dict},
+            upsert=True
+        )
+        
+        return {"success": True, "message": "Auto trading settings updated"}
+        
+    except Exception as e:
+        print(f"Error updating autotrade settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update autotrade settings")
+
+@api_router.get("/autotrade/logs")
+async def get_autotrade_logs(limit: int = 50):
+    """Get auto trading execution logs"""
+    try:
+        logs = await db.autotrade_logs.find(
+            {"user_id": "default_user"}
+        ).sort("executed_at", -1).limit(limit).to_list(None)
+        
+        return [AutoTradeLog(**log) for log in logs]
+        
+    except Exception as e:
+        print(f"Error getting autotrade logs: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get autotrade logs")
+
+@api_router.post("/autotrade/execute")
+async def execute_autotrade():
+    """Manually trigger auto trading analysis and execution"""
+    try:
+        # Get auto trading settings
+        settings = await db.autotrade_settings.find_one({"user_id": "default_user"})
+        if not settings or not settings.get("enabled", False):
+            return {"success": False, "message": "Auto trading is not enabled"}
+        
+        # Get current portfolio and market data
+        portfolio_data = await luno_service.get_portfolio_data()
+        market_data = await luno_service.get_market_data()
+        
+        # Execute auto trading analysis
+        results = await ai_service.execute_autotrade(settings, portfolio_data, market_data)
+        
+        return results
+        
+    except Exception as e:
+        print(f"Error executing autotrade: {e}")
+        raise HTTPException(status_code=500, detail="Failed to execute autotrade")
+
+@api_router.post("/autotrade/toggle")
+async def toggle_autotrade(enabled: bool):
+    """Enable or disable auto trading"""
+    try:
+        await db.autotrade_settings.update_one(
+            {"user_id": "default_user"},
+            {"$set": {"enabled": enabled, "updated_at": datetime.utcnow()}},
+            upsert=True
+        )
+        
+        status = "enabled" if enabled else "disabled"
+        return {"success": True, "message": f"Auto trading {status}"}
+        
+    except Exception as e:
+        print(f"Error toggling autotrade: {e}")
+        raise HTTPException(status_code=500, detail="Failed to toggle autotrade")
+
+# Import the new models at the top
+from models import AutoTradingSettings, AutoTradeLog, AutoTradingSettingsCreate
+
 # Target management endpoints
 @api_router.get("/targets/settings")
 async def get_target_settings():
