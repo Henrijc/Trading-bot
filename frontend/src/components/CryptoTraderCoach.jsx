@@ -23,8 +23,8 @@ const CryptoTraderCoach = () => {
   const [riskMetrics, setRiskMetrics] = useState(null);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [activeTab, setActiveTab] = useState('overview');
-  const [monthlyTarget, setMonthlyTarget] = useState(100000);
-  const [weeklyTarget, setWeeklyTarget] = useState(25000);
+  const [monthlyTargetState, setMonthlyTargetState] = useState(100000);
+  const [weeklyTargetState, setWeeklyTargetState] = useState(25000);
   const [targetSettings, setTargetSettings] = useState(null);
 
   // Load initial data
