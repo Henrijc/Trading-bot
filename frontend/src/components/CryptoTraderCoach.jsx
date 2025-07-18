@@ -257,6 +257,13 @@ const CryptoTraderCoach = () => {
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh Data
               </Button>
+              <Button
+                onClick={() => setShowAutoTradeModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold border border-blue-500/50 shadow-lg shadow-blue-500/25 transition-all duration-300"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Auto Trade: {autoTradeSettings?.enabled ? 'ON' : 'OFF'}
+              </Button>
               <div className="text-center lg:text-right bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-xl border border-amber-600/30 shadow-lg">
                 <div className="text-2xl lg:text-3xl font-bold font-mono bg-gradient-to-r from-green-400 to-green-500 bg-clip-text text-transparent">
                   {formatCurrency(currentMonthProgress)}
