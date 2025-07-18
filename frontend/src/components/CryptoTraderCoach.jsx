@@ -748,6 +748,99 @@ const CryptoTraderCoach = () => {
             </Tabs>
           </div>
         </div>
+
+        {/* Auto Trading Modal */}
+        {showAutoTradeModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-amber-600/40 shadow-2xl max-w-md w-full">
+              <h3 className="text-xl font-bold text-amber-300 mb-4">Auto Trading Settings</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-amber-400 text-sm font-medium">Auto Trading</label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Button
+                      onClick={() => setAutoTradeSettings({...autoTradeSettings, enabled: !autoTradeSettings?.enabled})}
+                      className={`${autoTradeSettings?.enabled ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white font-semibold`}
+                    >
+                      {autoTradeSettings?.enabled ? 'ENABLED' : 'DISABLED'}
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-amber-400 text-sm font-medium">Max Trade Amount</label>
+                  <Input
+                    type="number"
+                    value={autoTradeSettings?.max_trade_amount || 1000}
+                    onChange={(e) => setAutoTradeSettings({...autoTradeSettings, max_trade_amount: parseFloat(e.target.value)})}
+                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    placeholder="1000"
+                  />
+                  <div className="text-xs text-amber-400/60 mt-1">Maximum ZAR per trade</div>
+                </div>
+
+                <div>
+                  <label className="text-amber-400 text-sm font-medium">Daily Limit</label>
+                  <Input
+                    type="number"
+                    value={autoTradeSettings?.daily_limit || 5000}
+                    onChange={(e) => setAutoTradeSettings({...autoTradeSettings, daily_limit: parseFloat(e.target.value)})}
+                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    placeholder="5000"
+                  />
+                  <div className="text-xs text-amber-400/60 mt-1">Maximum ZAR per day</div>
+                </div>
+
+                <div>
+                  <label className="text-amber-400 text-sm font-medium">Stop Loss %</label>
+                  <Input
+                    type="number"
+                    value={autoTradeSettings?.stop_loss_percent || 5}
+                    onChange={(e) => setAutoTradeSettings({...autoTradeSettings, stop_loss_percent: parseFloat(e.target.value)})}
+                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    placeholder="5"
+                  />
+                  <div className="text-xs text-amber-400/60 mt-1">Auto sell when down this %</div>
+                </div>
+
+                <div>
+                  <label className="text-amber-400 text-sm font-medium">Take Profit %</label>
+                  <Input
+                    type="number"
+                    value={autoTradeSettings?.take_profit_percent || 10}
+                    onChange={(e) => setAutoTradeSettings({...autoTradeSettings, take_profit_percent: parseFloat(e.target.value)})}
+                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    placeholder="10"
+                  />
+                  <div className="text-xs text-amber-400/60 mt-1">Auto sell when up this %</div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <Button
+                  onClick={() => setShowAutoTradeModal(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    try {
+                      await axios.put(`${API}/autotrade/settings`, autoTradeSettings);
+                      setShowAutoTradeModal(false);
+                    } catch (error) {
+                      console.error('Error saving auto trade settings:', error);
+                    }
+                  }}
+                  className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold flex-1"
+                >
+                  Save Settings
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
