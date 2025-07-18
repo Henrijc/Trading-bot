@@ -58,6 +58,9 @@ const CryptoTraderCoach = () => {
 
   const loadInitialData = async () => {
     try {
+      setIsLoading(true);
+      setDataLoadingComplete(false);
+      
       // Load data sequentially instead of parallel to avoid race conditions
       console.log('Starting initial data load...');
       
@@ -78,8 +81,11 @@ const CryptoTraderCoach = () => {
       await loadMarketOverview();
       
       console.log('Initial data load completed');
+      setDataLoadingComplete(true);
     } catch (error) {
       console.error('Error loading initial data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
