@@ -538,10 +538,25 @@ const CryptoTraderCoach = () => {
                         <div key={holding.symbol} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300">
                           <div className="flex justify-between items-start mb-4">
                             <div>
-                              <div className="font-bold text-amber-300 text-xl">{holding.symbol}</div>
+                              <div className="flex items-center gap-2">
+                                <div className="font-bold text-amber-300 text-xl">{holding.symbol}</div>
+                                {holding.is_staked && (
+                                  <Badge className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs">
+                                    Staked
+                                  </Badge>
+                                )}
+                                {holding.estimated_price && (
+                                  <Badge className="bg-gradient-to-r from-gray-600 to-gray-700 text-white text-xs">
+                                    Est. Price
+                                  </Badge>
+                                )}
+                              </div>
                               <div className="text-sm text-amber-400/70 font-medium">{holding.name}</div>
                               <div className="text-sm text-amber-400/50 mt-2 font-mono bg-gray-800/50 px-3 py-1 rounded-lg">
                                 {formatNumber(holding.amount)} units
+                                {holding.accounts > 1 && (
+                                  <span className="ml-2 text-blue-400">({holding.accounts} accounts)</span>
+                                )}
                               </div>
                             </div>
                             <div className="text-right">
