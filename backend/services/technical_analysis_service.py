@@ -10,7 +10,6 @@ from ta.utils import dropna
 from ta.volatility import BollingerBands
 from ta.trend import SMAIndicator, EMAIndicator, MACD
 from ta.momentum import RSIIndicator, StochasticOscillator
-from ta.volume import VolumeSMAIndicator
 
 class TechnicalAnalysisService:
     def __init__(self):
