@@ -229,13 +229,58 @@ const CryptoTraderCoach = () => {
                   <div className="space-y-4">
                     {chatMessages.map((msg) => (
                       <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[85%] p-4 rounded-lg border shadow-lg ${
+                        <div className={`max-w-[90%] p-4 rounded-lg border shadow-lg ${
                           msg.role === 'user' 
                             ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black border-amber-500/50 shadow-amber-500/25' 
                             : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 border-gray-600/50 shadow-gray-500/25'
                         }`}>
-                          <p className="text-sm leading-relaxed font-medium">{msg.message}</p>
-                          <p className="text-xs opacity-70 mt-2 font-mono">
+                          <div className="text-sm leading-relaxed font-medium whitespace-pre-wrap">
+                            {msg.message.split('\n').map((line, index) => {
+                              // Handle headers (lines starting with ##, **, or 📊, 💡, etc.)
+                              if (line.startsWith('**') && line.endsWith('**')) {
+                                return (
+                                  <div key={index} className="font-bold text-amber-300 mb-2 mt-3 first:mt-0">
+                                    {line.replace(/\*\*/g, '')}
+                                  </div>
+                                );
+                              }
+                              // Handle bullet points
+                              if (line.startsWith('- ') || line.startsWith('• ')) {
+                                return (
+                                  <div key={index} className="ml-4 mb-1 flex items-start">
+                                    <span className="text-amber-400 mr-2 mt-1">•</span>
+                                    <span>{line.replace(/^[-•]\s*/, '')}</span>
+                                  </div>
+                                );
+                              }
+                              // Handle numbered lists
+                              if (/^\d+\./.test(line)) {
+                                return (
+                                  <div key={index} className="ml-4 mb-1 flex items-start">
+                                    <span className="text-amber-400 mr-2 font-bold">{line.match(/^\d+\./)[0]}</span>
+                                    <span>{line.replace(/^\d+\.\s*/, '')}</span>
+                                  </div>
+                                );
+                              }
+                              // Handle emoji headers
+                              if (/^[📊💡🎯📈⚠️🔥💰🛡️]\s/.test(line)) {
+                                return (
+                                  <div key={index} className="font-semibold text-amber-300 mb-2 mt-3 first:mt-0">
+                                    {line}
+                                  </div>
+                                );
+                              }
+                              // Regular text
+                              return line.trim() ? (
+                                <div key={index} className="mb-2">
+                                  {line}
+                                </div>
+                              ) : (
+                                <div key={index} className="mb-2"></div>
+                              );
+                            })}
+                          </div>
+                          <p className="text-xs opacity-70 mt-3 font-mono border-t border-gray-600/30 pt-2">
                             {new Date(msg.timestamp).toLocaleTimeString()}
                           </p>
                         </div>
@@ -248,7 +293,7 @@ const CryptoTraderCoach = () => {
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
-                            <span className="text-sm">AI is analyzing...</span>
+                            <span className="text-sm font-medium">AI Coach is analyzing your request...</span>
                           </div>
                         </div>
                       </div>
