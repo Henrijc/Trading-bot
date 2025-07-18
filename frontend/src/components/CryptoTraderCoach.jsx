@@ -301,7 +301,11 @@ const CryptoTraderCoach = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col p-4">
-                <ScrollArea className="flex-1 mb-4 max-h-[350px] lg:max-h-[450px]">
+                <div 
+                  ref={chatScrollRef}
+                  className="flex-1 mb-4 max-h-[350px] lg:max-h-[450px] overflow-y-auto pr-2"
+                  style={{ scrollBehavior: 'smooth' }}
+                >
                   <div className="space-y-4">
                     {chatMessages.map((msg) => (
                       <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
