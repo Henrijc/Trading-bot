@@ -601,29 +601,34 @@ async def get_technical_indicators(symbol: str, days: int = 30):
             'trend_analysis': ta_service.analyze_trend(df)
         }
         
-        # Convert pandas series to lists for JSON serialization
+        # Helper function to safely convert pandas values to JSON-serializable
+        def safe_convert(value):
+            import pandas as pd
+            if pd.isna(value):
+                return None
+            if isinstance(value, (pd.Series, pd.DataFrame)):
+                return None
+            return float(value) if isinstance(value, (int, float)) else value
+        
+        # Convert pandas series to safe values for JSON serialization
         serialized_indicators = {}
         for key, value in indicators.items():
             if isinstance(value, dict):
                 serialized_indicators[key] = {}
                 for sub_key, sub_value in value.items():
-                    if hasattr(sub_value, 'tolist'):
-                        serialized_indicators[key][sub_key] = sub_value.tolist()
-                    elif hasattr(sub_value, 'iloc'):
-                        serialized_indicators[key][sub_key] = sub_value.iloc[-1] if len(sub_value) > 0 else None
+                    if hasattr(sub_value, 'iloc') and len(sub_value) > 0:
+                        serialized_indicators[key][sub_key] = safe_convert(sub_value.iloc[-1])
                     else:
-                        serialized_indicators[key][sub_key] = sub_value
-            elif hasattr(value, 'tolist'):
-                serialized_indicators[key] = value.tolist()
-            elif hasattr(value, 'iloc'):
-                serialized_indicators[key] = value.iloc[-1] if len(value) > 0 else None
+                        serialized_indicators[key][sub_key] = safe_convert(sub_value)
+            elif hasattr(value, 'iloc') and len(value) > 0:
+                serialized_indicators[key] = safe_convert(value.iloc[-1])
             else:
-                serialized_indicators[key] = value
+                serialized_indicators[key] = safe_convert(value)
         
         return {
             'symbol': symbol.upper(),
             'indicators': serialized_indicators,
-            'current_price': df['close'].iloc[-1],
+            'current_price': safe_convert(df['close'].iloc[-1]),
             'timestamp': datetime.now().isoformat()
         }
         
