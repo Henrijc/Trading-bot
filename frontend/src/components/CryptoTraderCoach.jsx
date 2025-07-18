@@ -285,11 +285,11 @@ const CryptoTraderCoach = () => {
                         }`}>
                           <div className="text-sm leading-relaxed font-medium whitespace-pre-wrap">
                             {msg.message.split('\n').map((line, index) => {
-                              // Handle headers (lines starting with ##, **, or 📊, 💡, etc.)
-                              if (line.startsWith('**') && line.endsWith('**')) {
+                              // Handle headers (lines starting with ##, **, or numbered lists)
+                              if (line.startsWith('##')) {
                                 return (
-                                  <div key={index} className="font-bold text-amber-300 mb-2 mt-3 first:mt-0">
-                                    {line.replace(/\*\*/g, '')}
+                                  <div key={index} className="font-semibold text-amber-300 mb-2 mt-3 first:mt-0">
+                                    {line.replace(/^##\s*/, '')}
                                   </div>
                                 );
                               }
@@ -306,26 +306,18 @@ const CryptoTraderCoach = () => {
                               if (/^\d+\./.test(line)) {
                                 return (
                                   <div key={index} className="ml-4 mb-1 flex items-start">
-                                    <span className="text-amber-400 mr-2 font-bold">{line.match(/^\d+\./)[0]}</span>
+                                    <span className="text-amber-400 mr-2 font-medium">{line.match(/^\d+\./)[0]}</span>
                                     <span>{line.replace(/^\d+\.\s*/, '')}</span>
-                                  </div>
-                                );
-                              }
-                              // Handle emoji headers
-                              if (/^[📊💡🎯📈⚠️🔥💰🛡️]\s/.test(line)) {
-                                return (
-                                  <div key={index} className="font-semibold text-amber-300 mb-2 mt-3 first:mt-0">
-                                    {line}
                                   </div>
                                 );
                               }
                               // Regular text
                               return line.trim() ? (
-                                <div key={index} className="mb-2">
+                                <div key={index} className="mb-1">
                                   {line}
                                 </div>
                               ) : (
-                                <div key={index} className="mb-2"></div>
+                                <div key={index} className="mb-1"></div>
                               );
                             })}
                           </div>
