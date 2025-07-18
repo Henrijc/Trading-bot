@@ -311,6 +311,7 @@ class TechnicalAnalysisAPITester:
             # Test chat endpoint with technical analysis keywords
             chat_request = {
                 'session_id': 'test_session_ta',
+                'role': 'user',
                 'message': 'What is the current technical analysis for BTC? Should I buy or sell?'
             }
             
