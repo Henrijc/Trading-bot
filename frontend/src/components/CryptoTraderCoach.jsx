@@ -160,8 +160,16 @@ const CryptoTraderCoach = () => {
               message: `**🎯 Targets Updated!**\n\n${adjustResponse.data.message}\n\n**New Monthly Target:** ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\n\nI've adjusted your targets based on current performance and market conditions.`,
               timestamp: new Date().toISOString()
             }]);
-          }
-        } catch (error) {
+              // Check if AI suggests a trade
+              if (response.data.message.includes('BUY') || response.data.message.includes('SELL')) {
+                // Add a follow-up message with trading options
+                setChatMessages(prev => [...prev, {
+                  id: Date.now() + 2,
+                  role: 'assistant',
+                  message: `**🔄 Ready to Execute Trade?**\n\nI can help you execute this trade on Luno. Just confirm and I'll place the order for you.\n\n**Note:** This will be a real trade on your Luno account. Always double-check before confirming.`,
+                  timestamp: new Date().toISOString()
+                }]);
+              } catch (error) {
           console.error('Error adjusting targets:', error);
         }
       }
