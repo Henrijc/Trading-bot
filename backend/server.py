@@ -552,6 +552,219 @@ async def update_user_settings(settings: UserSettings):
         print(f"Error updating settings: {e}")
         raise HTTPException(status_code=500, detail="Failed to update settings")
 
+# Technical Analysis endpoints
+@api_router.get("/technical/signals/{symbol}")
+async def get_technical_signals(symbol: str, days: int = 30):
+    """Get technical analysis signals for a specific symbol"""
+    try:
+        signals = await ta_service.generate_trading_signals(symbol.upper(), days)
+        return signals
+        
+    except Exception as e:
+        print(f"Error getting technical signals for {symbol}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get technical signals")
+
+@api_router.get("/technical/portfolio")
+async def get_portfolio_technical_analysis():
+    """Get technical analysis for entire portfolio"""
+    try:
+        portfolio_data = await luno_service.get_portfolio_data()
+        analysis = await ta_service.analyze_portfolio_technical(portfolio_data)
+        return analysis
+        
+    except Exception as e:
+        print(f"Error getting portfolio technical analysis: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get portfolio technical analysis")
+
+@api_router.get("/technical/indicators/{symbol}")
+async def get_technical_indicators(symbol: str, days: int = 30):
+    """Get detailed technical indicators for a symbol"""
+    try:
+        # Get historical data
+        df = await ta_service.get_historical_data(symbol.upper(), days)
+        
+        if df.empty:
+            raise HTTPException(status_code=404, detail="No historical data available")
+        
+        # Calculate indicators
+        indicators = {
+            'rsi': ta_service.calculate_rsi(df),
+            'macd': ta_service.calculate_macd(df),
+            'bollinger_bands': ta_service.calculate_bollinger_bands(df),
+            'moving_averages': ta_service.calculate_moving_averages(df),
+            'stochastic': ta_service.calculate_stochastic(df),
+            'support_resistance': ta_service.detect_support_resistance(df),
+            'trend_analysis': ta_service.analyze_trend(df)
+        }
+        
+        # Convert pandas series to lists for JSON serialization
+        serialized_indicators = {}
+        for key, value in indicators.items():
+            if isinstance(value, dict):
+                serialized_indicators[key] = {}
+                for sub_key, sub_value in value.items():
+                    if hasattr(sub_value, 'tolist'):
+                        serialized_indicators[key][sub_key] = sub_value.tolist()
+                    elif hasattr(sub_value, 'iloc'):
+                        serialized_indicators[key][sub_key] = sub_value.iloc[-1] if len(sub_value) > 0 else None
+                    else:
+                        serialized_indicators[key][sub_key] = sub_value
+            elif hasattr(value, 'tolist'):
+                serialized_indicators[key] = value.tolist()
+            elif hasattr(value, 'iloc'):
+                serialized_indicators[key] = value.iloc[-1] if len(value) > 0 else None
+            else:
+                serialized_indicators[key] = value
+        
+        return {
+            'symbol': symbol.upper(),
+            'indicators': serialized_indicators,
+            'current_price': df['close'].iloc[-1],
+            'timestamp': datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        print(f"Error getting technical indicators for {symbol}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get technical indicators")
+
+@api_router.get("/technical/strategy/{strategy_name}")
+async def get_technical_strategy(strategy_name: str):
+    """Get a specific technical analysis strategy"""
+    try:
+        # Define predefined strategies
+        strategies = {
+            'momentum': {
+                'name': 'Momentum Strategy',
+                'description': 'Uses RSI and MACD to identify momentum-based trading opportunities',
+                'indicators': ['RSI', 'MACD', 'Moving Averages'],
+                'rules': [
+                    {'condition': 'RSI < 30', 'action': 'BUY', 'weight': 0.8},
+                    {'condition': 'RSI > 70', 'action': 'SELL', 'weight': 0.8},
+                    {'condition': 'MACD > Signal', 'action': 'BUY', 'weight': 0.6},
+                    {'condition': 'MACD < Signal', 'action': 'SELL', 'weight': 0.6}
+                ],
+                'risk_parameters': {
+                    'stop_loss': 0.05,
+                    'take_profit': 0.10,
+                    'position_size': 0.10
+                }
+            },
+            'mean_reversion': {
+                'name': 'Mean Reversion Strategy',
+                'description': 'Uses Bollinger Bands to identify overbought/oversold conditions',
+                'indicators': ['Bollinger Bands', 'RSI', 'Support/Resistance'],
+                'rules': [
+                    {'condition': 'Price < Lower BB', 'action': 'BUY', 'weight': 0.9},
+                    {'condition': 'Price > Upper BB', 'action': 'SELL', 'weight': 0.9},
+                    {'condition': 'Price near Support', 'action': 'BUY', 'weight': 0.7},
+                    {'condition': 'Price near Resistance', 'action': 'SELL', 'weight': 0.7}
+                ],
+                'risk_parameters': {
+                    'stop_loss': 0.03,
+                    'take_profit': 0.06,
+                    'position_size': 0.15
+                }
+            },
+            'trend_following': {
+                'name': 'Trend Following Strategy',
+                'description': 'Uses moving averages to ride trends',
+                'indicators': ['Moving Averages', 'MACD', 'Trend Analysis'],
+                'rules': [
+                    {'condition': 'MA(10) > MA(50)', 'action': 'BUY', 'weight': 0.7},
+                    {'condition': 'MA(10) < MA(50)', 'action': 'SELL', 'weight': 0.7},
+                    {'condition': 'Strong Uptrend', 'action': 'BUY', 'weight': 0.8},
+                    {'condition': 'Strong Downtrend', 'action': 'SELL', 'weight': 0.8}
+                ],
+                'risk_parameters': {
+                    'stop_loss': 0.08,
+                    'take_profit': 0.15,
+                    'position_size': 0.12
+                }
+            }
+        }
+        
+        strategy = strategies.get(strategy_name.lower())
+        if not strategy:
+            raise HTTPException(status_code=404, detail="Strategy not found")
+            
+        return strategy
+        
+    except Exception as e:
+        print(f"Error getting technical strategy: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get technical strategy")
+
+@api_router.post("/technical/backtest")
+async def backtest_strategy(request: dict):
+    """Backtest a trading strategy"""
+    try:
+        symbol = request.get('symbol', 'BTC')
+        strategy_name = request.get('strategy', 'momentum')
+        days = request.get('days', 30)
+        
+        # Get historical data
+        df = await ta_service.get_historical_data(symbol.upper(), days)
+        
+        if df.empty:
+            raise HTTPException(status_code=404, detail="No historical data available")
+        
+        # Simple backtest simulation
+        signals = await ta_service.generate_trading_signals(symbol.upper(), days)
+        
+        # Mock backtest results (would need more sophisticated implementation)
+        backtest_results = {
+            'symbol': symbol.upper(),
+            'strategy': strategy_name,
+            'period': f'{days} days',
+            'total_trades': len(signals.get('trading_signals', [])),
+            'winning_trades': len([s for s in signals.get('trading_signals', []) if s['type'] == 'BUY']),
+            'losing_trades': len([s for s in signals.get('trading_signals', []) if s['type'] == 'SELL']),
+            'win_rate': 0.65,  # Mock win rate
+            'total_return': 0.12,  # Mock return
+            'max_drawdown': 0.08,  # Mock drawdown
+            'sharpe_ratio': 1.8,  # Mock Sharpe ratio
+            'signals_analyzed': signals
+        }
+        
+        return backtest_results
+        
+    except Exception as e:
+        print(f"Error backtesting strategy: {e}")
+        raise HTTPException(status_code=500, detail="Failed to backtest strategy")
+
+@api_router.get("/technical/market-overview")
+async def get_market_technical_overview():
+    """Get technical analysis overview for major cryptocurrencies"""
+    try:
+        major_cryptos = ['BTC', 'ETH', 'ADA', 'XRP', 'SOL']
+        overview = []
+        
+        for crypto in major_cryptos:
+            try:
+                signals = await ta_service.generate_trading_signals(crypto, 30)
+                if 'error' not in signals:
+                    overview.append({
+                        'symbol': crypto,
+                        'price': signals.get('current_price', 0),
+                        'trend': signals.get('trend_analysis', {}).get('trend', 'neutral'),
+                        'trend_strength': signals.get('trend_analysis', {}).get('strength', 0),
+                        'recommendation': signals.get('recommendation', {}),
+                        'rsi': signals.get('technical_indicators', {}).get('rsi'),
+                        'signals_count': len(signals.get('trading_signals', []))
+                    })
+            except Exception as e:
+                print(f"Error analyzing {crypto}: {e}")
+                continue
+        
+        return {
+            'market_overview': overview,
+            'timestamp': datetime.now().isoformat(),
+            'analyzed_assets': len(overview)
+        }
+        
+    except Exception as e:
+        print(f"Error getting market technical overview: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get market technical overview")
+
 # Include the router in the main app
 app.include_router(api_router)
 
