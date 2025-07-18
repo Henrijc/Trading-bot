@@ -169,7 +169,6 @@ const CryptoTraderCoach = () => {
     }).format(num);
   };
 
-  const monthlyTarget = 100000;
   const currentMonthProgress = portfolio?.total_value || 0;
 
   return (
