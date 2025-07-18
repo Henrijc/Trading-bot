@@ -57,18 +57,26 @@ const CryptoTraderCoach = () => {
 
   const loadInitialData = async () => {
     try {
-      await Promise.all([
-        loadMarketData(),
-        loadPortfolio(),
-        loadDailyStrategy(),
-        loadWeeklyTargets(),
-        loadRiskMetrics(),
-        loadChatHistory(),
-        loadTargetSettings(),
-        loadAutoTradeSettings(),
-        loadTechnicalAnalysis(),
-        loadMarketOverview()
-      ]);
+      // Load data sequentially instead of parallel to avoid race conditions
+      console.log('Starting initial data load...');
+      
+      // Load market data first
+      await loadMarketData();
+      
+      // Load portfolio data second
+      await loadPortfolio();
+      
+      // Load other data
+      await loadDailyStrategy();
+      await loadWeeklyTargets();
+      await loadRiskMetrics();
+      await loadChatHistory();
+      await loadTargetSettings();
+      await loadAutoTradeSettings();
+      await loadTechnicalAnalysis();
+      await loadMarketOverview();
+      
+      console.log('Initial data load completed');
     } catch (error) {
       console.error('Error loading initial data:', error);
     }
