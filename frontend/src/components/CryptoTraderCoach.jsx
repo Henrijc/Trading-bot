@@ -171,7 +171,7 @@ const CryptoTraderCoach = () => {
         setChatMessages(prev => [...prev, {
           id: Date.now() + 2,
           role: 'assistant',
-          message: `**🔄 Ready to Execute Trade?**\n\nI can help you execute this trade on Luno. Just confirm and I'll place the order for you.\n\n**Note:** This will be a real trade on your Luno account. Always double-check before confirming.`,
+          message: `Ready to Execute Trade?\n\nI can help you execute this trade on Luno. Just confirm and I will place the order for you.\n\nNote: This will be a real trade on your Luno account. Always double-check before confirming.`,
           timestamp: new Date().toISOString()
         }]);
       }
