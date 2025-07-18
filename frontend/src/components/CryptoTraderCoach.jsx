@@ -88,11 +88,15 @@ const CryptoTraderCoach = () => {
   const loadPortfolio = async () => {
     try {
       console.log('Loading portfolio data...');
+      console.log('API URL:', `${API}/portfolio`);
       const response = await axios.get(`${API}/portfolio`);
-      console.log('Portfolio response:', response.data);
+      console.log('Portfolio response status:', response.status);
+      console.log('Portfolio response data:', response.data);
       setPortfolio(response.data);
+      console.log('Portfolio state updated successfully');
     } catch (error) {
       console.error('Error loading portfolio:', error);
+      console.error('Error details:', error.response?.data, error.response?.status);
     }
   };
 
