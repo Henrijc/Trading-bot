@@ -57,7 +57,9 @@ const CryptoTraderCoach = () => {
         loadRiskMetrics(),
         loadChatHistory(),
         loadTargetSettings(),
-        loadAutoTradeSettings()
+        loadAutoTradeSettings(),
+        loadTechnicalAnalysis(),
+        loadMarketOverview()
       ]);
     } catch (error) {
       console.error('Error loading initial data:', error);
