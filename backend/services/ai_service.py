@@ -134,11 +134,9 @@ class AICoachService:
             
         except Exception as e:
             print(f"Error in AI service: {e}")
-            return """I apologize, but I'm having trouble accessing the real-time data right now. 
+            return """I'm having trouble accessing real-time data right now. Please try again in a moment.
 
-**Please try again in a moment.**
-
-In the meantime, here's a quick tip: With your current portfolio value, consider taking profits on any positions that are up 15-20% and reinvesting in underperforming assets that show strong fundamentals."""
+Current portfolio value suggests taking profits on positions up 15-20% and reinvesting in underperforming assets with strong fundamentals."""
     
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
