@@ -175,6 +175,7 @@ const CryptoTraderCoach = () => {
           timestamp: new Date().toISOString()
         }]);
       }
+    } catch (error) {
       console.error('Error sending message:', error);
       // Add error message
       setChatMessages(prev => [...prev, {
