@@ -33,6 +33,7 @@ const CryptoTraderCoach = () => {
   const [selectedTechnicalSymbol, setSelectedTechnicalSymbol] = useState('BTC');
   const [technicalIndicators, setTechnicalIndicators] = useState(null);
   const [marketOverview, setMarketOverview] = useState(null);
+  const [dataLoadingComplete, setDataLoadingComplete] = useState(false);
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
