@@ -115,7 +115,7 @@ const CryptoTraderCoach = () => {
       setChatMessages([{
         id: 1,
         role: 'assistant',
-        message: 'Welcome to your AI Trading Coach. I am here to assist you in achieving your monthly target of R100,000. How may I help you today?',
+        message: 'I am your AI Trading Coach. I can help you reach your monthly target of R100,000. What would you like to know about your portfolio or the market?',
         timestamp: new Date().toISOString()
       }]);
     }
