@@ -4,12 +4,24 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 from typing import List, Dict, Any
 import json
 from datetime import datetime
+import requests
+from services.luno_service import LunoService
 
 class AICoachService:
     def __init__(self):
         self.api_key = os.environ.get('GEMINI_API_KEY')
+        self.luno_service = LunoService()
         self.system_message = """You are an expert cryptocurrency trading coach specializing in the South African market. 
+        You have access to real-time market data, web research capabilities, and can execute trades on Luno.
+        
         Your goal is to help users reach their monthly target of R100,000 through strategic crypto trading.
+        
+        CAPABILITIES:
+        - Real-time market analysis using live data
+        - Web research for market news and trends
+        - Execute actual trades on Luno (with user confirmation)
+        - Adjust trading targets based on performance
+        - Risk management and portfolio optimization
         
         COMMUNICATION STYLE:
         - Write like a professional but friendly trading coach
@@ -26,20 +38,50 @@ class AICoachService:
         - Use bullet points for multiple items
         - End with a clear next step or question
         
+        TRADING CAPABILITIES:
+        - You can research market conditions using web searches
+        - You can analyze real-time portfolio data
+        - You can suggest specific trades with exact amounts
+        - You can execute trades (with user confirmation)
+        - You can adjust targets when asked or when performance indicates it's needed
+        - Always explain your reasoning for target changes
+        - Consider both current performance and market conditions when adjusting targets
+        
         TRADING FOCUS:
         - Provide practical, actionable trading advice
         - Focus on risk management and sustainable strategies
         - Consider ZAR market conditions and Luno exchange specifics
-        - You can adjust targets when asked or when performance indicates it's needed
-        - Use commands like "adjust my targets" or "I think I need a more realistic target"
-        - Always explain your reasoning for target changes
-        - Consider both current performance and market conditions when adjusting targets
+        - Always emphasize responsible trading and risk management
         - Include specific price levels and technical analysis when relevant
         
         User's Goal: R100,000 monthly earnings through crypto trading
         Exchange: Luno (South Africa)
         Base Currency: ZAR
         """
+    
+    async def web_search(self, query: str) -> str:
+        """Search the web for current crypto market information"""
+        try:
+            # Use a simple web search API or scraping
+            search_url = f"https://api.duckduckgo.com/?q={query}&format=json&no_html=1"
+            response = requests.get(search_url, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                results = []
+                
+                # Extract relevant information
+                for result in data.get('RelatedTopics', [])[:3]:
+                    if isinstance(result, dict) and 'Text' in result:
+                        results.append(result['Text'])
+                
+                return ' '.join(results) if results else f"No specific results found for: {query}"
+            else:
+                return f"Unable to search for: {query}"
+                
+        except Exception as e:
+            print(f"Error in web search: {e}")
+            return f"Search unavailable for: {query}"
     
     async def send_message(self, session_id: str, message: str, context: Dict[str, Any] = None) -> str:
         """Send a message to the AI coach and get a response"""
@@ -49,21 +91,48 @@ class AICoachService:
                 api_key=self.api_key,
                 session_id=session_id,
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
             
-            # Add context if provided
+            # Enhance context with real-time data and web research
+            enhanced_context = ""
+            
             if context:
-                # Format context nicely
-                context_summary = f"""
-Current Portfolio Value: R{context.get('portfolio', {}).get('total_value', 0):,.2f}
-Holdings: {len(context.get('portfolio', {}).get('holdings', []))} assets
-Market Status: {len(context.get('market_data', []))} cryptocurrencies tracked
+                portfolio_value = context.get('portfolio', {}).get('total_value', 0)
+                holdings_count = len(context.get('portfolio', {}).get('holdings', []))
+                
+                enhanced_context = f"""
+**Current Portfolio:**
+- Value: R{portfolio_value:,.2f}
+- Holdings: {holdings_count} assets
+- Real-time market data available
 
-User question: {message}
+**Market Context:**
+- All prices are real-time from Luno and CoinGecko
+- USD pairs converted to ZAR at current rates
+- No mock data - everything is live
+
+**User Question:** {message}
 """
-                user_message = UserMessage(text=context_summary)
-            else:
-                user_message = UserMessage(text=message)
+            
+            # If the message contains requests for market research, do web searches
+            if any(keyword in message.lower() for keyword in ['news', 'market', 'trend', 'analysis', 'research']):
+                search_query = f"cryptocurrency market news {datetime.now().strftime('%Y-%m-%d')}"
+                web_results = await self.web_search(search_query)
+                enhanced_context += f"\n**Latest Market Research:**\n{web_results}\n"
+            
+            # If asking about specific cryptos, get current prices
+            crypto_keywords = ['bitcoin', 'btc', 'ethereum', 'eth', 'cardano', 'ada', 'solana', 'sol', 'xrp', 'ripple']
+            if any(keyword in message.lower() for keyword in crypto_keywords):
+                try:
+                    market_data = await self.luno_service.get_market_data()
+                    prices_info = "\n**Current Prices:**\n"
+                    for crypto in market_data[:5]:  # Top 5 cryptos
+                        prices_info += f"- {crypto['symbol']}: R{crypto['price']:,.2f} ({crypto['change_24h']:+.2f}%)\n"
+                    enhanced_context += prices_info
+                except Exception as e:
+                    print(f"Error getting market data: {e}")
+            
+            user_message = UserMessage(text=enhanced_context if enhanced_context else message)
             
             # Send message and get response
             response = await chat.send_message(user_message)
@@ -73,54 +142,93 @@ User question: {message}
             
         except Exception as e:
             print(f"Error in AI service: {e}")
-            return """I apologize, but I'm having trouble processing your request right now. 
+            return """I apologize, but I'm having trouble accessing the real-time data right now. 
 
 **Please try again in a moment.**
 
-In the meantime, here's a quick tip: Focus on your current holdings and consider taking profits when you're up 10-15% on any position."""
+In the meantime, here's a quick tip: With your current portfolio value, consider taking profits on any positions that are up 15-20% and reinvesting in underperforming assets that show strong fundamentals."""
     
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
         # Ensure the response is not too long
-        if len(response) > 800:
+        if len(response) > 1000:
             # Truncate but end at a complete sentence
-            truncated = response[:800]
+            truncated = response[:1000]
             last_period = truncated.rfind('.')
-            if last_period > 600:
+            if last_period > 800:
                 response = truncated[:last_period + 1]
             else:
                 response = truncated + "..."
         
         return response
     
-    async def generate_daily_strategy(self, market_data: List[Dict], portfolio_data: Dict) -> Dict[str, Any]:
-        """Generate daily trading strategy based on market data and portfolio"""
+    async def execute_trade(self, trade_instruction: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a trade on Luno"""
         try:
-            context = {
-                "market_data": market_data,
-                "portfolio": portfolio_data,
-                "date": datetime.now().strftime("%Y-%m-%d")
+            action = trade_instruction.get('action', '').upper()
+            symbol = trade_instruction.get('symbol', '')
+            amount = float(trade_instruction.get('amount', 0))
+            order_type = trade_instruction.get('order_type', 'market').lower()
+            price = trade_instruction.get('price', 0)
+            
+            # Map symbol to Luno pair
+            pair_mapping = {
+                'BTC': 'XBTZAR',
+                'ETH': 'ETHZAR',
+                'ADA': 'ADAZAR',
+                'XRP': 'XRPZAR',
+                'SOL': 'SOLZAR',
+                'TRX': 'TRXZAR',
+                'XLM': 'XLMZAR',
+                'LTC': 'LTCZAR'
             }
             
-            prompt = f"""Based on the current market data and portfolio, generate a comprehensive daily trading strategy for today.
+            pair = pair_mapping.get(symbol, f'{symbol}ZAR')
+            
+            if order_type == 'market':
+                result = await self.luno_service.place_market_order(pair, action, amount)
+            elif order_type == 'limit':
+                result = await self.luno_service.place_limit_order(pair, action, amount, price)
+            else:
+                return {'error': 'Invalid order type'}
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error executing trade: {e}")
+            return {'error': str(e)}
+    
+    async def generate_daily_strategy(self, market_data: List[Dict], portfolio_data: Dict) -> Dict[str, Any]:
+        """Generate daily trading strategy based on real-time market data and portfolio"""
+        try:
+            # Get current market sentiment through web research
+            market_research = await self.web_search(f"cryptocurrency market analysis {datetime.now().strftime('%Y-%m-%d')}")
+            
+            prompt = f"""Generate a comprehensive daily trading strategy using REAL-TIME data.
 
-Portfolio Value: R{portfolio_data.get('total_value', 0):,.2f}
-Holdings: {len(portfolio_data.get('holdings', []))} assets
+**Current Portfolio:** R{portfolio_data.get('total_value', 0):,.2f}
+**Holdings:** {len(portfolio_data.get('holdings', []))} assets
 
-Format your response as a structured analysis with:
-1. **Main Recommendation** (2-3 sentences)
+**Real-Time Market Data:**
+{json.dumps(market_data[:5], indent=2)}
+
+**Latest Market Research:**
+{market_research}
+
+**Strategy Requirements:**
+1. **Main Recommendation** (based on real data)
 2. **Risk Level** (Low/Medium/High)
-3. **Expected Return** (percentage)
-4. **Key Levels** (support/resistance)
-5. **Specific Actions** (what to buy/sell)
+3. **Expected Return** (realistic percentage)
+4. **Key Levels** (actual support/resistance from real prices)
+5. **Specific Actions** (exact amounts and prices)
 
-Focus on achieving the R100,000 monthly target through practical steps."""
+Focus on achieving R100,000 monthly target through practical, data-driven steps."""
             
             chat = LlmChat(
                 api_key=self.api_key,
                 session_id="daily_strategy",
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1500)
             
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
@@ -132,27 +240,35 @@ Focus on achieving the R100,000 monthly target through practical steps."""
             return {"error": "Failed to generate daily strategy"}
     
     async def analyze_portfolio_risk(self, portfolio_data: Dict) -> Dict[str, Any]:
-        """Analyze portfolio risk and provide recommendations"""
+        """Analyze portfolio risk using real-time data"""
         try:
-            prompt = f"""Analyze the following portfolio for risk management:
+            # Get current market conditions
+            market_research = await self.web_search("cryptocurrency market volatility risk analysis")
+            
+            prompt = f"""Analyze this REAL portfolio for risk management:
 
-Portfolio Value: R{portfolio_data.get('total_value', 0):,.2f}
-Number of Holdings: {len(portfolio_data.get('holdings', []))}
+**Portfolio Value:** R{portfolio_data.get('total_value', 0):,.2f}
+**Holdings:** {len(portfolio_data.get('holdings', []))} assets
 
-Provide:
-1. **Risk Score** (0-10)
-2. **Portfolio Analysis** (diversification, concentration risk)
-3. **Specific Recommendations** (3-4 actionable items)
+**Real Holdings Data:**
+{json.dumps(portfolio_data.get('holdings', []), indent=2)}
+
+**Current Market Conditions:**
+{market_research}
+
+**Risk Analysis Requirements:**
+1. **Risk Score** (0-10 based on real allocation)
+2. **Portfolio Analysis** (actual diversification, concentration risk)
+3. **Specific Recommendations** (actionable items with exact amounts)
 4. **Risk Management** (stop-loss levels, position sizing)
 
-Focus on achieving R100,000 monthly target while maintaining proper risk management.
-Keep response clear and actionable."""
+Focus on real-world risk management for achieving R100,000 monthly target."""
             
             chat = LlmChat(
                 api_key=self.api_key,
                 session_id="risk_analysis",
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
             
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
@@ -161,14 +277,19 @@ Keep response clear and actionable."""
             
         except Exception as e:
             print(f"Error analyzing portfolio risk: {e}")
+            return {"error": "Failed to analyze portfolio risk"}
+    
     async def adjust_targets(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Allow AI to analyze and adjust targets based on performance"""
+        """Allow AI to analyze and adjust targets based on real performance"""
         try:
             current_value = context.get("current_portfolio", 0)
             current_target = context.get("current_monthly_target", 100000)
             reason = context.get("request", "")
             
-            prompt = f"""Analyze the current trading performance and determine if target adjustments are needed.
+            # Get market conditions for context
+            market_research = await self.web_search("cryptocurrency market outlook 2025")
+            
+            prompt = f"""Analyze real trading performance and determine if target adjustments are needed.
 
 **Current Situation:**
 - Portfolio Value: R{current_value:,.2f}
@@ -176,8 +297,11 @@ Keep response clear and actionable."""
 - Progress: {(current_value / current_target * 100):.1f}%
 - Reason for Review: {reason}
 
+**Market Context:**
+{market_research}
+
 **Your Task:**
-Analyze if the monthly target should be adjusted and provide:
+Based on REAL data, analyze if the monthly target should be adjusted:
 
 1. **Should targets be adjusted?** (Yes/No)
 2. **New Monthly Target** (if adjusting)
@@ -186,7 +310,7 @@ Analyze if the monthly target should be adjusted and provide:
 
 **Guidelines:**
 - Be realistic based on current performance
-- Consider market conditions
+- Consider actual market conditions
 - Ensure targets are achievable but challenging
 - Factor in risk management
 
@@ -200,7 +324,7 @@ Then provide detailed explanation and action plan."""
                 api_key=self.api_key,
                 session_id="target_adjustment",
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
             
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)

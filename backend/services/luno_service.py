@@ -1,9 +1,10 @@
 import os
 import asyncio
 import aiohttp
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from datetime import datetime
 import json
+import requests_cache
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -18,6 +19,9 @@ class LunoService:
         self.base_url = 'https://api.luno.com/api/1'
         self.session = None
         
+        # Setup caching for external price data
+        self.cache = requests_cache.CachedSession('crypto_cache', expire_after=60)
+        
         print(f"LunoService initialized with API key: {self.api_key[:10]}..." if self.api_key else "No API key found")
     
     async def _get_session(self):
@@ -26,215 +30,166 @@ class LunoService:
             self.session = aiohttp.ClientSession()
         return self.session
     
-    async def _make_request(self, endpoint: str, params: Dict = None) -> Dict:
+    async def _make_request(self, endpoint: str, params: Dict = None, method: str = 'GET', data: Dict = None) -> Dict:
         """Make authenticated request to Luno API"""
         try:
             session = await self._get_session()
             url = f"{self.base_url}/{endpoint}"
             
-            # If no API credentials, return mock data
             if not self.api_key or not self.secret:
-                print(f"No Luno API credentials, using mock data for {endpoint}")
-                return self._get_mock_data(endpoint)
+                raise Exception("No Luno API credentials available")
             
             auth = aiohttp.BasicAuth(self.api_key, self.secret)
-            print(f"Making request to Luno API: {url}")
             
-            async with session.get(url, params=params, auth=auth) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    print(f"Luno API success: {endpoint}")
-                    return data
-                else:
-                    print(f"Luno API error: {response.status} - {await response.text()}")
-                    return self._get_mock_data(endpoint)
+            if method == 'GET':
+                async with session.get(url, params=params, auth=auth) as response:
+                    return await self._handle_response(response, endpoint)
+            elif method == 'POST':
+                async with session.post(url, data=data, auth=auth) as response:
+                    return await self._handle_response(response, endpoint)
                     
         except Exception as e:
             print(f"Error calling Luno API: {e}")
-            return self._get_mock_data(endpoint)
+            raise e
     
-    def _get_mock_data(self, endpoint: str) -> Dict:
-        """Return mock data when API is not available"""
-        mock_data = {
-            'tickers': {
-                'tickers': [
-                    {
-                        'pair': 'XBTZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '485000.00',
-                        'ask': '487000.00',
-                        'last_trade': '486000.00',
-                        'rolling_24_hour_volume': '125.5',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'ETHZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '15400.00',
-                        'ask': '15650.00',
-                        'last_trade': '15500.00',
-                        'rolling_24_hour_volume': '890.2',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'LTCZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '102.00',
-                        'ask': '104.50',
-                        'last_trade': '103.25',
-                        'rolling_24_hour_volume': '1250.8',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'XRPZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '2.35',
-                        'ask': '2.42',
-                        'last_trade': '2.39',
-                        'rolling_24_hour_volume': '45000.0',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'ADAZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '12.80',
-                        'ask': '13.20',
-                        'last_trade': '13.00',
-                        'rolling_24_hour_volume': '25000.0',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'TRXZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '2.20',
-                        'ask': '2.25',
-                        'last_trade': '2.22',
-                        'rolling_24_hour_volume': '15000.0',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'XLMZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '2.85',
-                        'ask': '2.90',
-                        'last_trade': '2.87',
-                        'rolling_24_hour_volume': '12000.0',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'SOLZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '2420.00',
-                        'ask': '2450.00',
-                        'last_trade': '2435.00',
-                        'rolling_24_hour_volume': '850.0',
-                        'status': 'ACTIVE'
-                    },
-                    {
-                        'pair': 'HBARZAR',
-                        'timestamp': int(datetime.now().timestamp() * 1000),
-                        'bid': '2.15',
-                        'ask': '2.20',
-                        'last_trade': '2.18',
-                        'rolling_24_hour_volume': '8000.0',
-                        'status': 'ACTIVE'
-                    }
-                ]
-            },
-            'balance': {
-                'balance': [
-                    {
-                        'account_id': '1234567890',
-                        'asset': 'ZAR',
-                        'balance': '5432.10',
-                        'reserved': '0.00',
-                        'unconfirmed': '0.00'
-                    },
-                    {
-                        'account_id': '1234567891',
-                        'asset': 'XBT',
-                        'balance': '0.01505450',
-                        'reserved': '0.00',
-                        'unconfirmed': '0.00'
-                    },
-                    {
-                        'account_id': '1234567892',
-                        'asset': 'ADA',
-                        'balance': '83.99704',
-                        'reserved': '0.00',
-                        'unconfirmed': '0.00'
-                    }
-                ]
-            },
-            'orderbook': {
-                'asks': [
-                    ['487000.00', '0.1'],
-                    ['488000.00', '0.5'],
-                    ['490000.00', '1.0']
-                ],
-                'bids': [
-                    ['485000.00', '0.2'],
-                    ['484000.00', '0.8'],
-                    ['482000.00', '1.5']
-                ],
-                'timestamp': int(datetime.now().timestamp() * 1000)
+    async def _handle_response(self, response, endpoint):
+        """Handle API response"""
+        if response.status == 200:
+            data = await response.json()
+            print(f"Luno API success: {endpoint}")
+            return data
+        else:
+            error_text = await response.text()
+            print(f"Luno API error: {response.status} - {error_text}")
+            raise Exception(f"Luno API error: {response.status} - {error_text}")
+    
+    def get_usd_to_zar_rate(self) -> float:
+        """Get current USD to ZAR exchange rate"""
+        try:
+            response = self.cache.get('https://api.exchangerate-api.com/v4/latest/USD')
+            if response.status_code == 200:
+                data = response.json()
+                return data['rates']['ZAR']
+            else:
+                print("Failed to get USD/ZAR rate, using fallback")
+                return 18.50  # Fallback rate
+        except Exception as e:
+            print(f"Error getting USD/ZAR rate: {e}")
+            return 18.50  # Fallback rate
+    
+    def get_crypto_usd_prices(self) -> Dict[str, float]:
+        """Get cryptocurrency prices in USD from CoinGecko"""
+        try:
+            # Get prices for all major cryptocurrencies
+            crypto_ids = {
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum',
+                'ADA': 'cardano',
+                'XRP': 'ripple',
+                'SOL': 'solana',
+                'TRX': 'tron',
+                'XLM': 'stellar',
+                'HBAR': 'hedera-hashgraph',
+                'LTC': 'litecoin',
+                'DOGE': 'dogecoin',
+                'DOT': 'polkadot',
+                'AVAX': 'avalanche-2',
+                'ATOM': 'cosmos',
+                'ALGO': 'algorand',
+                'BCH': 'bitcoin-cash',
+                'CRV': 'curve-dao-token',
+                'AAVE': 'aave'
             }
-        }
-        
-        return mock_data.get(endpoint, {})
+            
+            ids_string = ','.join(crypto_ids.values())
+            url = f'https://api.coingecko.com/api/v3/simple/price?ids={ids_string}&vs_currencies=usd&include_24hr_change=true'
+            
+            response = self.cache.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                prices = {}
+                for symbol, coin_id in crypto_ids.items():
+                    if coin_id in data:
+                        prices[symbol] = {
+                            'usd': data[coin_id]['usd'],
+                            'change_24h': data[coin_id].get('usd_24h_change', 0)
+                        }
+                return prices
+            else:
+                print("Failed to get crypto prices from CoinGecko")
+                return {}
+        except Exception as e:
+            print(f"Error getting crypto USD prices: {e}")
+            return {}
     
     async def get_market_data(self) -> List[Dict]:
         """Get current market data for all supported cryptocurrencies"""
         try:
-            tickers_data = await self._make_request('tickers')
+            # Get real-time data from both Luno and external sources
+            luno_tickers = await self._make_request('tickers')
+            usd_prices = self.get_crypto_usd_prices()
+            usd_to_zar = self.get_usd_to_zar_rate()
+            
             market_data = []
             
-            # Map Luno pairs to our format - COMPREHENSIVE MAPPING
-            pair_mapping = {
-                'XBTZAR': {'symbol': 'BTC', 'name': 'Bitcoin'},
-                'ETHZAR': {'symbol': 'ETH', 'name': 'Ethereum'},
-                'LTCZAR': {'symbol': 'LTC', 'name': 'Litecoin'},
-                'XRPZAR': {'symbol': 'XRP', 'name': 'Ripple'},
-                'ADAZAR': {'symbol': 'ADA', 'name': 'Cardano'},
-                'TRXZAR': {'symbol': 'TRX', 'name': 'Tron'},
-                'XLMZAR': {'symbol': 'XLM', 'name': 'Stellar'},
-                'SOLZAR': {'symbol': 'SOL', 'name': 'Solana'},
-                'HBARZAR': {'symbol': 'HBAR', 'name': 'Hedera'},
-                'DOGEZAR': {'symbol': 'DOGE', 'name': 'Dogecoin'},
-                'DOTZAR': {'symbol': 'DOT', 'name': 'Polkadot'},
-                'AVAXZAR': {'symbol': 'AVAX', 'name': 'Avalanche'},
-                'ATOMZAR': {'symbol': 'ATOM', 'name': 'Cosmos'},
-                'ALGOZAR': {'symbol': 'ALGO', 'name': 'Algorand'},
-                'BCHZAR': {'symbol': 'BCH', 'name': 'Bitcoin Cash'},
-                'CRVZAR': {'symbol': 'CRV', 'name': 'Curve'},
-                'AAVEZAR': {'symbol': 'AAVE', 'name': 'Aave'}
+            # Comprehensive mapping of all cryptocurrencies
+            crypto_info = {
+                'BTC': {'name': 'Bitcoin', 'luno_pair': 'XBTZAR'},
+                'ETH': {'name': 'Ethereum', 'luno_pair': 'ETHZAR'},
+                'ADA': {'name': 'Cardano', 'luno_pair': 'ADAZAR'},
+                'XRP': {'name': 'Ripple', 'luno_pair': 'XRPZAR'},
+                'SOL': {'name': 'Solana', 'luno_pair': 'SOLZAR'},
+                'TRX': {'name': 'Tron', 'luno_pair': 'TRXZAR'},
+                'XLM': {'name': 'Stellar', 'luno_pair': 'XLMZAR'},
+                'HBAR': {'name': 'Hedera', 'luno_pair': 'HBARZAR'},
+                'LTC': {'name': 'Litecoin', 'luno_pair': 'LTCZAR'},
+                'DOGE': {'name': 'Dogecoin', 'luno_pair': 'DOGEZAR'},
+                'DOT': {'name': 'Polkadot', 'luno_pair': 'DOTZAR'},
+                'AVAX': {'name': 'Avalanche', 'luno_pair': 'AVAXZAR'},
+                'ATOM': {'name': 'Cosmos', 'luno_pair': 'ATOMZAR'},
+                'ALGO': {'name': 'Algorand', 'luno_pair': 'ALGOZAR'},
+                'BCH': {'name': 'Bitcoin Cash', 'luno_pair': 'BCHZAR'},
+                'CRV': {'name': 'Curve', 'luno_pair': 'CRVZAR'},
+                'AAVE': {'name': 'Aave', 'luno_pair': 'AAVEZAR'}
             }
             
-            for ticker in tickers_data.get('tickers', []):
-                pair = ticker.get('pair')
-                if pair in pair_mapping:
-                    crypto_info = pair_mapping[pair]
-                    
-                    # Calculate 24h change (mock calculation since Luno doesn't provide this directly)
-                    current_price = float(ticker.get('last_trade', 0))
-                    if crypto_info['symbol'] == 'BTC':
-                        change_24h = current_price * 0.025  # +2.5% for BTC
-                    elif crypto_info['symbol'] == 'ETH':
-                        change_24h = current_price * -0.015  # -1.5% for ETH
-                    elif crypto_info['symbol'] == 'ADA':
-                        change_24h = current_price * 0.035  # +3.5% for ADA
-                    else:
-                        change_24h = current_price * 0.012  # +1.2% for others
-                    
+            # Create a lookup for Luno prices
+            luno_lookup = {}
+            for ticker in luno_tickers.get('tickers', []):
+                luno_lookup[ticker['pair']] = ticker
+            
+            # Process each cryptocurrency
+            for symbol, info in crypto_info.items():
+                price_zar = None
+                change_24h = 0
+                source = "USD"
+                
+                # Try to get ZAR price from Luno first
+                if info['luno_pair'] in luno_lookup:
+                    ticker = luno_lookup[info['luno_pair']]
+                    price_zar = float(ticker['last_trade'])
+                    source = "Luno"
+                    # Estimate 24h change (Luno doesn't provide this)
+                    if symbol in usd_prices:
+                        change_24h = usd_prices[symbol]['change_24h']
+                
+                # Fallback to USD price converted to ZAR
+                elif symbol in usd_prices:
+                    price_usd = usd_prices[symbol]['usd']
+                    price_zar = price_usd * usd_to_zar
+                    change_24h = usd_prices[symbol]['change_24h']
+                
+                if price_zar:
                     market_data.append({
-                        'symbol': crypto_info['symbol'],
-                        'name': crypto_info['name'],
-                        'price': current_price,
-                        'change_24h': change_24h / current_price * 100,  # Convert to percentage
-                        'volume': float(ticker.get('rolling_24_hour_volume', 0)) * current_price,
-                        'market_cap': current_price * 19000000,  # Approximate market cap
+                        'symbol': symbol,
+                        'name': info['name'],
+                        'price': price_zar,
+                        'change_24h': change_24h,
+                        'volume': 0,  # Volume not critical for display
+                        'market_cap': 0,  # Market cap not critical for display
                         'trend': 'up' if change_24h > 0 else 'down',
-                        'last_updated': datetime.now().isoformat()  # Convert to ISO string
+                        'source': source,
+                        'last_updated': datetime.now().isoformat()
                     })
             
             return market_data
@@ -255,43 +210,55 @@ class LunoService:
             holdings = []
             total_value = 0.0
             
-            # Group assets by symbol to handle multiple accounts (like staked ETH)
+            # Group assets by symbol to handle multiple accounts (staking)
             asset_groups = {}
             
             for balance in balance_data.get('balance', []):
                 asset = balance.get('asset')
                 amount = float(balance.get('balance', 0))
+                account_id = balance.get('account_id')
                 
                 if asset == 'ZAR':
                     total_value += amount
                     continue
                 
-                if amount > 0:  # Only include assets with positive balance
+                if amount > 0:
                     if asset not in asset_groups:
                         asset_groups[asset] = []
-                    asset_groups[asset].append(amount)
+                    asset_groups[asset].append({
+                        'amount': amount,
+                        'account_id': account_id
+                    })
             
             # Process each asset group
-            for asset, amounts in asset_groups.items():
+            for asset, accounts in asset_groups.items():
                 # Map asset symbols
                 symbol_mapping = {'XBT': 'BTC'}
                 symbol = symbol_mapping.get(asset, asset)
                 
-                # Get price for this asset
                 if symbol in price_lookup:
                     current_price = price_lookup[symbol]
-                    total_amount = sum(amounts)
+                    total_amount = sum(acc['amount'] for acc in accounts)
                     value = total_amount * current_price
                     total_value += value
                     
                     # Get market data for this asset
                     market_info = next((item for item in market_data if item['symbol'] == symbol), {})
                     
-                    # Determine if this is staked (multiple accounts for same asset)
-                    is_staked = len(amounts) > 1
+                    # Determine staking status
+                    is_staked = len(accounts) > 1
+                    
+                    # Enhanced staking detection
+                    staking_keywords = ['staking', 'stake', 'staked', 'earn', 'savings']
+                    staking_patterns = any(keyword in str(acc.get('account_id', '')).lower() for acc in accounts for keyword in staking_keywords)
+                    
+                    # Special handling for known staked assets
+                    if symbol in ['SOL', 'ADA', 'ETH'] and (is_staked or staking_patterns):
+                        is_staked = True
+                    
                     asset_name = market_info.get('name', symbol)
                     if is_staked:
-                        asset_name += f" ({len(amounts)} accounts)"
+                        asset_name += f" (Staked)"
                     
                     holdings.append({
                         'symbol': symbol,
@@ -301,49 +268,10 @@ class LunoService:
                         'value': value,
                         'change_24h': market_info.get('change_24h', 0),
                         'allocation': 0,  # Will be calculated after total_value is known
-                        'accounts': len(amounts),
-                        'is_staked': is_staked
+                        'accounts': len(accounts),
+                        'is_staked': is_staked,
+                        'source': market_info.get('source', 'Unknown')
                     })
-                else:
-                    # Handle assets without ZAR pairs (estimate using USD approximation)
-                    estimated_prices = {
-                        'HBAR': 2.18,  # Approximate ZAR price
-                        'DOGE': 4.29,  # From earlier ticker data
-                        'DOT': 81.41,
-                        'AVAX': 442.00,
-                        'ATOM': 91.04,
-                        'ALGO': 5.51,
-                        'BCH': 9239.00,
-                        'CRV': 18.13,
-                        'AAVE': 5651.00
-                    }
-                    
-                    if symbol in estimated_prices:
-                        current_price = estimated_prices[symbol]
-                        total_amount = sum(amounts)
-                        value = total_amount * current_price
-                        total_value += value
-                        
-                        # Determine if this is staked
-                        is_staked = len(amounts) > 1
-                        asset_name = symbol
-                        if is_staked:
-                            asset_name += f" ({len(amounts)} accounts)"
-                        
-                        holdings.append({
-                            'symbol': symbol,
-                            'name': asset_name,
-                            'amount': total_amount,
-                            'current_price': current_price,
-                            'value': value,
-                            'change_24h': 1.2,  # Estimated change
-                            'allocation': 0,
-                            'accounts': len(amounts),
-                            'is_staked': is_staked,
-                            'estimated_price': True
-                        })
-                    else:
-                        print(f"No price data available for {symbol}, skipping...")
             
             # Calculate allocations
             for holding in holdings:
@@ -353,7 +281,7 @@ class LunoService:
                 'total_value': total_value,
                 'currency': 'ZAR',
                 'holdings': holdings,
-                'last_updated': datetime.now().isoformat()  # Convert to ISO string
+                'last_updated': datetime.now().isoformat()
             }
             
         except Exception as e:
@@ -365,13 +293,73 @@ class LunoService:
                 'last_updated': datetime.now().isoformat()
             }
     
-    async def get_order_book(self, pair: str = 'XBTZAR') -> Dict:
+    async def place_market_order(self, pair: str, order_type: str, amount: float) -> Dict:
+        """Place a market order (buy/sell immediately at current price)"""
+        try:
+            data = {
+                'pair': pair,
+                'type': order_type.upper(),
+            }
+            
+            if order_type.upper() == 'BUY':
+                data['counter_volume'] = str(amount)  # Amount in ZAR to spend
+            else:
+                data['base_volume'] = str(amount)    # Amount of crypto to sell
+            
+            result = await self._make_request('marketorder', method='POST', data=data)
+            return result
+            
+        except Exception as e:
+            print(f"Error placing market order: {e}")
+            return {'error': str(e)}
+    
+    async def place_limit_order(self, pair: str, order_type: str, volume: float, price: float) -> Dict:
+        """Place a limit order (buy/sell at specific price)"""
+        try:
+            data = {
+                'pair': pair,
+                'type': 'BID' if order_type.upper() == 'BUY' else 'ASK',
+                'volume': str(volume),
+                'price': str(price)
+            }
+            
+            result = await self._make_request('postorder', method='POST', data=data)
+            return result
+            
+        except Exception as e:
+            print(f"Error placing limit order: {e}")
+            return {'error': str(e)}
+    
+    async def get_order_book(self, pair: str) -> Dict:
         """Get order book for a specific trading pair"""
         try:
-            return await self._make_request(f'orderbook', {'pair': pair})
+            return await self._make_request('orderbook', {'pair': pair})
         except Exception as e:
             print(f"Error getting order book: {e}")
-            return {}
+            return {'error': str(e)}
+    
+    async def get_trading_pairs(self) -> List[str]:
+        """Get all available trading pairs"""
+        try:
+            tickers = await self._make_request('tickers')
+            pairs = [ticker['pair'] for ticker in tickers.get('tickers', [])]
+            return sorted(pairs)
+        except Exception as e:
+            print(f"Error getting trading pairs: {e}")
+            return []
+    
+    async def get_order_history(self, pair: str = None, limit: int = 100) -> List[Dict]:
+        """Get order history"""
+        try:
+            params = {'limit': limit}
+            if pair:
+                params['pair'] = pair
+            
+            orders = await self._make_request('listorders', params)
+            return orders.get('orders', [])
+        except Exception as e:
+            print(f"Error getting order history: {e}")
+            return []
     
     async def close_session(self):
         """Close the aiohttp session"""
