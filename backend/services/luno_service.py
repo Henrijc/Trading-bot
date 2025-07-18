@@ -153,13 +153,25 @@ class LunoService:
             tickers_data = await self._make_request('tickers')
             market_data = []
             
-            # Map Luno pairs to our format
+            # Map Luno pairs to our format - COMPREHENSIVE MAPPING
             pair_mapping = {
                 'XBTZAR': {'symbol': 'BTC', 'name': 'Bitcoin'},
                 'ETHZAR': {'symbol': 'ETH', 'name': 'Ethereum'},
                 'LTCZAR': {'symbol': 'LTC', 'name': 'Litecoin'},
                 'XRPZAR': {'symbol': 'XRP', 'name': 'Ripple'},
-                'ADAZAR': {'symbol': 'ADA', 'name': 'Cardano'}
+                'ADAZAR': {'symbol': 'ADA', 'name': 'Cardano'},
+                'TRXZAR': {'symbol': 'TRX', 'name': 'Tron'},
+                'XLMZAR': {'symbol': 'XLM', 'name': 'Stellar'},
+                'SOLZAR': {'symbol': 'SOL', 'name': 'Solana'},
+                'HBARZAR': {'symbol': 'HBAR', 'name': 'Hedera'},
+                'DOGEZAR': {'symbol': 'DOGE', 'name': 'Dogecoin'},
+                'DOTZAR': {'symbol': 'DOT', 'name': 'Polkadot'},
+                'AVAXZAR': {'symbol': 'AVAX', 'name': 'Avalanche'},
+                'ATOMZAR': {'symbol': 'ATOM', 'name': 'Cosmos'},
+                'ALGOZAR': {'symbol': 'ALGO', 'name': 'Algorand'},
+                'BCHZAR': {'symbol': 'BCH', 'name': 'Bitcoin Cash'},
+                'CRVZAR': {'symbol': 'CRV', 'name': 'Curve'},
+                'AAVEZAR': {'symbol': 'AAVE', 'name': 'Aave'}
             }
             
             for ticker in tickers_data.get('tickers', []):
