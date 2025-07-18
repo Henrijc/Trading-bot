@@ -102,6 +102,42 @@ class LunoService:
                         'last_trade': '13.00',
                         'rolling_24_hour_volume': '25000.0',
                         'status': 'ACTIVE'
+                    },
+                    {
+                        'pair': 'TRXZAR',
+                        'timestamp': int(datetime.now().timestamp() * 1000),
+                        'bid': '2.20',
+                        'ask': '2.25',
+                        'last_trade': '2.22',
+                        'rolling_24_hour_volume': '15000.0',
+                        'status': 'ACTIVE'
+                    },
+                    {
+                        'pair': 'XLMZAR',
+                        'timestamp': int(datetime.now().timestamp() * 1000),
+                        'bid': '2.85',
+                        'ask': '2.90',
+                        'last_trade': '2.87',
+                        'rolling_24_hour_volume': '12000.0',
+                        'status': 'ACTIVE'
+                    },
+                    {
+                        'pair': 'SOLZAR',
+                        'timestamp': int(datetime.now().timestamp() * 1000),
+                        'bid': '2420.00',
+                        'ask': '2450.00',
+                        'last_trade': '2435.00',
+                        'rolling_24_hour_volume': '850.0',
+                        'status': 'ACTIVE'
+                    },
+                    {
+                        'pair': 'HBARZAR',
+                        'timestamp': int(datetime.now().timestamp() * 1000),
+                        'bid': '2.15',
+                        'ask': '2.20',
+                        'last_trade': '2.18',
+                        'rolling_24_hour_volume': '8000.0',
+                        'status': 'ACTIVE'
                     }
                 ]
             },
