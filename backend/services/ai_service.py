@@ -158,4 +158,78 @@ Keep response clear and actionable."""
             
         except Exception as e:
             print(f"Error analyzing portfolio risk: {e}")
-            return {"error": "Failed to analyze portfolio risk"}
+    async def adjust_targets(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Allow AI to analyze and adjust targets based on performance"""
+        try:
+            current_value = context.get("current_portfolio", 0)
+            current_target = context.get("current_monthly_target", 100000)
+            reason = context.get("request", "")
+            
+            prompt = f"""Analyze the current trading performance and determine if target adjustments are needed.
+
+**Current Situation:**
+- Portfolio Value: R{current_value:,.2f}
+- Monthly Target: R{current_target:,.2f}
+- Progress: {(current_value / current_target * 100):.1f}%
+- Reason for Review: {reason}
+
+**Your Task:**
+Analyze if the monthly target should be adjusted and provide:
+
+1. **Should targets be adjusted?** (Yes/No)
+2. **New Monthly Target** (if adjusting)
+3. **Reasoning** (why this adjustment makes sense)
+4. **Action Plan** (how to achieve the new target)
+
+**Guidelines:**
+- Be realistic based on current performance
+- Consider market conditions
+- Ensure targets are achievable but challenging
+- Factor in risk management
+
+**Response Format:**
+If adjusting: "ADJUST: New monthly target should be R[amount] because [reason]"
+If not adjusting: "MAINTAIN: Current target is appropriate because [reason]"
+
+Then provide detailed explanation and action plan."""
+            
+            chat = LlmChat(
+                api_key=self.api_key,
+                session_id="target_adjustment",
+                system_message=self.system_message
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
+            
+            user_message = UserMessage(text=prompt)
+            response = await chat.send_message(user_message)
+            
+            # Parse AI response to extract new targets
+            if "ADJUST:" in response:
+                # Extract new target amount
+                import re
+                target_match = re.search(r'R([\d,]+)', response)
+                if target_match:
+                    new_monthly_target = int(target_match.group(1).replace(',', ''))
+                    new_weekly_target = new_monthly_target / 4
+                    new_daily_target = new_weekly_target / 7
+                    
+                    return {
+                        "new_targets": {
+                            "monthly_target": new_monthly_target,
+                            "weekly_target": new_weekly_target,
+                            "daily_target": new_daily_target
+                        },
+                        "explanation": response,
+                        "adjusted": True
+                    }
+            
+            return {
+                "explanation": response,
+                "adjusted": False
+            }
+            
+        except Exception as e:
+            print(f"Error in target adjustment: {e}")
+            return {
+                "explanation": "I couldn't analyze the targets right now. Let's keep the current targets for now.",
+                "adjusted": False
+            }
