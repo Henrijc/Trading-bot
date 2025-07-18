@@ -225,6 +225,24 @@ Then provide detailed explanation and action plan."""
                         "adjusted": True
                     }
             
+            # Also check for specific target mentions in the response
+            import re
+            target_match = re.search(r'target should be R([\d,]+)', response.lower())
+            if target_match:
+                new_monthly_target = int(target_match.group(1).replace(',', ''))
+                new_weekly_target = new_monthly_target / 4
+                new_daily_target = new_weekly_target / 7
+                
+                return {
+                    "new_targets": {
+                        "monthly_target": new_monthly_target,
+                        "weekly_target": new_weekly_target,
+                        "daily_target": new_daily_target
+                    },
+                    "explanation": response,
+                    "adjusted": True
+                }
+            
             return {
                 "explanation": response,
                 "adjusted": False
