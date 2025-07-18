@@ -156,7 +156,7 @@ const CryptoTraderCoach = () => {
             setChatMessages(prev => [...prev, {
               id: Date.now() + 1,
               role: 'assistant',
-              message: `**🎯 Targets Updated!**\n\n${adjustResponse.data.message}\n\n**New Monthly Target:** ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\n\nI've adjusted your targets based on current performance and market conditions.`,
+              message: `Target Update: ${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\n\nI have adjusted your targets based on current performance and market conditions.`,
               timestamp: new Date().toISOString()
             }]);
           }
