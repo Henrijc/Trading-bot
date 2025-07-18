@@ -584,52 +584,18 @@ async def get_portfolio_technical_analysis():
 async def get_technical_indicators(symbol: str, days: int = 30):
     """Get detailed technical indicators for a symbol"""
     try:
-        # Get historical data
-        df = await ta_service.get_historical_data(symbol.upper(), days)
+        # Use the existing working signals endpoint which already handles serialization properly
+        signals_data = await ta_service.generate_trading_signals(symbol.upper(), days)
         
-        if df.empty:
-            raise HTTPException(status_code=404, detail="No historical data available")
+        if 'error' in signals_data:
+            raise HTTPException(status_code=404, detail=signals_data['error'])
         
-        # Calculate indicators
-        indicators = {
-            'rsi': ta_service.calculate_rsi(df),
-            'macd': ta_service.calculate_macd(df),
-            'bollinger_bands': ta_service.calculate_bollinger_bands(df),
-            'moving_averages': ta_service.calculate_moving_averages(df),
-            'stochastic': ta_service.calculate_stochastic(df),
-            'support_resistance': ta_service.detect_support_resistance(df),
-            'trend_analysis': ta_service.analyze_trend(df)
-        }
-        
-        # Helper function to safely convert pandas values to JSON-serializable
-        def safe_convert(value):
-            import pandas as pd
-            if pd.isna(value):
-                return None
-            if isinstance(value, (pd.Series, pd.DataFrame)):
-                return None
-            return float(value) if isinstance(value, (int, float)) else value
-        
-        # Convert pandas series to safe values for JSON serialization
-        serialized_indicators = {}
-        for key, value in indicators.items():
-            if isinstance(value, dict):
-                serialized_indicators[key] = {}
-                for sub_key, sub_value in value.items():
-                    if hasattr(sub_value, 'iloc') and len(sub_value) > 0:
-                        serialized_indicators[key][sub_key] = safe_convert(sub_value.iloc[-1])
-                    else:
-                        serialized_indicators[key][sub_key] = safe_convert(sub_value)
-            elif hasattr(value, 'iloc') and len(value) > 0:
-                serialized_indicators[key] = safe_convert(value.iloc[-1])
-            else:
-                serialized_indicators[key] = safe_convert(value)
-        
+        # Return the same data format as signals but focused on indicators
         return {
             'symbol': symbol.upper(),
-            'indicators': serialized_indicators,
-            'current_price': safe_convert(df['close'].iloc[-1]),
-            'timestamp': datetime.now().isoformat()
+            'indicators': signals_data.get('technical_indicators', {}),
+            'current_price': signals_data.get('current_price', 0),
+            'timestamp': signals_data.get('timestamp', datetime.now().isoformat())
         }
         
     except Exception as e:
