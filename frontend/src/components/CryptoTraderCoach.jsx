@@ -365,7 +365,7 @@ const CryptoTraderCoach = () => {
                         </div>
                         <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
                           <div className="text-2xl font-bold font-mono text-blue-400">
-                            {formatCurrency(monthlyTarget)}
+                            {formatCurrency(monthlyTargetState)}
                           </div>
                           <div className="text-sm text-blue-300/80">Monthly Target</div>
                         </div>
