@@ -29,6 +29,7 @@ const CryptoTraderCoach = () => {
   const [targetSettings, setTargetSettings] = useState(null);
   const [autoTradeSettings, setAutoTradeSettings] = useState(null);
   const [showAutoTradeModal, setShowAutoTradeModal] = useState(false);
+  const chatScrollRef = useRef(null);
 
   // Load initial data
   useEffect(() => {
