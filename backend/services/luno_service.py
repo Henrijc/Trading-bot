@@ -219,6 +219,9 @@ class LunoService:
             holdings = []
             total_value = 0.0
             
+            # Group assets by symbol to handle multiple accounts (like staked ETH)
+            asset_groups = {}
+            
             for balance in balance_data.get('balance', []):
                 asset = balance.get('asset')
                 amount = float(balance.get('balance', 0))
@@ -227,27 +230,47 @@ class LunoService:
                     total_value += amount
                     continue
                 
+                if amount > 0:  # Only include assets with positive balance
+                    if asset not in asset_groups:
+                        asset_groups[asset] = []
+                    asset_groups[asset].append(amount)
+            
+            # Process each asset group
+            for asset, amounts in asset_groups.items():
                 # Map asset symbols
                 symbol_mapping = {'XBT': 'BTC'}
                 symbol = symbol_mapping.get(asset, asset)
                 
-                if symbol in price_lookup and amount > 0:
+                # Get price for this asset
+                if symbol in price_lookup:
                     current_price = price_lookup[symbol]
-                    value = amount * current_price
+                    total_amount = sum(amounts)
+                    value = total_amount * current_price
                     total_value += value
                     
                     # Get market data for this asset
                     market_info = next((item for item in market_data if item['symbol'] == symbol), {})
                     
+                    # Determine if this is staked (multiple accounts for same asset)
+                    is_staked = len(amounts) > 1
+                    asset_name = market_info.get('name', symbol)
+                    if is_staked:
+                        asset_name += f" ({len(amounts)} accounts)"
+                    
                     holdings.append({
                         'symbol': symbol,
-                        'name': market_info.get('name', symbol),
-                        'amount': amount,
+                        'name': asset_name,
+                        'amount': total_amount,
                         'current_price': current_price,
                         'value': value,
                         'change_24h': market_info.get('change_24h', 0),
-                        'allocation': 0  # Will be calculated after total_value is known
+                        'allocation': 0,  # Will be calculated after total_value is known
+                        'accounts': len(amounts),
+                        'is_staked': is_staked
                     })
+                else:
+                    # Handle assets without ZAR pairs (estimate or skip)
+                    print(f"No ZAR price found for {symbol}, skipping...")
             
             # Calculate allocations
             for holding in holdings:
