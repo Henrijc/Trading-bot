@@ -542,12 +542,17 @@ const CryptoTraderCoach = () => {
                                 <div className="font-bold text-amber-300 text-xl">{holding.symbol}</div>
                                 {holding.is_staked && (
                                   <Badge className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs">
-                                    Staked
+                                    STAKED
                                   </Badge>
                                 )}
-                                {holding.estimated_price && (
-                                  <Badge className="bg-gradient-to-r from-gray-600 to-gray-700 text-white text-xs">
-                                    Est. Price
+                                {holding.source === 'USD' && (
+                                  <Badge className="bg-gradient-to-r from-green-600 to-green-700 text-white text-xs">
+                                    USD→ZAR
+                                  </Badge>
+                                )}
+                                {holding.source === 'Luno' && (
+                                  <Badge className="bg-gradient-to-r from-amber-600 to-amber-700 text-black text-xs">
+                                    LUNO
                                   </Badge>
                                 )}
                               </div>
