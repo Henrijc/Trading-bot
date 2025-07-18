@@ -240,7 +240,10 @@ const CryptoTraderCoach = () => {
                   {formatCurrency(currentMonthProgress)}
                 </div>
                 <div className="text-xs lg:text-sm text-amber-400/80 font-medium">
-                  Current Portfolio Value
+                  Real-Time Portfolio Value
+                </div>
+                <div className="text-xs text-green-400 mt-1">
+                  ● Live Data • Trading Enabled
                 </div>
               </div>
             </div>
