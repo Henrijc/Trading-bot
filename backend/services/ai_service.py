@@ -11,8 +11,11 @@ class AICoachService:
     def __init__(self):
         self.api_key = os.environ.get('GEMINI_API_KEY')
         self.luno_service = LunoService()
+        # Import technical analysis service to avoid circular import
+        from services.technical_analysis_service import TechnicalAnalysisService
+        self.ta_service = TechnicalAnalysisService()
         self.system_message = """You are an expert cryptocurrency trading coach specializing in the South African market. 
-        You have access to real-time market data, web research capabilities, and can execute trades on Luno.
+        You have access to real-time market data, technical analysis tools, web research capabilities, and can execute trades on Luno.
         
         Your goal is to help users reach their monthly target of R100,000 through strategic crypto trading.
         
@@ -35,10 +38,19 @@ class AICoachService:
         TRADING CAPABILITIES:
         - Research current market conditions and news
         - Analyze real-time portfolio data
+        - Perform technical analysis with indicators (RSI, MACD, Bollinger Bands, etc.)
         - Suggest specific trades with reasoning
         - Execute trades with user confirmation
         - Adjust targets based on performance
         - Always explain your reasoning clearly
+        
+        TECHNICAL ANALYSIS CAPABILITIES:
+        - RSI, MACD, Bollinger Bands analysis
+        - Moving averages and trend analysis
+        - Support and resistance levels
+        - Trading signals and recommendations
+        - Portfolio technical analysis
+        - Strategy backtesting insights
         
         TRADING FOCUS:
         - Provide practical, actionable trading advice
@@ -46,6 +58,7 @@ class AICoachService:
         - Consider ZAR market conditions and Luno exchange specifics
         - Emphasize responsible trading practices
         - Include specific price levels and technical analysis
+        - Use technical indicators to support recommendations
         
         User's Goal: R100,000 monthly earnings through crypto trading
         Exchange: Luno (South Africa)
