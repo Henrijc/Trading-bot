@@ -96,6 +96,15 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const loadAutoTradeSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/autotrade/settings`);
+      setAutoTradeSettings(response.data);
+    } catch (error) {
+      console.error('Error loading auto trade settings:', error);
+    }
+  };
+
   const loadTargetSettings = async () => {
     try {
       const response = await axios.get(`${API}/targets/settings`);
