@@ -249,12 +249,21 @@ class LunoService:
                     is_staked = len(accounts) > 1
                     
                     # Enhanced staking detection
-                    staking_keywords = ['staking', 'stake', 'staked', 'earn', 'savings']
-                    staking_patterns = any(keyword in str(acc.get('account_id', '')).lower() for acc in accounts for keyword in staking_keywords)
+                    staking_keywords = ['staking', 'stake', 'staked', 'earn', 'savings', 'rewards']
+                    account_ids = [str(acc.get('account_id', '')) for acc in accounts]
+                    staking_patterns = any(keyword in account_id.lower() for account_id in account_ids for keyword in staking_keywords)
                     
                     # Special handling for known staked assets
-                    if symbol in ['SOL', 'ADA', 'ETH'] and (is_staked or staking_patterns):
-                        is_staked = True
+                    # SOL, ADA, ETH commonly have staking programs
+                    if symbol in ['SOL', 'ADA', 'ETH']:
+                        # Multiple accounts usually means staking
+                        if len(accounts) > 1:
+                            is_staked = True
+                        # Single account but could still be staked based on patterns
+                        elif staking_patterns or total_amount > 0.1:  # Assume meaningful amounts are staked
+                            is_staked = True
+                    else:
+                        is_staked = len(accounts) > 1 or staking_patterns
                     
                     asset_name = market_info.get('name', symbol)
                     if is_staked:
