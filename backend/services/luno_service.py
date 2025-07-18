@@ -4,13 +4,21 @@ import aiohttp
 from typing import Dict, List, Any
 from datetime import datetime
 import json
+from dotenv import load_dotenv
+from pathlib import Path
 
 class LunoService:
     def __init__(self):
+        # Ensure environment variables are loaded
+        ROOT_DIR = Path(__file__).parent.parent
+        load_dotenv(ROOT_DIR / '.env')
+        
         self.api_key = os.environ.get('LUNO_API_KEY', '')
         self.secret = os.environ.get('LUNO_SECRET', '')
         self.base_url = 'https://api.luno.com/api/1'
         self.session = None
+        
+        print(f"LunoService initialized with API key: {self.api_key[:10]}..." if self.api_key else "No API key found")
     
     async def _get_session(self):
         """Get or create aiohttp session"""
@@ -26,7 +34,7 @@ class LunoService:
             
             # If no API credentials, return mock data
             if not self.api_key or not self.secret:
-                print("No Luno API credentials, using mock data")
+                print(f"No Luno API credentials, using mock data for {endpoint}")
                 return self._get_mock_data(endpoint)
             
             auth = aiohttp.BasicAuth(self.api_key, self.secret)
@@ -85,6 +93,15 @@ class LunoService:
                         'last_trade': '2.39',
                         'rolling_24_hour_volume': '45000.0',
                         'status': 'ACTIVE'
+                    },
+                    {
+                        'pair': 'ADAZAR',
+                        'timestamp': int(datetime.now().timestamp() * 1000),
+                        'bid': '12.80',
+                        'ask': '13.20',
+                        'last_trade': '13.00',
+                        'rolling_24_hour_volume': '25000.0',
+                        'status': 'ACTIVE'
                     }
                 ]
             },
@@ -93,21 +110,21 @@ class LunoService:
                     {
                         'account_id': '1234567890',
                         'asset': 'ZAR',
-                        'balance': '45670.50',
+                        'balance': '5432.10',
                         'reserved': '0.00',
                         'unconfirmed': '0.00'
                     },
                     {
                         'account_id': '1234567891',
                         'asset': 'XBT',
-                        'balance': '0.05234',
+                        'balance': '0.01505450',
                         'reserved': '0.00',
                         'unconfirmed': '0.00'
                     },
                     {
                         'account_id': '1234567892',
-                        'asset': 'ETH',
-                        'balance': '0.82341',
+                        'asset': 'ADA',
+                        'balance': '83.99704',
                         'reserved': '0.00',
                         'unconfirmed': '0.00'
                     }
@@ -141,7 +158,8 @@ class LunoService:
                 'XBTZAR': {'symbol': 'BTC', 'name': 'Bitcoin'},
                 'ETHZAR': {'symbol': 'ETH', 'name': 'Ethereum'},
                 'LTCZAR': {'symbol': 'LTC', 'name': 'Litecoin'},
-                'XRPZAR': {'symbol': 'XRP', 'name': 'Ripple'}
+                'XRPZAR': {'symbol': 'XRP', 'name': 'Ripple'},
+                'ADAZAR': {'symbol': 'ADA', 'name': 'Cardano'}
             }
             
             for ticker in tickers_data.get('tickers', []):
@@ -151,7 +169,14 @@ class LunoService:
                     
                     # Calculate 24h change (mock calculation since Luno doesn't provide this directly)
                     current_price = float(ticker.get('last_trade', 0))
-                    change_24h = (current_price * 0.032) if crypto_info['symbol'] == 'BTC' else (current_price * -0.018)
+                    if crypto_info['symbol'] == 'BTC':
+                        change_24h = current_price * 0.025  # +2.5% for BTC
+                    elif crypto_info['symbol'] == 'ETH':
+                        change_24h = current_price * -0.015  # -1.5% for ETH
+                    elif crypto_info['symbol'] == 'ADA':
+                        change_24h = current_price * 0.035  # +3.5% for ADA
+                    else:
+                        change_24h = current_price * 0.012  # +1.2% for others
                     
                     market_data.append({
                         'symbol': crypto_info['symbol'],

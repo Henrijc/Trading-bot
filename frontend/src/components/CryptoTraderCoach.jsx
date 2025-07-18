@@ -6,7 +6,7 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ScrollArea } from './ui/scroll-area';
-import { TrendingUp, TrendingDown, Target, AlertTriangle, MessageCircle, DollarSign, BarChart3, Shield, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, AlertTriangle, MessageCircle, DollarSign, BarChart3, Shield, RefreshCw, Activity, PieChart, TrendingUpIcon, Zap } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -159,38 +159,52 @@ const CryptoTraderCoach = () => {
     return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
   };
 
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat('en-ZA', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 6
+    }).format(num);
+  };
+
   const monthlyTarget = 100000;
   const currentMonthProgress = portfolio?.total_value || 0;
 
   return (
-    <div className="min-h-screen bg-black">
-      <div className="container mx-auto p-4 lg:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-transparent to-transparent"></div>
+      
+      <div className="relative z-10 container mx-auto p-4 lg:p-6">
         {/* Header */}
         <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-amber-900/30 pb-4">
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-light text-amber-400 mb-1">
-                AI Trading Coach
-              </h1>
-              <p className="text-amber-600/70 text-sm">
-                Monthly Target: R100,000
-              </p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-gradient-to-r from-transparent via-amber-700/50 to-transparent pb-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl shadow-lg">
+                <Activity className="w-8 h-8 text-black" />
+              </div>
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                  AI Trading Coach
+                </h1>
+                <p className="text-amber-600/80 text-sm lg:text-base font-medium">
+                  Professional Cryptocurrency Trading Analysis
+                </p>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <Button
                 onClick={handleRefresh}
-                variant="outline"
-                className="border-amber-800/50 text-amber-400 hover:bg-amber-900/20 hover:border-amber-700"
+                className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold border border-amber-500/50 shadow-lg shadow-amber-500/25 transition-all duration-300"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh
+                Refresh Data
               </Button>
-              <div className="text-right">
-                <div className="text-xl lg:text-2xl font-mono text-amber-300">
+              <div className="text-center lg:text-right bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-xl border border-amber-600/30 shadow-lg">
+                <div className="text-2xl lg:text-3xl font-bold font-mono bg-gradient-to-r from-green-400 to-green-500 bg-clip-text text-transparent">
                   {formatCurrency(currentMonthProgress)}
                 </div>
-                <div className="text-xs lg:text-sm text-amber-600/60">
-                  Portfolio Value
+                <div className="text-xs lg:text-sm text-amber-400/80 font-medium">
+                  Current Portfolio Value
                 </div>
               </div>
             </div>
@@ -198,29 +212,30 @@ const CryptoTraderCoach = () => {
         </div>
 
         {/* Main Dashboard */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           
           {/* Chat Interface */}
           <div className="lg:col-span-1 order-2 lg:order-1">
-            <Card className="bg-black border border-amber-900/40 h-[500px] lg:h-[600px] flex flex-col">
-              <CardHeader className="pb-3 border-b border-amber-900/30">
-                <CardTitle className="text-amber-400 flex items-center gap-2 text-lg font-normal">
-                  <MessageCircle className="text-amber-500" size={20} />
+            <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10 h-[500px] lg:h-[650px] flex flex-col">
+              <CardHeader className="pb-3 border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                <CardTitle className="text-amber-300 flex items-center gap-3 text-lg font-semibold">
+                  <MessageCircle className="text-amber-500" size={22} />
                   AI Trading Assistant
+                  <div className="ml-auto w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col p-4">
-                <ScrollArea className="flex-1 mb-4 max-h-[320px] lg:max-h-[400px]">
-                  <div className="space-y-3">
+                <ScrollArea className="flex-1 mb-4 max-h-[350px] lg:max-h-[450px]">
+                  <div className="space-y-4">
                     {chatMessages.map((msg) => (
                       <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[85%] p-3 rounded border ${
+                        <div className={`max-w-[85%] p-4 rounded-lg border shadow-lg ${
                           msg.role === 'user' 
-                            ? 'bg-amber-900/20 text-amber-100 border-amber-800/50' 
-                            : 'bg-gray-900/60 text-gray-100 border-gray-700/50'
+                            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black border-amber-500/50 shadow-amber-500/25' 
+                            : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 border-gray-600/50 shadow-gray-500/25'
                         }`}>
-                          <p className="text-sm leading-relaxed">{msg.message}</p>
-                          <p className="text-xs opacity-60 mt-2 font-mono">
+                          <p className="text-sm leading-relaxed font-medium">{msg.message}</p>
+                          <p className="text-xs opacity-70 mt-2 font-mono">
                             {new Date(msg.timestamp).toLocaleTimeString()}
                           </p>
                         </div>
@@ -228,29 +243,30 @@ const CryptoTraderCoach = () => {
                     ))}
                     {isLoading && (
                       <div className="flex justify-start">
-                        <div className="bg-gray-900/60 text-gray-100 p-3 rounded border border-gray-700/50">
-                          <div className="flex items-center gap-2">
+                        <div className="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 p-4 rounded-lg border border-gray-600/50 shadow-lg">
+                          <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                            <span className="text-sm">AI is analyzing...</span>
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
                 </ScrollArea>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <Input
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
-                    placeholder="Enter your query..."
-                    className="bg-gray-900/50 border-amber-900/40 text-amber-100 placeholder-amber-600/50 focus:border-amber-700"
+                    placeholder="Ask about trading strategies, market analysis..."
+                    className="bg-gradient-to-r from-gray-700 to-gray-800 border-amber-600/40 text-amber-100 placeholder-amber-400/60 focus:border-amber-500 focus:ring-amber-500/50 font-medium"
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                   <Button 
                     onClick={handleSendMessage}
                     disabled={isLoading}
-                    className="bg-amber-900/60 hover:bg-amber-800/60 text-amber-100 border border-amber-800/50"
+                    className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold border border-amber-500/50 shadow-lg px-4"
                   >
                     Send
                   </Button>
@@ -261,53 +277,72 @@ const CryptoTraderCoach = () => {
 
           {/* Dashboard Content */}
           <div className="lg:col-span-2 order-1 lg:order-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 lg:space-y-6">
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-black border border-amber-900/40">
-                <TabsTrigger value="overview" className="text-amber-400 data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-300 text-xs lg:text-sm font-normal">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-gradient-to-r from-gray-800 to-gray-900 border border-amber-600/40 p-1 rounded-xl shadow-lg">
+                <TabsTrigger value="overview" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Overview
                 </TabsTrigger>
-                <TabsTrigger value="portfolio" className="text-amber-400 data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-300 text-xs lg:text-sm font-normal">
+                <TabsTrigger value="portfolio" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Portfolio
                 </TabsTrigger>
-                <TabsTrigger value="strategy" className="text-amber-400 data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-300 text-xs lg:text-sm font-normal">
+                <TabsTrigger value="strategy" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Strategy
                 </TabsTrigger>
-                <TabsTrigger value="risk" className="text-amber-400 data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-300 text-xs lg:text-sm font-normal">
+                <TabsTrigger value="risk" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Risk
                 </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
-              <TabsContent value="overview" className="space-y-4 lg:space-y-6">
+              <TabsContent value="overview" className="space-y-6">
                 
                 {/* Monthly Progress */}
-                <Card className="bg-black border border-amber-900/40">
-                  <CardHeader className="border-b border-amber-900/30">
-                    <CardTitle className="text-amber-400 flex items-center gap-2 text-lg font-normal">
-                      <Target className="text-amber-500" size={20} />
-                      Monthly Progress
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <Target className="text-amber-500" size={24} />
+                      Monthly Target Progress
+                      <div className="ml-auto bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
+                        R100,000 Goal
+                      </div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-amber-500/70">Current Month</span>
-                        <span className="text-amber-200 font-mono">
-                          {formatCurrency(currentMonthProgress)} / {formatCurrency(monthlyTarget)}
-                        </span>
+                  <CardContent className="p-6">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center p-4 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
+                          <div className="text-2xl font-bold font-mono text-green-400">
+                            {formatCurrency(currentMonthProgress)}
+                          </div>
+                          <div className="text-sm text-green-300/80">Current Value</div>
+                        </div>
+                        <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
+                          <div className="text-2xl font-bold font-mono text-blue-400">
+                            {formatCurrency(monthlyTarget)}
+                          </div>
+                          <div className="text-sm text-blue-300/80">Monthly Target</div>
+                        </div>
+                        <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-amber-600/30">
+                          <div className="text-2xl font-bold font-mono text-amber-400">
+                            {formatCurrency(monthlyTarget - currentMonthProgress)}
+                          </div>
+                          <div className="text-sm text-amber-300/80">Remaining</div>
+                        </div>
                       </div>
-                      <div className="bg-gray-900/60 rounded h-2 border border-amber-900/30">
+                      <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
                         <div 
-                          className="h-full bg-gradient-to-r from-amber-600 to-amber-500 rounded transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 transition-all duration-1000 ease-out shadow-lg relative"
                           style={{width: `${Math.min((currentMonthProgress / monthlyTarget) * 100, 100)}%`}}
-                        />
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                        </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-xl font-mono text-amber-300">
+                        <div className="text-3xl font-bold font-mono bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
                           {((currentMonthProgress / monthlyTarget) * 100).toFixed(1)}%
                         </div>
-                        <div className="text-amber-500/60 text-sm mt-1">
-                          Remaining: {formatCurrency(monthlyTarget - currentMonthProgress)}
+                        <div className="text-amber-400/80 text-sm mt-1 font-medium">
+                          Progress Towards Freedom
                         </div>
                       </div>
                     </div>
@@ -315,30 +350,36 @@ const CryptoTraderCoach = () => {
                 </Card>
 
                 {/* Market Overview */}
-                <Card className="bg-black border border-amber-900/40">
-                  <CardHeader className="border-b border-amber-900/30">
-                    <CardTitle className="text-amber-400 flex items-center gap-2 text-lg font-normal">
-                      <BarChart3 className="text-amber-500" size={20} />
-                      Market Overview
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <BarChart3 className="text-amber-500" size={24} />
+                      Live Market Data
+                      <div className="ml-auto w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {marketData.map((crypto) => (
-                        <div key={crypto.symbol} className="p-4 bg-gray-900/40 rounded border border-amber-900/20">
-                          <div className="flex justify-between items-start">
+                        <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                          <div className="flex justify-between items-start mb-3">
                             <div>
-                              <div className="font-mono text-amber-300 text-base">{crypto.symbol}</div>
-                              <div className="text-sm text-amber-500/70">{crypto.name}</div>
+                              <div className="font-bold text-amber-300 text-lg">{crypto.symbol}</div>
+                              <div className="text-sm text-amber-400/70 font-medium">{crypto.name}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-amber-200 font-mono text-sm">{formatCurrency(crypto.price)}</div>
-                              <div className={`text-sm flex items-center gap-1 justify-end ${
+                              <div className="text-amber-100 font-mono text-base font-semibold">{formatCurrency(crypto.price)}</div>
+                              <div className={`text-sm flex items-center gap-1 justify-end font-semibold ${
                                 crypto.change_24h >= 0 ? 'text-green-400' : 'text-red-400'
                               }`}>
-                                {crypto.change_24h >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                {crypto.change_24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                 {formatPercentage(crypto.change_24h)}
                               </div>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-amber-600/20">
+                            <div className="text-xs text-amber-400/60 font-medium">
+                              Volume: {formatCurrency(crypto.volume)}
                             </div>
                           </div>
                         </div>
@@ -349,35 +390,46 @@ const CryptoTraderCoach = () => {
 
                 {/* Weekly Targets */}
                 {weeklyTargets && (
-                  <Card className="bg-black border border-amber-900/40">
-                    <CardHeader className="border-b border-amber-900/30">
-                      <CardTitle className="text-amber-400 flex items-center gap-2 text-lg font-normal">
-                        <DollarSign className="text-amber-500" size={20} />
-                        Weekly Targets
+                  <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                    <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                      <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                        <DollarSign className="text-amber-500" size={24} />
+                        Weekly Performance
+                        <div className="ml-auto bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-1 rounded-full text-sm font-bold">
+                          {weeklyTargets.days_left} Days Left
+                        </div>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-4 lg:p-6">
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-amber-500/70">Target</span>
-                          <span className="text-amber-200 font-mono">{formatCurrency(weeklyTargets.target)}</span>
+                    <CardContent className="p-6">
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
+                            <div className="text-2xl font-bold font-mono text-blue-400">
+                              {formatCurrency(weeklyTargets.target)}
+                            </div>
+                            <div className="text-sm text-blue-300/80">Weekly Target</div>
+                          </div>
+                          <div className="text-center p-4 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
+                            <div className="text-2xl font-bold font-mono text-green-400">
+                              {formatCurrency(weeklyTargets.achieved)}
+                            </div>
+                            <div className="text-sm text-green-300/80">Achieved</div>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-amber-500/70">Achieved</span>
-                          <span className="text-green-400 font-mono">{formatCurrency(weeklyTargets.achieved)}</span>
-                        </div>
-                        <div className="bg-gray-900/60 rounded h-2 border border-amber-900/30">
+                        <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
                           <div 
-                            className="h-full bg-gradient-to-r from-amber-600 to-amber-500 rounded transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 transition-all duration-1000 ease-out shadow-lg relative"
                             style={{width: `${Math.min(weeklyTargets.progress, 100)}%`}}
-                          />
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                          </div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-mono text-amber-300">
+                          <div className="text-2xl font-bold font-mono bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             {formatCurrency(weeklyTargets.remaining)}
                           </div>
-                          <div className="text-amber-500/60 text-sm mt-1">
-                            Remaining ({weeklyTargets.days_left} days)
+                          <div className="text-amber-400/80 text-sm mt-1 font-medium">
+                            Remaining This Week
                           </div>
                         </div>
                       </div>
@@ -388,31 +440,45 @@ const CryptoTraderCoach = () => {
               </TabsContent>
 
               {/* Portfolio Tab */}
-              <TabsContent value="portfolio" className="space-y-4 lg:space-y-6">
-                <Card className="bg-black border border-amber-900/40">
-                  <CardHeader className="border-b border-amber-900/30">
-                    <CardTitle className="text-amber-400 text-lg font-normal">Portfolio Holdings</CardTitle>
+              <TabsContent value="portfolio" className="space-y-6">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <PieChart className="text-amber-500" size={24} />
+                      Portfolio Holdings
+                      <div className="ml-auto bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        {portfolio?.holdings?.length || 0} Assets
+                      </div>
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-4 lg:p-6">
+                  <CardContent className="p-6">
                     <div className="space-y-4">
                       {portfolio?.holdings?.map((holding) => (
-                        <div key={holding.symbol} className="p-4 bg-gray-900/40 rounded border border-amber-900/20">
-                          <div className="flex justify-between items-start">
+                        <div key={holding.symbol} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                          <div className="flex justify-between items-start mb-4">
                             <div>
-                              <div className="font-mono text-amber-300 text-base">{holding.symbol}</div>
-                              <div className="text-sm text-amber-500/70">{holding.name}</div>
-                              <div className="text-sm text-amber-500/50 mt-1 font-mono">{holding.amount.toFixed(6)} units</div>
+                              <div className="font-bold text-amber-300 text-xl">{holding.symbol}</div>
+                              <div className="text-sm text-amber-400/70 font-medium">{holding.name}</div>
+                              <div className="text-sm text-amber-400/50 mt-2 font-mono bg-gray-800/50 px-3 py-1 rounded-lg">
+                                {formatNumber(holding.amount)} units
+                              </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-amber-200 font-mono text-sm">{formatCurrency(holding.value)}</div>
-                              <div className={`text-sm font-mono ${
+                              <div className="text-amber-100 font-mono text-lg font-semibold">{formatCurrency(holding.value)}</div>
+                              <div className={`text-sm font-semibold flex items-center gap-1 justify-end ${
                                 holding.change_24h >= 0 ? 'text-green-400' : 'text-red-400'
                               }`}>
+                                {holding.change_24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                 {formatPercentage(holding.change_24h)}
                               </div>
-                              <div className="text-sm text-amber-500/50 mt-1 font-mono">
-                                {holding.allocation.toFixed(1)}%
-                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center pt-4 border-t border-amber-600/20">
+                            <div className="text-sm text-amber-400/60 font-medium">
+                              Price: {formatCurrency(holding.current_price)}
+                            </div>
+                            <div className="bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
+                              {holding.allocation.toFixed(1)}% of portfolio
                             </div>
                           </div>
                         </div>
@@ -423,57 +489,64 @@ const CryptoTraderCoach = () => {
               </TabsContent>
 
               {/* Strategy Tab */}
-              <TabsContent value="strategy" className="space-y-4 lg:space-y-6">
+              <TabsContent value="strategy" className="space-y-6">
                 {dailyStrategy && (
-                  <Card className="bg-black border border-amber-900/40">
-                    <CardHeader className="border-b border-amber-900/30">
-                      <CardTitle className="text-amber-400 text-lg font-normal">Daily Strategy</CardTitle>
-                      <Badge className="w-fit bg-amber-900/30 text-amber-300 border border-amber-800/50">
-                        {dailyStrategy.risk_level} Risk
+                  <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                    <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                      <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                        <Zap className="text-amber-500" size={24} />
+                        Daily Trading Strategy
+                      </CardTitle>
+                      <Badge className="w-fit bg-gradient-to-r from-orange-600 to-orange-700 text-white border border-orange-500/50 font-semibold shadow-lg">
+                        {dailyStrategy.risk_level} Risk Level
                       </Badge>
                     </CardHeader>
-                    <CardContent className="p-4 lg:p-6">
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="text-amber-400 font-normal mb-2">Primary Recommendation</h4>
-                          <p className="text-amber-100 bg-gray-900/40 p-3 rounded border border-amber-900/20 leading-relaxed">
+                    <CardContent className="p-6">
+                      <div className="space-y-6">
+                        <div className="p-5 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
+                          <h4 className="text-amber-300 font-semibold mb-3 text-lg">Primary Recommendation</h4>
+                          <p className="text-amber-100 leading-relaxed font-medium text-base">
                             {dailyStrategy.main_recommendation}
                           </p>
                         </div>
                         
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                          <div className="text-center p-3 bg-gray-900/40 rounded border border-green-800/30">
-                            <div className="text-sm text-amber-500/70">Expected Return</div>
-                            <div className="text-green-400 font-mono text-base">{dailyStrategy.expected_return}</div>
+                          <div className="text-center p-4 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
+                            <div className="text-sm text-green-300/80 font-medium">Expected Return</div>
+                            <div className="text-green-400 font-mono text-xl font-bold">{dailyStrategy.expected_return}</div>
                           </div>
-                          <div className="text-center p-3 bg-gray-900/40 rounded border border-blue-800/30">
-                            <div className="text-sm text-amber-500/70">Timeframe</div>
-                            <div className="text-blue-400 font-mono text-base">{dailyStrategy.timeframe}</div>
+                          <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
+                            <div className="text-sm text-blue-300/80 font-medium">Timeframe</div>
+                            <div className="text-blue-400 font-mono text-xl font-bold">{dailyStrategy.timeframe}</div>
                           </div>
-                          <div className="text-center p-3 bg-gray-900/40 rounded border border-purple-800/30">
-                            <div className="text-sm text-amber-500/70">Target</div>
-                            <div className="text-purple-400 font-mono text-base">{dailyStrategy.key_levels.target}</div>
+                          <div className="text-center p-4 bg-gradient-to-r from-purple-900/40 to-purple-800/40 rounded-xl border border-purple-600/30">
+                            <div className="text-sm text-purple-300/80 font-medium">Target Price</div>
+                            <div className="text-purple-400 font-mono text-xl font-bold">{dailyStrategy.key_levels.target}</div>
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-amber-400 font-normal mb-3">Recommended Actions</h4>
-                          <div className="space-y-3">
+                          <h4 className="text-amber-300 font-semibold mb-4 text-lg">Recommended Actions</h4>
+                          <div className="space-y-4">
                             {dailyStrategy.actions.map((action, index) => (
-                              <div key={index} className="p-4 bg-gray-900/40 rounded border border-amber-900/20">
-                                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-3">
-                                  <div>
-                                    <Badge className={`${
-                                      action.type === 'BUY' ? 'bg-green-900/40 text-green-300 border-green-800/50' : 'bg-red-900/40 text-red-300 border-red-800/50'
-                                    } font-mono`}>
-                                      {action.type}
-                                    </Badge>
-                                    <div className="text-amber-300 font-mono mt-2">{action.asset}</div>
-                                    <div className="text-sm text-amber-500/70 mt-1 leading-relaxed">{action.reasoning}</div>
+                              <div key={index} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-3">
+                                      <Badge className={`${
+                                        action.type === 'BUY' ? 'bg-gradient-to-r from-green-600 to-green-700 text-white' : 'bg-gradient-to-r from-red-600 to-red-700 text-white'
+                                      } font-bold shadow-lg`}>
+                                        {action.type}
+                                      </Badge>
+                                      <div className="text-amber-300 font-mono text-lg font-bold">{action.asset}</div>
+                                    </div>
+                                    <div className="text-sm text-amber-400/80 leading-relaxed font-medium bg-gray-800/50 p-3 rounded-lg">
+                                      {action.reasoning}
+                                    </div>
                                   </div>
-                                  <div className="text-right">
-                                    <div className="text-amber-200 font-mono text-sm">{action.amount}</div>
-                                    <div className="text-sm text-amber-500/60 font-mono">@ {action.price}</div>
+                                  <div className="text-right bg-gradient-to-r from-amber-900/40 to-amber-800/40 p-4 rounded-xl border border-amber-600/30">
+                                    <div className="text-amber-200 font-mono text-base font-semibold">{action.amount}</div>
+                                    <div className="text-sm text-amber-400/80 font-medium mt-1">@ {action.price}</div>
                                   </div>
                                 </div>
                               </div>
@@ -487,53 +560,53 @@ const CryptoTraderCoach = () => {
               </TabsContent>
 
               {/* Risk Tab */}
-              <TabsContent value="risk" className="space-y-4 lg:space-y-6">
+              <TabsContent value="risk" className="space-y-6">
                 {riskMetrics && (
-                  <Card className="bg-black border border-amber-900/40">
-                    <CardHeader className="border-b border-amber-900/30">
-                      <CardTitle className="text-amber-400 flex items-center gap-2 text-lg font-normal">
-                        <Shield className="text-amber-500" size={20} />
-                        Risk Management
+                  <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                    <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                      <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                        <Shield className="text-amber-500" size={24} />
+                        Risk Management Analysis
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-4 lg:p-6">
+                    <CardContent className="p-6">
                       <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="text-center p-4 bg-gray-900/40 rounded border border-red-800/30">
-                            <div className="text-xl font-mono text-red-400">
+                          <div className="text-center p-5 bg-gradient-to-r from-red-900/40 to-red-800/40 rounded-xl border border-red-600/30">
+                            <div className="text-3xl font-bold font-mono text-red-400">
                               {riskMetrics.risk_score}/10
                             </div>
-                            <div className="text-sm text-amber-500/70">Risk Score</div>
+                            <div className="text-sm text-red-300/80 font-medium">Risk Score</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-900/40 rounded border border-orange-800/30">
-                            <div className="text-xl font-mono text-orange-400">
+                          <div className="text-center p-5 bg-gradient-to-r from-orange-900/40 to-orange-800/40 rounded-xl border border-orange-600/30">
+                            <div className="text-3xl font-bold font-mono text-orange-400">
                               {riskMetrics.portfolio_var}%
                             </div>
-                            <div className="text-sm text-amber-500/70">Value at Risk</div>
+                            <div className="text-sm text-orange-300/80 font-medium">Value at Risk</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-900/40 rounded border border-green-800/30">
-                            <div className="text-xl font-mono text-green-400">
+                          <div className="text-center p-5 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
+                            <div className="text-3xl font-bold font-mono text-green-400">
                               {riskMetrics.sharpe_ratio}
                             </div>
-                            <div className="text-sm text-amber-500/70">Sharpe Ratio</div>
+                            <div className="text-sm text-green-300/80 font-medium">Sharpe Ratio</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-900/40 rounded border border-purple-800/30">
-                            <div className="text-xl font-mono text-purple-400">
+                          <div className="text-center p-5 bg-gradient-to-r from-purple-900/40 to-purple-800/40 rounded-xl border border-purple-600/30">
+                            <div className="text-3xl font-bold font-mono text-purple-400">
                               {riskMetrics.diversification_score}/10
                             </div>
-                            <div className="text-sm text-amber-500/70">Diversification</div>
+                            <div className="text-sm text-purple-300/80 font-medium">Diversification</div>
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-amber-400 font-normal mb-3 flex items-center gap-2">
-                            <AlertTriangle className="text-amber-500" size={18} />
-                            Risk Recommendations
+                          <h4 className="text-amber-300 font-semibold mb-4 text-lg flex items-center gap-2">
+                            <AlertTriangle className="text-amber-500" size={20} />
+                            Risk Management Recommendations
                           </h4>
                           <div className="space-y-3">
                             {riskMetrics.recommendations.map((rec, index) => (
-                              <div key={index} className="p-3 bg-gray-900/40 rounded border border-amber-900/20">
-                                <p className="text-amber-100 leading-relaxed">{rec}</p>
+                              <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                                <p className="text-amber-100 leading-relaxed font-medium">{rec}</p>
                               </div>
                             ))}
                           </div>
