@@ -31,6 +31,13 @@ const CryptoTraderCoach = () => {
   const [showAutoTradeModal, setShowAutoTradeModal] = useState(false);
   const chatScrollRef = useRef(null);
 
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
   // Load initial data
   useEffect(() => {
     loadInitialData();
