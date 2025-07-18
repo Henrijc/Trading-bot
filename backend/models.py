@@ -107,6 +107,48 @@ class RiskMetrics(BaseModel):
     recommendations: List[str]
     calculated_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Auto Trading Models
+class AutoTradingSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    enabled: bool = False
+    max_trade_amount: float = 1000.0  # Maximum ZAR per trade
+    daily_limit: float = 5000.0  # Maximum ZAR traded per day
+    allowed_assets: List[str] = ["BTC", "ETH", "ADA", "XRP", "SOL"]
+    risk_level: str = "medium"  # low, medium, high
+    stop_loss_percent: float = 5.0  # Auto stop loss at 5%
+    take_profit_percent: float = 10.0  # Auto take profit at 10%
+    auto_rebalance: bool = False
+    trading_hours: Dict[str, Any] = {"start": "08:00", "end": "22:00", "timezone": "Africa/Johannesburg"}
+    conditions: Dict[str, Any] = {}
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AutoTradeLog(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    trade_type: str  # 'buy', 'sell', 'stop_loss', 'take_profit'
+    asset: str
+    amount: float
+    price: float
+    value: float
+    reason: str
+    success: bool
+    luno_order_id: Optional[str] = None
+    executed_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AutoTradingSettingsCreate(BaseModel):
+    enabled: bool = False
+    max_trade_amount: float = 1000.0
+    daily_limit: float = 5000.0
+    allowed_assets: List[str] = ["BTC", "ETH", "ADA", "XRP", "SOL"]
+    risk_level: str = "medium"
+    stop_loss_percent: float = 5.0
+    take_profit_percent: float = 10.0
+    auto_rebalance: bool = False
+    trading_hours: Dict[str, Any] = {"start": "08:00", "end": "22:00", "timezone": "Africa/Johannesburg"}
+    conditions: Dict[str, Any] = {}
+
 # User Settings Models
 class UserSettings(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
