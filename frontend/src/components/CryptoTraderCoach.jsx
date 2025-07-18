@@ -371,7 +371,7 @@ const CryptoTraderCoach = () => {
                       </div>
                     )}
                   </div>
-                </ScrollArea>
+                </div>
                 <div className="flex gap-3">
                   <Input
                     value={inputMessage}
