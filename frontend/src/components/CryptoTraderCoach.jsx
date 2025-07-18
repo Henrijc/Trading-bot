@@ -27,6 +27,8 @@ const CryptoTraderCoach = () => {
   const [monthlyTargetState, setMonthlyTargetState] = useState(100000);
   const [weeklyTargetState, setWeeklyTargetState] = useState(25000);
   const [targetSettings, setTargetSettings] = useState(null);
+  const [autoTradeSettings, setAutoTradeSettings] = useState(null);
+  const [showAutoTradeModal, setShowAutoTradeModal] = useState(false);
 
   // Load initial data
   useEffect(() => {
