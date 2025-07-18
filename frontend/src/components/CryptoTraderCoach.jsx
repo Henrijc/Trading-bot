@@ -93,6 +93,17 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const loadTargetSettings = async () => {
+    try {
+      const response = await axios.get(`${API}/targets/settings`);
+      setTargetSettings(response.data);
+      setMonthlyTargetState(response.data.monthly_target);
+      setWeeklyTargetState(response.data.weekly_target);
+    } catch (error) {
+      console.error('Error loading target settings:', error);
+    }
+  };
+
   const loadChatHistory = async () => {
     try {
       const response = await axios.get(`${API}/chat/history/${sessionId}`);
