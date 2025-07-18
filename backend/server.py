@@ -272,7 +272,103 @@ async def get_risk_metrics():
         print(f"Error getting risk metrics: {e}")
         raise HTTPException(status_code=500, detail="Failed to get risk metrics")
 
-# User settings endpoints
+# Target management endpoints
+@api_router.get("/targets/settings")
+async def get_target_settings():
+    """Get current target settings"""
+    try:
+        settings = await db.target_settings.find_one({"user_id": "default_user"})
+        
+        if not settings:
+            # Create default settings
+            default_settings = {
+                "user_id": "default_user",
+                "monthly_target": 100000,
+                "weekly_target": 25000,
+                "daily_target": 3571,
+                "auto_adjust": True,
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            await db.target_settings.insert_one(default_settings)
+            return default_settings
+        
+        return settings
+        
+    except Exception as e:
+        print(f"Error getting target settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get target settings")
+
+@api_router.put("/targets/settings")
+async def update_target_settings(settings: dict):
+    """Update target settings"""
+    try:
+        settings["updated_at"] = datetime.utcnow().isoformat()
+        settings["user_id"] = "default_user"
+        
+        await db.target_settings.update_one(
+            {"user_id": "default_user"},
+            {"$set": settings},
+            upsert=True
+        )
+        
+        return settings
+        
+    except Exception as e:
+        print(f"Error updating target settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update target settings")
+
+@api_router.post("/ai/adjust-targets")
+async def ai_adjust_targets(request: dict):
+    """Allow AI to adjust targets based on performance"""
+    try:
+        # Get current portfolio performance
+        portfolio_data = await luno_service.get_portfolio_data()
+        current_value = portfolio_data.get('total_value', 0)
+        
+        # Get current targets
+        current_targets = await db.target_settings.find_one({"user_id": "default_user"})
+        if not current_targets:
+            current_targets = {"monthly_target": 100000}
+        
+        # Let AI analyze and suggest new targets
+        context = {
+            "current_portfolio": current_value,
+            "current_monthly_target": current_targets.get("monthly_target", 100000),
+            "request": request.get("reason", ""),
+            "market_conditions": await luno_service.get_market_data()
+        }
+        
+        ai_response = await ai_service.adjust_targets(context)
+        
+        # If AI suggests new targets, update them
+        if "new_targets" in ai_response:
+            new_targets = ai_response["new_targets"]
+            new_targets["updated_at"] = datetime.utcnow().isoformat()
+            new_targets["user_id"] = "default_user"
+            new_targets["ai_adjusted"] = True
+            new_targets["adjustment_reason"] = request.get("reason", "AI optimization")
+            
+            await db.target_settings.update_one(
+                {"user_id": "default_user"},
+                {"$set": new_targets},
+                upsert=True
+            )
+            
+            return {
+                "success": True,
+                "message": ai_response.get("explanation", "Targets updated successfully"),
+                "new_targets": new_targets
+            }
+        
+        return {
+            "success": False,
+            "message": ai_response.get("explanation", "No target adjustment needed")
+        }
+        
+    except Exception as e:
+        print(f"Error in AI target adjustment: {e}")
+        raise HTTPException(status_code=500, detail="Failed to adjust targets")
 @api_router.get("/settings")
 async def get_user_settings():
     """Get user settings"""
