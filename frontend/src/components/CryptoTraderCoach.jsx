@@ -77,11 +77,15 @@ const CryptoTraderCoach = () => {
   const loadMarketData = async () => {
     try {
       console.log('Loading market data...');
+      console.log('API URL:', `${API}/market/data`);
       const response = await axios.get(`${API}/market/data`);
-      console.log('Market data response:', response.data);
+      console.log('Market data response status:', response.status);
+      console.log('Market data response data:', response.data);
       setMarketData(response.data);
+      console.log('Market data state updated successfully');
     } catch (error) {
       console.error('Error loading market data:', error);
+      console.error('Error details:', error.response?.data, error.response?.status);
     }
   };
 
