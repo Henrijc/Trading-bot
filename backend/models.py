@@ -169,3 +169,54 @@ class NewsItem(BaseModel):
     source: str
     url: Optional[str] = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+# Technical Analysis Models
+class TechnicalIndicators(BaseModel):
+    rsi: Optional[float] = None
+    macd: Optional[Dict[str, float]] = None
+    bollinger_bands: Optional[Dict[str, float]] = None
+    moving_averages: Optional[Dict[str, float]] = None
+    support_resistance: Optional[Dict[str, float]] = None
+    stochastic: Optional[Dict[str, float]] = None
+
+class TradingSignal(BaseModel):
+    type: str  # 'BUY', 'SELL', 'HOLD'
+    reason: str
+    strength: str  # 'weak', 'medium', 'strong'
+    indicator: str
+    confidence: float = 0.5
+
+class TrendAnalysis(BaseModel):
+    trend: str  # 'bullish', 'bearish', 'neutral'
+    strength: float  # 0.0 to 1.0
+    signals: List[str]
+    bullish_signals: float
+    bearish_signals: float
+
+class TechnicalAnalysisResult(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    symbol: str
+    current_price: float
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    trend_analysis: TrendAnalysis
+    technical_indicators: TechnicalIndicators
+    trading_signals: List[TradingSignal]
+    recommendation: Dict[str, Any]
+    data_points: int
+
+class PortfolioTechnicalAnalysis(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    portfolio_total: float
+    analyzed_assets: int
+    asset_analysis: List[TechnicalAnalysisResult]
+    portfolio_insights: Dict[str, Any]
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class TechnicalStrategy(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    indicators: List[str]
+    rules: List[Dict[str, Any]]
+    risk_parameters: Dict[str, float]
+    created_at: datetime = Field(default_factory=datetime.utcnow)
