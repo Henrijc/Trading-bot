@@ -143,6 +143,28 @@ const CryptoTraderCoach = () => {
       });
       
       setChatMessages(prev => [...prev, response.data]);
+      
+      // Check if AI wants to adjust targets
+      if (response.data.message.includes('adjust') && response.data.message.includes('target')) {
+        try {
+          const adjustResponse = await axios.post(`${API}/ai/adjust-targets`, {
+            reason: inputMessage
+          });
+          
+          if (adjustResponse.data.success) {
+            await loadTargetSettings();
+            // Add AI message about target adjustment
+            setChatMessages(prev => [...prev, {
+              id: Date.now() + 1,
+              role: 'assistant',
+              message: `**🎯 Targets Updated!**\n\n${adjustResponse.data.message}\n\n**New Monthly Target:** ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\n\nI've adjusted your targets based on current performance and market conditions.`,
+              timestamp: new Date().toISOString()
+            }]);
+          }
+        } catch (error) {
+          console.error('Error adjusting targets:', error);
+        }
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       // Add error message
