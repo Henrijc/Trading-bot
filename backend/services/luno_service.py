@@ -26,15 +26,19 @@ class LunoService:
             
             # If no API credentials, return mock data
             if not self.api_key or not self.secret:
+                print("No Luno API credentials, using mock data")
                 return self._get_mock_data(endpoint)
             
             auth = aiohttp.BasicAuth(self.api_key, self.secret)
+            print(f"Making request to Luno API: {url}")
             
             async with session.get(url, params=params, auth=auth) as response:
                 if response.status == 200:
-                    return await response.json()
+                    data = await response.json()
+                    print(f"Luno API success: {endpoint}")
+                    return data
                 else:
-                    print(f"Luno API error: {response.status}")
+                    print(f"Luno API error: {response.status} - {await response.text()}")
                     return self._get_mock_data(endpoint)
                     
         except Exception as e:
@@ -157,7 +161,7 @@ class LunoService:
                         'volume': float(ticker.get('rolling_24_hour_volume', 0)) * current_price,
                         'market_cap': current_price * 19000000,  # Approximate market cap
                         'trend': 'up' if change_24h > 0 else 'down',
-                        'last_updated': datetime.now()
+                        'last_updated': datetime.now().isoformat()  # Convert to ISO string
                     })
             
             return market_data
@@ -216,7 +220,7 @@ class LunoService:
                 'total_value': total_value,
                 'currency': 'ZAR',
                 'holdings': holdings,
-                'last_updated': datetime.now()
+                'last_updated': datetime.now().isoformat()  # Convert to ISO string
             }
             
         except Exception as e:
@@ -225,7 +229,7 @@ class LunoService:
                 'total_value': 0,
                 'currency': 'ZAR',
                 'holdings': [],
-                'last_updated': datetime.now()
+                'last_updated': datetime.now().isoformat()
             }
     
     async def get_order_book(self, pair: str = 'XBTZAR') -> Dict:
