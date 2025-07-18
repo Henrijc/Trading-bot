@@ -272,6 +272,58 @@ async def get_risk_metrics():
         print(f"Error getting risk metrics: {e}")
         raise HTTPException(status_code=500, detail="Failed to get risk metrics")
 
+# Trading endpoints
+@api_router.post("/trade/execute")
+async def execute_trade(trade_request: dict):
+    """Execute a trade on Luno"""
+    try:
+        result = await ai_service.execute_trade(trade_request)
+        return result
+    except Exception as e:
+        print(f"Error executing trade: {e}")
+        raise HTTPException(status_code=500, detail="Failed to execute trade")
+
+@api_router.get("/trade/pairs")
+async def get_trading_pairs():
+    """Get all available trading pairs"""
+    try:
+        pairs = await luno_service.get_trading_pairs()
+        return {"pairs": pairs}
+    except Exception as e:
+        print(f"Error getting trading pairs: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get trading pairs")
+
+@api_router.get("/trade/orderbook/{pair}")
+async def get_order_book(pair: str):
+    """Get order book for a trading pair"""
+    try:
+        orderbook = await luno_service.get_order_book(pair)
+        return orderbook
+    except Exception as e:
+        print(f"Error getting order book: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get order book")
+
+@api_router.get("/trade/history")
+async def get_trade_history(pair: str = None, limit: int = 100):
+    """Get trading history"""
+    try:
+        history = await luno_service.get_order_history(pair, limit)
+        return {"orders": history}
+    except Exception as e:
+        print(f"Error getting trade history: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get trade history")
+
+@api_router.post("/ai/research")
+async def ai_research(request: dict):
+    """AI web research for market analysis"""
+    try:
+        query = request.get("query", "")
+        results = await ai_service.web_search(query)
+        return {"results": results}
+    except Exception as e:
+        print(f"Error in AI research: {e}")
+        raise HTTPException(status_code=500, detail="Failed to perform research")
+
 # Target management endpoints
 @api_router.get("/targets/settings")
 async def get_target_settings():
