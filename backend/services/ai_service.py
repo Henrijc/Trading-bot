@@ -140,15 +140,21 @@ Current portfolio value suggests taking profits on positions up 15-20% and reinv
     
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
-        # Ensure the response is not too long
-        if len(response) > 1000:
+        # Ensure the response is not too long and clean
+        if len(response) > 600:
             # Truncate but end at a complete sentence
-            truncated = response[:1000]
+            truncated = response[:600]
             last_period = truncated.rfind('.')
-            if last_period > 800:
+            if last_period > 500:
                 response = truncated[:last_period + 1]
             else:
                 response = truncated + "..."
+        
+        # Clean up excessive formatting
+        response = response.replace('**', '').replace('*', '')
+        response = response.replace('📊', '').replace('💡', '').replace('🎯', '')
+        response = response.replace('📈', '').replace('⚠️', '').replace('🔥', '')
+        response = response.replace('💰', '').replace('🛡️', '').replace('🚀', '')
         
         return response
     
