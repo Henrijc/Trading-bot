@@ -192,11 +192,8 @@ Current portfolio value suggests taking profits on positions up 15-20% and reinv
             else:
                 response = truncated + "..."
         
-        # Clean up excessive formatting
-        response = response.replace('**', '').replace('*', '')
-        response = response.replace('📊', '').replace('💡', '').replace('🎯', '')
-        response = response.replace('📈', '').replace('⚠️', '').replace('🔥', '')
-        response = response.replace('💰', '').replace('🛡️', '').replace('🚀', '')
+        # Clean up excessive formatting but keep it readable
+        response = response.replace('**', '')
         
         return response
     
