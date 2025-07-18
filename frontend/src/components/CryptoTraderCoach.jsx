@@ -441,6 +441,9 @@ const CryptoTraderCoach = () => {
                 <TabsTrigger value="risk" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Risk
                 </TabsTrigger>
+                <TabsTrigger value="technical" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
+                  Technical
+                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
