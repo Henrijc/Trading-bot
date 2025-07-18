@@ -113,7 +113,7 @@ def test_technical_indicators():
         if ma and 'sma_20' in ma and not ma['sma_20'].empty:
             sma_20 = ma['sma_20'].iloc[-1]
             ema_20 = ma['ema_20'].iloc[-1] if 'ema_20' in ma else None
-            print(f"✅ Moving Averages: PASS (SMA20: {sma_20:.2f}, EMA20: {ema_20:.2f if ema_20 else 'N/A'})")
+            print(f"✅ Moving Averages: PASS (SMA20: {sma_20:.2f}, EMA20: {ema_20:.2f if ema_20 is not None else 'N/A'})")
             tests_passed += 1
         else:
             print("❌ Moving Averages: FAIL - Empty result")
