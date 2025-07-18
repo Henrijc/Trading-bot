@@ -78,7 +78,8 @@ const CryptoTraderCoach = () => {
     try {
       console.log('Loading market data...');
       console.log('API URL:', `${API}/market/data`);
-      const response = await axios.get(`${API}/market/data`);
+      
+      const response = await axios.get(`${API}/market/data`, { timeout: 10000 });
       console.log('Market data response status:', response.status);
       console.log('Market data response data:', response.data);
       setMarketData(response.data);
@@ -86,6 +87,7 @@ const CryptoTraderCoach = () => {
     } catch (error) {
       console.error('Error loading market data:', error);
       console.error('Error details:', error.response?.data, error.response?.status);
+      console.error('Error message:', error.message);
     }
   };
 
@@ -94,7 +96,7 @@ const CryptoTraderCoach = () => {
       console.log('Loading portfolio data...');
       console.log('API URL:', `${API}/portfolio`);
       
-      const response = await axios.get(`${API}/portfolio`);
+      const response = await axios.get(`${API}/portfolio`, { timeout: 10000 });
       console.log('Portfolio response status:', response.status);
       console.log('Portfolio response data:', response.data);
       
