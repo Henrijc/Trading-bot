@@ -118,7 +118,7 @@ Always start by acknowledging their current portfolio state and provide specific
                 api_key=self.api_key,
                 session_id=session_id,
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(2500)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(4000)
             
             # Build enhanced context - keep it focused and concise
             enhanced_context = ""
