@@ -342,15 +342,15 @@ async def ai_research(request: dict):
 
 # Trading Campaign endpoints
 @api_router.post("/campaigns/create")
-async def create_trading_campaign(
-    allocated_capital: float,
-    profit_target: float,
-    timeframe_days: int,
-    risk_level: str = "aggressive",
-    name: str = None
-):
+async def create_trading_campaign(request: dict):
     """Create a new targeted trading campaign"""
     try:
+        allocated_capital = request.get("allocated_capital", 10000)
+        profit_target = request.get("profit_target", 10000)
+        timeframe_days = request.get("timeframe_days", 7)
+        risk_level = request.get("risk_level", "aggressive")
+        name = request.get("name")
+        
         result = await campaign_service.create_campaign(
             allocated_capital=allocated_capital,
             profit_target=profit_target,
