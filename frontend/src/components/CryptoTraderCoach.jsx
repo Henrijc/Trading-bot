@@ -467,9 +467,32 @@ const CryptoTraderCoach = () => {
     }
   };
 
-  const handleRefresh = async () => {
-    setLastRefresh(Date.now());
-    await loadInitialData();
+  const handleNewSession = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Clear backend chat history
+      await axios.delete(`${API}/chat/history/${sessionId}`);
+      
+      // Clear frontend chat messages
+      setChatMessages([{
+        id: 1,
+        role: 'assistant',
+        message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
+        timestamp: new Date().toISOString()
+      }]);
+      
+      // Clear the session ID from localStorage and create new one
+      const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('ai_trading_coach_session_id', newSessionId);
+      
+      console.log('Started new clean session:', newSessionId);
+      
+    } catch (error) {
+      console.error('Error starting new session:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatCurrency = (amount) => {
