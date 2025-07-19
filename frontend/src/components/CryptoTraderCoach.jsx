@@ -575,7 +575,9 @@ const CryptoTraderCoach = () => {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="text-center p-4 bg-gradient-to-r from-green-900/40 to-green-800/40 rounded-xl border border-green-600/30">
                           <div className="text-2xl font-bold font-mono text-green-400">
-                            {formatCurrency(currentMonthProgress)}
+                            {dataLoadingComplete ? formatCurrency(currentMonthProgress) : 
+                             isLoading ? "Loading..." : 
+                             currentMonthProgress > 0 ? formatCurrency(currentMonthProgress) : "R 0.00"}
                           </div>
                           <div className="text-sm text-green-300/80">Current Value</div>
                         </div>
