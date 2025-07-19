@@ -542,7 +542,26 @@ async def update_target_settings(settings: dict):
             upsert=True
         )
         
-        return settings
+        return {"success": True, "settings": settings}
+        
+    except Exception as e:
+        print(f"Error updating target settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update target settings")
+
+@api_router.post("/targets/settings")
+async def create_or_update_target_settings(settings: dict):
+    """Create or update target settings (POST version)"""
+    try:
+        settings["updated_at"] = datetime.utcnow().isoformat()
+        settings["user_id"] = "default_user"
+        
+        await db.target_settings.update_one(
+            {"user_id": "default_user"},
+            {"$set": settings},
+            upsert=True
+        )
+        
+        return {"success": True, "settings": settings}
         
     except Exception as e:
         print(f"Error updating target settings: {e}")
