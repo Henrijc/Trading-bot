@@ -467,6 +467,11 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    setLastRefresh(Date.now());
+    await loadInitialData();
+  };
+
   const handleNewSession = async () => {
     try {
       setIsLoading(true);
