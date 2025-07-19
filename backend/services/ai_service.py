@@ -301,7 +301,7 @@ Number of Holdings: {len(holdings)} assets
             # Always add the user's message
             final_message = enhanced_context + f"**USER MESSAGE:** {message}"
             
-            user_message = UserMessage(text=enhanced_context + f"\n\nUSER MESSAGE: {message}")
+            user_message = UserMessage(text=final_message)
             
             # Send message and get response
             response = await chat.send_message(user_message)
