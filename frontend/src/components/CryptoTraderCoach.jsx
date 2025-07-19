@@ -367,7 +367,11 @@ const CryptoTraderCoach = () => {
     }).format(num);
   };
 
-  const currentMonthProgress = portfolio?.total_value || 0;
+  const currentMonthProgress = useMemo(() => {
+    const value = portfolio?.total_value || 0;
+    console.log('useMemo currentMonthProgress recalculated:', value, 'from portfolio:', portfolio);
+    return value;
+  }, [portfolio]);
   
   // Debug logging
   console.log('Portfolio state:', portfolio);
