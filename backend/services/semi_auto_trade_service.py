@@ -178,7 +178,7 @@ class SemiAutoTradeService:
                 # Log the execution
                 execution_log = {
                     "trade_id": trade_id,
-                    "executed_at": datetime.now().isoformat(),
+                    "executed_at": datetime.utcnow().isoformat(),
                     "execution_result": execution_result,
                     "user_approval": user_approval,
                     "trade_details": trade
