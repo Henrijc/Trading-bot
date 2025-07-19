@@ -287,7 +287,7 @@ class LunoService:
             for missing_symbol in missing_assets:
                 try:
                     # Get cross-conversion price via BTC
-                    cross_price = await self._get_cross_conversion_price(missing_symbol, 'BTC')
+                    cross_price = self._get_cross_conversion_price(missing_symbol, 'BTC')
                     if cross_price and 'BTC' in enhanced_price_lookup:
                         btc_zar_price = enhanced_price_lookup['BTC']
                         enhanced_price_lookup[missing_symbol] = cross_price * btc_zar_price
