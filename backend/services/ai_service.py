@@ -318,6 +318,78 @@ With your current portfolio value, I'd suggest taking profits on any positions t
         """Clear all chat sessions"""
         self.chat_sessions.clear()
     
+    async def summarize_conversation(self, messages: List[Dict]) -> Dict[str, Any]:
+        """Generate intelligent summary of conversation"""
+        try:
+            if not messages or len(messages) < 3:
+                return {
+                    "summary": "Brief conversation with minimal context.",
+                    "key_decisions": [],
+                    "goals_discussed": [],
+                    "portfolio_context": {}
+                }
+            
+            # Build conversation text for summarization
+            conversation_text = ""
+            for msg in messages:
+                role = msg.get('role', 'unknown')
+                message = msg.get('message', '')
+                conversation_text += f"{role.upper()}: {message}\n"
+            
+            # Create summarization prompt
+            summary_prompt = f"""Analyze this crypto trading conversation and create a structured summary:
+
+CONVERSATION:
+{conversation_text}
+
+Please provide a JSON response with:
+1. "summary": Brief 2-3 sentence overview of the conversation
+2. "key_decisions": List of specific decisions made (target changes, trading plans, etc.)
+3. "goals_discussed": List of goals mentioned (monthly targets, portfolio objectives, etc.)  
+4. "portfolio_context": Any important portfolio details discussed (asset holdings, staking, etc.)
+
+Focus on actionable information and specific details that would be useful context for future conversations.
+"""
+
+            # Use a simple chat instance for summarization
+            summary_chat = LlmChat(
+                api_key=self.api_key,
+                session_id="summary_session"
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
+            
+            response = await summary_chat.send_message(summary_prompt)
+            
+            # Try to parse JSON response
+            try:
+                import json
+                # Clean response - remove markdown code blocks if present
+                clean_response = response.strip()
+                if clean_response.startswith('```json'):
+                    clean_response = clean_response[7:-3]
+                elif clean_response.startswith('```'):
+                    clean_response = clean_response[3:-3]
+                
+                summary_data = json.loads(clean_response)
+                return summary_data
+                
+            except json.JSONDecodeError:
+                # Fallback if JSON parsing fails
+                return {
+                    "summary": response[:200] + "..." if len(response) > 200 else response,
+                    "key_decisions": [],
+                    "goals_discussed": [],
+                    "portfolio_context": {}
+                }
+                
+        except Exception as e:
+            print(f"Error creating conversation summary: {e}")
+            return {
+                "summary": f"Conversation about crypto trading strategy with {len(messages)} messages exchanged.",
+                "key_decisions": [],
+                "goals_discussed": [],
+                "portfolio_context": {}
+            }
+    
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
         # Remove the character limit truncation to allow full AI responses
