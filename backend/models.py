@@ -15,6 +15,7 @@ class ChatMessageCreate(BaseModel):
     session_id: str
     role: str
     message: str
+    context: Optional[Dict[str, Any]] = None
 
 class ChatSession(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
