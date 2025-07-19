@@ -244,12 +244,27 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
                 except Exception as e:
                     print(f"Trade suggestion error: {e}")
             
-            if context:
+            # Build enhanced context only for relevant requests
+            enhanced_context = ""
+            
+            # Check if user is asking for portfolio-related information
+            portfolio_keywords = ['portfolio', 'holdings', 'balance', 'value', 'allocation', 'assets', 'my coins', 'my crypto']
+            requests_portfolio = any(keyword in message.lower() for keyword in portfolio_keywords)
+            
+            # Check if user is asking for market analysis
+            market_keywords = ['market', 'analysis', 'overview', 'condition', 'sentiment']
+            requests_market = any(keyword in message.lower() for keyword in market_keywords)
+            
+            # Check if user is asking for detailed information
+            detail_keywords = ['detailed', 'full', 'breakdown', 'complete', 'comprehensive', 'analyze']
+            requests_details = any(keyword in message.lower() for keyword in detail_keywords)
+            
+            if context and (requests_portfolio or requests_details):
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
                 
-                # Build concise portfolio context
-                enhanced_context = f"""**CURRENT PORTFOLIO DATA:**
+                # Build concise portfolio context only when requested
+                enhanced_context += f"""**CURRENT PORTFOLIO DATA:**
 Portfolio Value: R{portfolio_value:,.2f}
 Number of Holdings: {len(holdings)} assets
 
@@ -261,10 +276,10 @@ Number of Holdings: {len(holdings)} assets
                     allocation = holding.get('allocation', 0)
                     enhanced_context += f"\n- {symbol}: R{value:,.2f} ({allocation:.1f}%)"
                 
-                enhanced_context += f"\n\n**USER QUESTION:** {message}\n"
+                enhanced_context += f"\n\n"
             
-            # Add technical analysis for relevant crypto discussions
-            if any(keyword in message.lower() for keyword in ['btc', 'bitcoin', 'eth', 'ethereum', 'trade', 'buy', 'sell', 'market']):
+            # Add technical analysis for relevant crypto discussions only when needed
+            if any(keyword in message.lower() for keyword in ['btc', 'bitcoin', 'eth', 'ethereum', 'trade', 'buy', 'sell']) or requests_details:
                 try:
                     if context and context.get('portfolio', {}).get('holdings'):
                         holdings = context['portfolio']['holdings']
@@ -277,11 +292,14 @@ Number of Holdings: {len(holdings)} assets
                                     rec = signals.get('recommendation', {})
                                     rsi = signals.get('technical_indicators', {}).get('rsi', 0)
                                     trend = signals.get('trend_analysis', {}).get('trend', 'neutral')
-                                    enhanced_context += f"\n**{symbol} TECHNICAL ANALYSIS:**\nRecommendation: {rec.get('action', 'HOLD')}, RSI: {rsi:.1f}, Trend: {trend}"
+                                    enhanced_context += f"\n**{symbol} TECHNICAL ANALYSIS:**\nRecommendation: {rec.get('action', 'HOLD')}, RSI: {rsi:.1f}, Trend: {trend}\n"
                             except:
                                 continue
                 except:
                     pass
+            
+            # Always add the user's message
+            final_message = enhanced_context + f"**USER MESSAGE:** {message}"
             
             user_message = UserMessage(text=enhanced_context + f"\n\nUSER MESSAGE: {message}")
             
