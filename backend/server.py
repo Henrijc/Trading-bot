@@ -139,24 +139,65 @@ async def get_chat_history(session_id: str, limit: int = 50):
 
 @api_router.delete("/chat/history/{session_id}")
 async def clear_chat_history(session_id: str):
-    """Clear chat history for a session to start fresh"""
+    """Summarize conversation then clear chat history for session forking"""
     try:
+        # Get existing messages for summarization
+        messages = await db.chat_messages.find(
+            {"session_id": session_id}
+        ).sort("timestamp", 1).to_list(None)
+        
+        summary_result = None
+        if messages and len(messages) > 2:  # Only summarize if meaningful conversation
+            try:
+                # Generate conversation summary
+                message_dicts = [
+                    {
+                        "role": msg.get("role", "unknown"),
+                        "message": msg.get("message", ""),
+                        "timestamp": msg.get("timestamp")
+                    } 
+                    for msg in messages
+                ]
+                
+                summary_data = await ai_service.summarize_conversation(message_dicts)
+                
+                # Save summary to database
+                from models import ConversationSummary
+                conversation_summary = ConversationSummary(
+                    session_id=session_id,
+                    summary=summary_data.get("summary", ""),
+                    key_decisions=summary_data.get("key_decisions", []),
+                    goals_discussed=summary_data.get("goals_discussed", []),
+                    portfolio_context=summary_data.get("portfolio_context", {}),
+                    message_count=len(messages)
+                )
+                
+                await db.conversation_summaries.insert_one(conversation_summary.dict())
+                summary_result = conversation_summary.dict()
+                print(f"Created conversation summary for session {session_id}: {summary_data.get('summary', '')}")
+                
+            except Exception as e:
+                print(f"Error creating summary: {e}")
+        
+        # Delete chat messages (clean slate)
         result = await db.chat_messages.delete_many(
             {"session_id": session_id}
         )
         
-        # Also clear the AI session to start fresh
+        # Clear AI session memory (fresh start)
         ai_service.clear_session(session_id)
         
         return {
             "success": True, 
-            "message": f"Cleared {result.deleted_count} messages for session {session_id}",
-            "deleted_count": result.deleted_count
+            "message": f"Summarized and cleared {result.deleted_count} messages for session {session_id}",
+            "deleted_count": result.deleted_count,
+            "summary_created": summary_result is not None,
+            "summary": summary_result
         }
         
     except Exception as e:
-        print(f"Error clearing chat history: {e}")
-        raise HTTPException(status_code=500, detail="Failed to clear chat history")
+        print(f"Error in session forking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fork session")
 
 # Market Data endpoints
 @api_router.get("/market/data")
