@@ -12,6 +12,7 @@ class AICoachService:
     def __init__(self):
         self.api_key = os.environ.get('GEMINI_API_KEY')
         self.luno_service = LunoService()
+        self.knowledge_base = AIKnowledgeBase()
         # Import technical analysis service to avoid circular import
         from services.technical_analysis_service import TechnicalAnalysisService
         self.ta_service = TechnicalAnalysisService()
