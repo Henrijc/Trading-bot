@@ -178,17 +178,8 @@ With your current portfolio value, I'd suggest taking profits on any positions t
     
     def _format_response(self, response: str) -> str:
         """Format the AI response to be more readable"""
-        # Ensure the response is not too long and clean
-        if len(response) > 600:
-            # Truncate but end at a complete sentence
-            truncated = response[:600]
-            last_period = truncated.rfind('.')
-            if last_period > 500:
-                response = truncated[:last_period + 1]
-            else:
-                response = truncated + "..."
-        
-        # Clean up excessive formatting but keep it readable
+        # Remove the character limit truncation to allow full AI responses
+        # Only clean up excessive formatting but keep it readable
         response = response.replace('**', '')
         
         return response
