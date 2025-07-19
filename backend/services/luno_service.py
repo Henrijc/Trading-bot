@@ -385,7 +385,7 @@ class LunoService:
                 'total_value': 0,
                 'currency': 'ZAR',
                 'holdings': [],
-                'last_updated': datetime.now().isoformat()
+                'last_updated': datetime.utcnow().isoformat()
             }
     
     async def place_market_order(self, pair: str, order_type: str, amount: float) -> Dict:
