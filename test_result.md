@@ -214,32 +214,8 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
-  - task: "Chat Timestamp Fix"
-    implemented: false
-    working: false
-    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-        - working: false
-        - agent: "user"
-        - comment: "User reported chat timestamps are incorrect"
-
-  - task: "Chat Character Limit Removal"
-    implemented: false
-    working: false
-    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-        - working: false
-        - agent: "user"
-        - comment: "User reported AI responses are being truncated by character limits"
-
-  - task: "AI Knowledge Base Integration"
-    implemented: false
+  - task: "AI Response Style Fix - Make Concise by Default"
+    implemented: true
     working: false
     file: "/app/backend/services/ai_service.py"
     stuck_count: 0
@@ -248,9 +224,57 @@ test_plan:
     status_history:
         - working: false
         - agent: "user"
-        - comment: "User provided extensive training data file but AI is not using it"
+        - comment: "User reported AI is overly verbose, ignores requests for shorter responses, always provides portfolio stats even when not requested"
+        - working: false
+        - agent: "main"
+        - comment: "Updated AI system message to be concise by default, only provide detailed analysis when specifically requested, modified context handling to only include portfolio data when user asks for it"
 
-  - task: "Portfolio Data Loading Fix"
+  - task: "Remove Hardcoded Targets and Make Dynamic"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reported hardcoded targets confuse the AI and dashboard should update from AI chat interactions"
+        - working: false
+        - agent: "main"
+        - comment: "Changed monthlyTargetState and weeklyTargetState from hardcoded values (100000, 25000) to null, added proper loading from backend via loadTargetSettings function"
+
+  - task: "Fix Timestamp to Use Browser Timezone"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reported timestamps are incorrect, should be system/location reliant from login location"
+        - working: false
+        - agent: "main"
+        - comment: "Changed timestamp display from hardcoded 'Africa/Johannesburg' timezone to use browser's default timezone by using 'undefined' as first parameter to toLocaleString"
+
+  - task: "Clean Chat Interface on Login"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User wants clean chat interface upon login like session forking, but retaining backend memory"
+        - working: false
+        - agent: "main"
+        - comment: "Updated welcome message to be cleaner and more concise, added new session functionality with 'New Session' button that clears chat history, created DELETE /chat/history/{session_id} endpoint"
+
+  - task: "Make Dashboard Update from AI Chat"
     implemented: false
     working: false
     file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
@@ -260,7 +284,7 @@ test_plan:
     status_history:
         - working: false
         - agent: "user"
-        - comment: "Portfolio value shows R 0.00 in header, data loading issue observed"
+        - comment: "User wants all dashboards and metrics to update with recent targets set through AI chat, not from hardcoded values"
     - agent: "testing"
     - message: "TESTING COMPLETED: Technical Analysis Engine backend is fully functional. All core components tested and working: 1) Technical Analysis Service with all indicators (RSI, MACD, Bollinger Bands, Moving Averages, Support/Resistance, Trend Analysis) - 83.3% success rate in direct testing. 2) All API endpoints responding correctly (/technical/signals, /technical/portfolio, /technical/indicators, /technical/strategy, /technical/backtest, /technical/market-overview). 3) Portfolio analysis working with 8 assets. 4) Strategy endpoints returning proper configurations. 5) AI service integration working correctly. 6) All dependencies properly installed. External API rate limiting from CoinGecko is expected behavior and doesn't affect core functionality. System is ready for production use."
     - agent: "testing"
