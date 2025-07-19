@@ -94,6 +94,18 @@ class AIKnowledgeBase:
         except Exception as e:
             print(f"Error saving user preferences: {e}")
     
+    def get_training_data(self) -> str:
+        """Load the comprehensive training data for AI bot"""
+        try:
+            training_file = self.knowledge_base_path / "Trading Data for AIbot.txt"
+            if training_file.exists():
+                with open(training_file, 'r', encoding='utf-8') as f:
+                    return f.read()
+            return ""
+        except Exception as e:
+            print(f"Error loading training data: {e}")
+            return ""
+    
     def get_enhanced_context(self, user_id: str = "default") -> str:
         """Get comprehensive knowledge context for AI"""
         context_parts = []
