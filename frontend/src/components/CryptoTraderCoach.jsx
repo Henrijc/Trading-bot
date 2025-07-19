@@ -21,7 +21,16 @@ const CryptoTraderCoach = () => {
   const [dailyStrategy, setDailyStrategy] = useState(null);
   const [weeklyTargets, setWeeklyTargets] = useState(null);
   const [riskMetrics, setRiskMetrics] = useState(null);
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId] = useState(() => {
+    // Try to get existing session ID from localStorage
+    let existingSessionId = localStorage.getItem('ai_trading_coach_session_id');
+    if (!existingSessionId) {
+      // Create new session ID if none exists
+      existingSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('ai_trading_coach_session_id', existingSessionId);
+    }
+    return existingSessionId;
+  });
   const [activeTab, setActiveTab] = useState('overview');
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [monthlyTargetState, setMonthlyTargetState] = useState(100000);
