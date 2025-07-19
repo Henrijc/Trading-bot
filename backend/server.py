@@ -1071,20 +1071,68 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 # Authentication endpoint
 @api_router.post("/auth/login")
 async def login(credentials: dict):
-    """Login endpoint - for production use"""
+    """Enhanced login with 2FA and AI analysis"""
     try:
         username = credentials.get("username")
         password = credentials.get("password")
+        totp_code = credentials.get("totp_code")
+        backup_code = credentials.get("backup_code")
         
-        # In production, validate against database
-        if username == "admin" and password == os.environ.get("ADMIN_PASSWORD", "admin123"):
-            token = security_service.create_access_token({"sub": username, "user_id": "admin"})
-            return {"access_token": token, "token_type": "bearer"}
+        # Authenticate user
+        result = await auth_service.authenticate_user(
+            username=username,
+            password=password,
+            totp_code=totp_code,
+            backup_code=backup_code
+        )
         
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        return result
         
     except Exception as e:
         raise HTTPException(status_code=500, detail="Authentication error")
+
+@api_router.post("/auth/setup-2fa")
+async def setup_2fa(user_data: dict):
+    """Set up 2FA for user"""
+    try:
+        username = user_data.get("username")
+        result = auth_service.setup_2fa_for_existing_user(username)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/auth/verify-2fa")
+async def verify_2fa_setup(verification_data: dict):
+    """Verify 2FA setup is working"""
+    try:
+        totp_secret = verification_data.get("totp_secret")
+        test_code = verification_data.get("test_code")
+        
+        is_valid = auth_service.verify_2fa_setup(totp_secret, test_code)
+        
+        return {"success": is_valid, "message": "2FA verified successfully" if is_valid else "Invalid 2FA code"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/auth/update-goals")
+async def update_user_goals(goals_data: dict, user_data = Depends(get_current_user)):
+    """Update user trading goals"""
+    try:
+        username = user_data.get("user_id", "admin")
+        result = await auth_service.update_user_goals(username, goals_data)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/auth/login-analysis")
+async def get_login_analysis(user_data = Depends(get_current_user)):
+    """Get fresh login analysis"""
+    try:
+        username = user_data.get("user_id", "admin")
+        analysis = await auth_service._perform_login_analysis(username)
+        return {"success": True, "analysis": analysis}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Configure logging
 logging.basicConfig(
