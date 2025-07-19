@@ -9,7 +9,7 @@ import json
 class AIMemoryService:
     def __init__(self):
         self.luno_service = LunoService()
-        self.ai_service = AICoachService()
+        # Note: AI service will be imported dynamically to avoid circular import
         
     async def consolidate_daily_memory(self, user_id: str = "default") -> Dict[str, Any]:
         """Consolidate daily trading data into AI memory"""
