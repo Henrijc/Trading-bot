@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Henrijc's Google Authenticator QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            color: #f0ad4e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a2520 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #f0ad4e;
+            box-shadow: 0 0 20px rgba(240, 173, 78, 0.3);
+        }
+        .qr-code {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+        .qr-code img {
+            width: 300px;
+            height: 300px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        .instructions {
+            max-width: 500px;
+            text-align: left;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .secret-key {
+            background: #1e4d72;
+            color: #b3d9ff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        .backup-codes {
+            background: #8b2b2b;
+            color: #ffb3b3;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 15px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Henrijc's Google Authenticator Setup</h1>
+        
+        <div class="qr-code">
+            <img src="/henrijc_2fa_scannable.png" alt="Google Authenticator QR Code" />
+        </div>
+        
+        <div class="instructions">
+            <h3>📱 Setup Instructions:</h3>
+            <ol>
+                <li><strong>Install Google Authenticator</strong> on your phone</li>
+                <li><strong>Open the app</strong> and tap the "+" button</li>
+                <li><strong>Choose "Scan QR code"</strong></li>
+                <li><strong>Scan the QR code above</strong> with your phone camera</li>
+                <li><strong>Your account will be added</strong> as "Henrijc@CryptoTradingCoach"</li>
+            </ol>
+        </div>
+        
+        <div>
+            <h3>🔑 Manual Entry (if QR code doesn't work):</h3>
+            <div class="secret-key">
+                OPRYF3QGNFGQGFUPVRPWU2C33C4HWHFP
+            </div>
+            <p><strong>Account:</strong> Henrijc<br>
+               <strong>Issuer:</strong> CryptoTradingCoach</p>
+        </div>
+        
+        <div>
+            <h3>🔐 Backup Recovery Codes:</h3>
+            <div class="backup-codes">
+                1. 0D6CCC6A    6. AA859A18
+                2. 7F5D7D33    7. 8A7A02B3  
+                3. E483159D    8. A65628D1
+                4. 5273E9FA    9. 0DEB3988
+                5. E2AA2725   10. 3808BD93
+            </div>
+            <p><small>⚠️ Save these codes safely! Use if you lose your phone.</small></p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <h3>🚀 Next Step:</h3>
+            <p>After setting up Google Authenticator, go back to your login page and enter the 6-digit code from the app!</p>
+        </div>
+    </div>
+</body>
+</html>
