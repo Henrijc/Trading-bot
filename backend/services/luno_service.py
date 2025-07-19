@@ -189,7 +189,7 @@ class LunoService:
                         'market_cap': 0,  # Market cap not critical for display
                         'trend': 'up' if change_24h > 0 else 'down',
                         'source': source,
-                        'last_updated': datetime.now().isoformat()
+                        'last_updated': datetime.utcnow().isoformat()
                     })
             
             return market_data
