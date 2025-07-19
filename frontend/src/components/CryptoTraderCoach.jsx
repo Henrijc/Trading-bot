@@ -326,6 +326,42 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const updateTargetsManually = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Update target settings in backend
+      const response = await axios.post(`${API}/targets/settings`, {
+        monthly_target: newTargetData.monthly_target,
+        weekly_target: newTargetData.weekly_target,
+        user_id: "default_user",
+        manually_adjusted: true
+      });
+      
+      if (response.data.success) {
+        // Update local state
+        setMonthlyTargetState(newTargetData.monthly_target);
+        setWeeklyTargetState(newTargetData.weekly_target);
+        setShowTargetAdjustmentModal(false);
+        
+        // Add AI message about manual target update
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          role: 'assistant',
+          message: `🎯 TARGETS UPDATED MANUALLY!\n\nNew Monthly Target: ${formatCurrency(newTargetData.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargetData.weekly_target)}\n\nI'll now adjust my trading recommendations to help you achieve these new targets. Let's make it happen!`,
+          timestamp: new Date().toISOString()
+        }]);
+        
+        // Reload target settings to sync with backend
+        await loadTargetSettings();
+      }
+    } catch (error) {
+      console.error('Error updating targets manually:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
