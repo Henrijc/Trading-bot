@@ -283,6 +283,7 @@ class AIBehaviorTester:
             # Test 1: General question should NOT include portfolio data
             general_request = {
                 'session_id': f"{self.test_session_id}_general",
+                'role': 'user',
                 'message': "What's the market trend today?"
             }
             
@@ -311,6 +312,7 @@ class AIBehaviorTester:
             # Test 2: Portfolio-specific question SHOULD include portfolio data
             portfolio_request = {
                 'session_id': f"{self.test_session_id}_portfolio",
+                'role': 'user',
                 'message': "Show me my portfolio balance and holdings"
             }
             
