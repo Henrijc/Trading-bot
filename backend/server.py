@@ -75,8 +75,8 @@ async def send_chat_message(message_data: ChatMessageCreate):
         if message_data.context:
             print(f"Using frontend context for chat message")
             context = message_data.context
-            # Ensure we have timestamp
-            context["timestamp"] = datetime.now().isoformat()
+            # Ensure we have timestamp (always use UTC for consistency)
+            context["timestamp"] = datetime.utcnow().isoformat()
         else:
             print(f"Fetching fresh context for chat message")
             # Get portfolio and market context
@@ -86,7 +86,7 @@ async def send_chat_message(message_data: ChatMessageCreate):
             context = {
                 "portfolio": portfolio_data,
                 "market_data": market_data,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.utcnow().isoformat()
             }
         
         print(f"Chat context: Portfolio value = {context.get('portfolio', {}).get('total_value', 'N/A')}")
