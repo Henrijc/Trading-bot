@@ -359,10 +359,21 @@ const CryptoTraderCoach = () => {
       console.log('AI response received:', response.data);
       setChatMessages(prev => [...prev, response.data]);
       
-      if (response.data.message.includes('adjust') && response.data.message.includes('target')) {
+      // Enhanced target adjustment detection
+      const message = response.data.message.toLowerCase();
+      const targetKeywords = ['adjust', 'change', 'update', 'set', 'modify'];
+      const targetWords = ['target', 'goal', 'monthly', 'weekly'];
+      const hasTargetAdjustment = targetKeywords.some(keyword => message.includes(keyword)) && 
+                                 targetWords.some(word => message.includes(word));
+      
+      // Also check if the AI specifically suggests a target change
+      const suggestsChange = message.includes('recommend') && (message.includes('target') || message.includes('goal'));
+      
+      if (hasTargetAdjustment || suggestsChange) {
         try {
           const adjustResponse = await axios.post(`${API}/ai/adjust-targets`, {
-            reason: inputMessage
+            reason: inputMessage,
+            ai_suggestion: response.data.message
           });
           
           if (adjustResponse.data.success) {
@@ -371,7 +382,7 @@ const CryptoTraderCoach = () => {
             setChatMessages(prev => [...prev, {
               id: Date.now() + 1,
               role: 'assistant',
-              message: `Target Update: ${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\n\nI have adjusted your targets based on current performance and market conditions.`,
+              message: `🎯 TARGET UPDATED!\n\n${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\nNew Weekly Target: ${formatCurrency(adjustResponse.data.new_targets.weekly_target)}\n\nI've optimized your targets based on current performance and market conditions.`,
               timestamp: new Date().toISOString()
             }]);
           }
