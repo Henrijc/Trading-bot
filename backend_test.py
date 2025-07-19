@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Crypto Trading Coach
-Tests all backend endpoints and functionality including the three critical fixes:
-1. AI Service Response Length (no truncation)
-2. AI Knowledge Base Integration (training data usage)
-3. Portfolio API (correct data loading)
-4. Chat History Timestamps (proper storage)
+Tests the recent changes focusing on:
+1. AI Service Response Style (concise by default)
+2. Dynamic Target Loading (not hardcoded)
+3. New Session Endpoint (DELETE chat history)
+4. Context-Aware Portfolio Data (only when requested)
+5. Target Adjustment System (AI chat integration)
 """
 
 import requests
