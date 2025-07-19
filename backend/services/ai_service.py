@@ -18,6 +18,9 @@ class AICoachService:
         self.ta_service = TechnicalAnalysisService()
         # Note: Memory service will be imported dynamically to avoid circular import
         
+        # Session management - maintain chat instances per session
+        self.chat_sessions = {}
+        
         # Load comprehensive training data from knowledge base
         training_data = self.knowledge_base.get_training_data()
         training_context = ""
