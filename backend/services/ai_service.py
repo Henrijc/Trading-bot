@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 import requests
 from services.luno_service import LunoService
+from services.ai_knowledge_base import AIKnowledgeBase
 
 class AICoachService:
     def __init__(self):
