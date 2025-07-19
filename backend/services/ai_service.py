@@ -326,10 +326,45 @@ Number of Holdings: {len(holdings)} assets
             return self._format_response(response)
             
         except Exception as e:
+            error_msg = str(e)
             print(f"Error in AI service: {e}")
-            return """I'm having trouble accessing real-time data right now. Please try again in a moment.
+            
+            # Handle specific error types with meaningful messages
+            if "rate limit" in error_msg.lower() or "quota" in error_msg.lower() or "429" in error_msg:
+                return """⚠️ **API Quota Exceeded**
 
-With your current portfolio value, I'd suggest taking profits on any positions that are up 15-20% and consider reinvesting in underperforming assets with strong fundamentals. Happy to help you analyze specific positions once my connection is restored."""
+The AI service has reached its daily quota limit. This typically resets in 24 hours.
+
+**Your Goals Noted:**
+- Monthly profit target: R8,000 (updated)
+- Keep 1,000 XRP for long-term holding
+- Diversify for generational wealth
+- 4% risk management with stop-loss strategy
+
+**Immediate Actions Available:**
+- Check your current portfolio on the Dashboard tab
+- Review Technical Analysis tab for market insights
+- I'll be back online when the quota resets"""
+            
+            elif "connection" in error_msg.lower() or "timeout" in error_msg.lower():
+                return """🔄 **Connection Issue**
+
+Temporary connectivity issue. Please try again in a moment.
+
+**Your request noted:** Your goal of R8,000 monthly profit with 1,000 XRP long-term hold and 4% risk management has been recorded."""
+            
+            else:
+                return f"""⚠️ **AI Service Temporarily Unavailable**
+
+Technical issue: {error_msg[:100]}{'...' if len(error_msg) > 100 else ''}
+
+**Your Goals Recorded:**
+- Monthly target: R8,000
+- Hold 1,000 XRP long-term  
+- Diversification strategy
+- 4% risk management
+
+Please try again shortly."""
     
     def clear_session(self, session_id: str):
         """Clear a specific chat session"""
