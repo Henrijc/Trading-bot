@@ -97,19 +97,24 @@ async def send_chat_message(message_data: ChatMessageCreate):
             context=context
         )
         
-        # Save user message
+        # Save user message with explicit timestamp
+        from datetime import datetime
+        current_time = datetime.utcnow()
+        
         user_message = ChatMessage(
             session_id=message_data.session_id,
             role="user",
-            message=message_data.message
+            message=message_data.message,
+            timestamp=current_time
         )
         await db.chat_messages.insert_one(user_message.dict())
         
-        # Save AI response
+        # Save AI response with same timestamp reference
         ai_message = ChatMessage(
             session_id=message_data.session_id,
             role="assistant",
-            message=ai_response
+            message=ai_response,
+            timestamp=current_time  # Use same base time for consistency
         )
         await db.chat_messages.insert_one(ai_message.dict())
         
