@@ -30,6 +30,7 @@ db = client[os.environ['DB_NAME']]
 ai_service = AICoachService()
 luno_service = LunoService()
 ta_service = TechnicalAnalysisService()
+knowledge_base = AIKnowledgeBase()
 
 # Create the main app without a prefix
 app = FastAPI(title="Crypto Trading Coach API", version="1.0.0")
