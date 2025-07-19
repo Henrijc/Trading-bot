@@ -328,6 +328,14 @@ With your current portfolio value, I'd suggest taking profits on any positions t
         """Clear all chat sessions"""
         self.chat_sessions.clear()
     
+    def _format_response(self, response: str) -> str:
+        """Format the AI response to be more readable"""
+        # Remove the character limit truncation to allow full AI responses
+        # Only clean up excessive formatting but keep it readable
+        response = response.replace('**', '')
+        
+        return response
+    
     async def execute_trade(self, trade_instruction: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a trade on Luno"""
         try:
