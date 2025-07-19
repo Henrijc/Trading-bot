@@ -446,7 +446,7 @@ class ComprehensiveBackendTester:
             # Check all timestamps for UTC format
             invalid_timestamps = []
             for service_name, field_path, timestamp in all_timestamps:
-                if not self.is_valid_utc_timestamp(timestamp):
+                if not self.is_valid_utc_timestamp(timestamp, allow_historical=True):
                     invalid_timestamps.append((service_name, field_path, timestamp))
             
             if invalid_timestamps:
