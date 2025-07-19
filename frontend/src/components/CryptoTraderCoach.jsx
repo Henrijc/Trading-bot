@@ -1442,6 +1442,83 @@ const CryptoTraderCoach = () => {
           </div>
         </div>
 
+      {/* Target Adjustment Modal */}
+      {showTargetAdjustmentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-amber-300 mb-4">🎯 Adjust Monthly Targets</h3>
+            
+            <div className="space-y-4">
+              <div className="bg-amber-900/20 border border-amber-600/30 rounded-lg p-3 mb-4">
+                <p className="text-amber-400 text-sm font-semibold">💡 AI Target Adjustment</p>
+                <p className="text-amber-300/80 text-xs mt-1">
+                  You can also ask the AI: "Change my monthly target to R150k" or "Adjust my targets based on my performance"
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-amber-400 text-sm font-medium mb-2">Monthly Target (ZAR)</label>
+                <Input
+                  type="number"
+                  value={newTargetData.monthly_target}
+                  onChange={(e) => setNewTargetData(prev => ({ 
+                    ...prev, 
+                    monthly_target: parseFloat(e.target.value),
+                    weekly_target: parseFloat(e.target.value) / 4
+                  }))}
+                  className="bg-gray-700 border-amber-600/40 text-amber-100"
+                  placeholder="100000"
+                />
+                <p className="text-xs text-amber-400/70 mt-1">Current: {formatCurrency(monthlyTargetState)}</p>
+              </div>
+              
+              <div>
+                <label className="block text-amber-400 text-sm font-medium mb-2">Weekly Target (Auto-calculated)</label>
+                <Input
+                  type="number"
+                  value={newTargetData.weekly_target}
+                  readOnly
+                  className="bg-gray-600 border-amber-600/40 text-amber-100 cursor-not-allowed"
+                />
+                <p className="text-xs text-amber-400/70 mt-1">Automatically set to Monthly ÷ 4</p>
+              </div>
+              
+              <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-3">
+                <p className="text-blue-400 text-sm font-semibold">📊 Target Analysis</p>
+                <p className="text-blue-300/80 text-xs mt-1">
+                  New target represents {((newTargetData.monthly_target / (portfolio?.total_value || 155000)) * 100).toFixed(1)}% of current portfolio value.
+                  {((newTargetData.monthly_target / (portfolio?.total_value || 155000)) * 100) > 200 ? " ⚠️ Very aggressive target!" :
+                   ((newTargetData.monthly_target / (portfolio?.total_value || 155000)) * 100) > 100 ? " 🎯 Challenging but achievable." :
+                   " ✅ Conservative target."}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <Button
+                onClick={() => {
+                  setShowTargetAdjustmentModal(false);
+                  setNewTargetData({
+                    monthly_target: monthlyTargetState,
+                    weekly_target: weeklyTargetState
+                  });
+                }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-amber-300"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={updateTargetsManually}
+                disabled={isLoading}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold"
+              >
+                {isLoading ? 'Updating...' : 'Update Targets'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
         {/* Auto Trading Modal */}
         {showAutoTradeModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
