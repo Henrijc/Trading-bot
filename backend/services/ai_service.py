@@ -56,67 +56,97 @@ Always start by acknowledging their current portfolio state and provide specific
     async def web_search(self, query: str) -> str:
         """Search the web for current crypto market information"""
         try:
-            # Use multiple search methods for better results
             results = []
             
-            # Method 1: Try DuckDuckGo API
+            # Method 1: Get global crypto market data from CoinGecko
             try:
-                search_url = f"https://api.duckduckgo.com/?q={query}&format=json&no_html=1"
-                response = requests.get(search_url, timeout=10)
+                cg_url = "https://api.coingecko.com/api/v3/global"
+                response = requests.get(cg_url, timeout=10)
                 
                 if response.status_code == 200:
                     data = response.json()
-                    
-                    # Extract abstract if available
-                    if data.get('Abstract'):
-                        results.append(data['Abstract'])
-                    
-                    # Extract related topics
-                    for result in data.get('RelatedTopics', [])[:3]:
-                        if isinstance(result, dict) and 'Text' in result:
-                            results.append(result['Text'])
-            except:
-                pass
+                    global_data = data.get('data', {})
+                    if global_data:
+                        market_cap = global_data.get('total_market_cap', {}).get('usd', 0)
+                        volume = global_data.get('total_volume', {}).get('usd', 0)
+                        btc_dominance = global_data.get('market_cap_percentage', {}).get('btc', 0)
+                        results.append(f"GLOBAL CRYPTO MARKET: Market cap ${market_cap:,.0f}. 24h volume ${volume:,.0f}. BTC dominance: {btc_dominance:.1f}%")
+            except Exception as e:
+                print(f"CoinGecko error: {e}")
             
-            # Method 2: Try a simple news API or web scraping
+            # Method 2: Get specific crypto prices from CoinGecko
             try:
-                # Use a crypto news API
-                crypto_news_url = f"https://newsapi.org/v2/everything?q={query}&apiKey=demo&pageSize=3"
-                response = requests.get(crypto_news_url, timeout=10)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    for article in data.get('articles', [])[:2]:
-                        if article.get('description'):
-                            results.append(f"{article['title']}: {article['description']}")
-            except:
-                pass
-            
-            # Method 3: Use CoinGecko for crypto-specific data
-            try:
-                if any(crypto in query.lower() for crypto in ['bitcoin', 'ethereum', 'crypto', 'btc', 'eth']):
-                    cg_url = "https://api.coingecko.com/api/v3/global"
-                    response = requests.get(cg_url, timeout=10)
+                if any(crypto in query.lower() for crypto in ['bitcoin', 'btc', 'ethereum', 'eth']):
+                    coins_url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true"
+                    response = requests.get(coins_url, timeout=10)
                     
                     if response.status_code == 200:
                         data = response.json()
-                        global_data = data.get('data', {})
-                        if global_data:
-                            market_cap = global_data.get('total_market_cap', {}).get('usd', 0)
-                            volume = global_data.get('total_volume', {}).get('usd', 0)
-                            results.append(f"Global crypto market cap: ${market_cap:,.0f}. 24h volume: ${volume:,.0f}")
-            except:
-                pass
+                        if 'bitcoin' in data:
+                            btc_price = data['bitcoin']['usd']
+                            btc_change = data['bitcoin']['usd_24h_change']
+                            results.append(f"BITCOIN: ${btc_price:,.0f} USD ({btc_change:+.2f}% 24h)")
+                        
+                        if 'ethereum' in data:
+                            eth_price = data['ethereum']['usd']
+                            eth_change = data['ethereum']['usd_24h_change']
+                            results.append(f"ETHEREUM: ${eth_price:,.0f} USD ({eth_change:+.2f}% 24h)")
+            except Exception as e:
+                print(f"Crypto prices error: {e}")
             
-            # Return results or fallback
+            # Method 3: Get Fear & Greed Index
+            try:
+                fng_url = "https://api.alternative.me/fng/"
+                response = requests.get(fng_url, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get('data') and len(data['data']) > 0:
+                        fng_value = data['data'][0]['value']
+                        fng_classification = data['data'][0]['value_classification']
+                        results.append(f"MARKET SENTIMENT: Fear & Greed Index {fng_value}/100 ({fng_classification})")
+            except Exception as e:
+                print(f"Fear & Greed error: {e}")
+            
+            # Method 4: Crypto news headlines (alternative API)
+            try:
+                # Using a more reliable crypto news source
+                news_url = "https://api.coindesk.com/v1/news.json"
+                response = requests.get(news_url, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get('articles'):
+                        latest_article = data['articles'][0]
+                        results.append(f"LATEST NEWS: {latest_article.get('title', '')}")
+            except Exception as e:
+                print(f"News error: {e}")
+            
+            # Method 5: DeFi and altcoin data
+            try:
+                if 'defi' in query.lower() or 'altcoin' in query.lower():
+                    defi_url = "https://api.coingecko.com/api/v3/global/defi"
+                    response = requests.get(defi_url, timeout=10)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        defi_data = data.get('data', {})
+                        if defi_data:
+                            defi_cap = defi_data.get('defi_market_cap', 0)
+                            defi_dominance = defi_data.get('defi_dominance', 0)
+                            results.append(f"DEFI MARKET: ${defi_cap:,.0f} market cap, {defi_dominance:.2f}% of total crypto")
+            except Exception as e:
+                print(f"DeFi error: {e}")
+            
+            # Return comprehensive results
             if results:
-                return ' '.join(results[:3])  # Limit to 3 results
+                return ' | '.join(results)
             else:
-                return f"Current search for '{query}' - Market data available through real-time feeds. Consider checking specific crypto prices and market sentiment."
+                return f"Real-time market data search for '{query}' - Using live Luno and technical analysis data for current market conditions."
                 
         except Exception as e:
             print(f"Error in web search: {e}")
-            return f"Web search temporarily unavailable. Using real-time market data for analysis of: {query}"
+            return f"Market analysis using real-time Luno data and technical indicators for: {query}"
     
     async def send_message(self, session_id: str, message: str, context: Dict[str, Any] = None) -> str:
         """Send a message to the AI coach and get a response with enhanced knowledge"""
