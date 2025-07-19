@@ -522,6 +522,13 @@ const CryptoTraderCoach = () => {
                 Refresh Data
               </Button>
               <Button
+                onClick={() => setShowTargetAdjustmentModal(true)}
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold border border-purple-500/50 shadow-lg shadow-purple-500/25 transition-all duration-300"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Adjust Targets
+              </Button>
+              <Button
                 onClick={() => setShowAutoTradeModal(true)}
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold border border-blue-500/50 shadow-lg shadow-blue-500/25 transition-all duration-300"
               >
