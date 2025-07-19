@@ -224,11 +224,12 @@ const CryptoTraderCoach = () => {
         console.log('Chat history loaded:', response.data.length, 'messages');
       } else {
         // Start with a clean welcome message if no history
+        const welcomeTimestamp = new Date();
         const welcomeMessage = [{
           id: 1,
           role: 'assistant',
           message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
-          timestamp: new Date().toISOString()
+          timestamp: welcomeTimestamp.toISOString()
         }];
         setChatMessages(welcomeMessage);
         console.log('No chat history found, starting with welcome message');
