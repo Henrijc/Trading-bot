@@ -8,7 +8,7 @@ import json
 import time
 from datetime import datetime
 
-BACKEND_URL = "https://801ca388-ac2b-447f-8072-0b08b1f28a4d.preview.emergentagent.com/api"
+BACKEND_URL = "https://09261e87-4cce-4af8-bd38-d0c7bd3f6025.preview.emergentagent.com/api"
 
 def test_api_health():
     """Test basic API health"""

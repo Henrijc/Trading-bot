@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 # Get backend URL from environment
-BACKEND_URL = "https://801ca388-ac2b-447f-8072-0b08b1f28a4d.preview.emergentagent.com/api"
+BACKEND_URL = "https://09261e87-4cce-4af8-bd38-d0c7bd3f6025.preview.emergentagent.com/api"
 
 class TechnicalAnalysisAPITester:
     def __init__(self, base_url: str):
