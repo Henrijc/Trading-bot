@@ -146,6 +146,7 @@ class CriticalFixesTester:
             # Send first message establishing context
             first_message = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'My name is TestUser and I prefer conservative trading strategies. Remember this for our conversation.'
             }
             
