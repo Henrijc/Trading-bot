@@ -269,6 +269,58 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  const createTradingCampaign = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API}/campaigns/create`, newCampaignData);
+      
+      if (response.data.success) {
+        setActiveCampaigns(prev => [...prev, response.data.campaign]);
+        setShowCreateCampaignModal(false);
+        
+        // Add AI message about campaign creation
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          role: 'assistant',
+          message: `🎯 TRADING CAMPAIGN CREATED!\n\n${response.data.campaign.name}\n\nAllocated Capital: R${newCampaignData.allocated_capital:,.0f}\nProfit Target: R${newCampaignData.profit_target:,.0f}\nTimeframe: ${newCampaignData.timeframe_days} days\n\n${response.data.risk_warning}\n\nI'm now monitoring the markets for high-probability opportunities. Let's make this work!`,
+          timestamp: new Date().toISOString()
+        }]);
+        
+        // Reset form
+        setNewCampaignData({
+          allocated_capital: 10000,
+          profit_target: 10000,
+          timeframe_days: 7,
+          risk_level: 'aggressive'
+        });
+      }
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const executeCampaignTrades = async (campaignId) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API}/campaigns/${campaignId}/execute`);
+      
+      if (response.data.success && response.data.trades_executed > 0) {
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          role: 'assistant',
+          message: `⚡ TRADES EXECUTED!\n\nCampaign: ${campaignId}\nTrades: ${response.data.trades_executed}\n\nJust executed ${response.data.trades_executed} high-confidence trades based on current market analysis. Monitoring positions for optimal exits.`,
+          timestamp: new Date().toISOString()
+        }]);
+      }
+    } catch (error) {
+      console.error('Error executing campaign trades:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
