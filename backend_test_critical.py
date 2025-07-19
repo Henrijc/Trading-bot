@@ -205,6 +205,7 @@ class CriticalFixesTester:
             # Send message specifically requesting portfolio information
             portfolio_request = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'How many assets do I have in my portfolio? Show me my portfolio details.'
             }
             
