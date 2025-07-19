@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement the Technical Analysis Engine to add more sophisticated trading strategies"
+user_problem_statement: "Fix three critical issues: 1) Incorrect timestamps in chat, 2) Character limit truncating AI responses, 3) Additional training data in backend not being used by AI"
 
 backend:
   - task: "Technical Analysis Service Implementation"
