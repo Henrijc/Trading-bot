@@ -568,7 +568,7 @@ class TechnicalAnalysisService:
                 'analyzed_assets': len(analysis_results),
                 'asset_analysis': analysis_results,
                 'portfolio_insights': portfolio_insights,
-                'generated_at': datetime.now().isoformat()
+                'generated_at': datetime.utcnow().isoformat()
             }
             
         except Exception as e:
