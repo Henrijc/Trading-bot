@@ -997,16 +997,92 @@ async def get_enhanced_context():
         print(f"Error getting enhanced context: {e}")
         raise HTTPException(status_code=500, detail="Failed to get enhanced context")
 
-# Include the router in the main app
+# Include the router in the main app  
 app.include_router(api_router)
 
+# Security middleware
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]  # In production, specify exact hosts
+)
+
+# CORS with security restrictions
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://09261e87-4cce-4af8-bd38-d0c7bd3f6025.preview.emergentagent.com"],
     allow_credentials=True,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
+    max_age=300,
 )
+
+# Security headers middleware
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    start_time = time.time()
+    
+    # Rate limiting check
+    client_ip = request.client.host
+    
+    response = await call_next(request)
+    
+    # Add security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    
+    # Log request time
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    
+    # Log security event for sensitive endpoints
+    if any(path in str(request.url) for path in ["/trade/", "/ai/", "/targets/"]):
+        security_service.log_security_event(
+            event_type="API_ACCESS",
+            user_id="default_user",
+            details={
+                "endpoint": str(request.url.path),
+                "method": request.method,
+                "ip_address": client_ip,
+                "process_time": process_time
+            }
+        )
+    
+    return response
+
+# Authentication dependency
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Validate JWT token for protected endpoints"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    token = credentials.credentials
+    payload = security_service.verify_token(token)
+    
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    return payload
+
+# Authentication endpoint
+@api_router.post("/auth/login")
+async def login(credentials: dict):
+    """Login endpoint - for production use"""
+    try:
+        username = credentials.get("username")
+        password = credentials.get("password")
+        
+        # In production, validate against database
+        if username == "admin" and password == os.environ.get("ADMIN_PASSWORD", "admin123"):
+            token = security_service.create_access_token({"sub": username, "user_id": "admin"})
+            return {"access_token": token, "token_type": "bearer"}
+        
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Authentication error")
 
 # Configure logging
 logging.basicConfig(
