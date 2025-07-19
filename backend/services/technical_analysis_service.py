@@ -36,7 +36,7 @@ class TechnicalAnalysisService:
                     # Create mock historical data based on current price
                     # This is a simplified approach for when external APIs are not available
                     current_price = current_crypto['price']
-                    dates = pd.date_range(end=datetime.now(), periods=min(days, 30), freq='D')
+                    dates = pd.date_range(end=datetime.utcnow(), periods=min(days, 30), freq='D')
                     
                     # Generate mock price data with some volatility
                     import random
