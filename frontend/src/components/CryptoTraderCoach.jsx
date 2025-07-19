@@ -263,6 +263,8 @@ const CryptoTraderCoach = () => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
+    console.log('Sending message:', inputMessage, 'for session:', sessionId);
+    
     const userMessage = {
       id: Date.now(),
       role: 'user',
@@ -281,6 +283,7 @@ const CryptoTraderCoach = () => {
         message: inputMessage
       });
       
+      console.log('AI response received:', response.data);
       setChatMessages(prev => [...prev, response.data]);
       
       if (response.data.message.includes('adjust') && response.data.message.includes('target')) {
