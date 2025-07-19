@@ -158,12 +158,15 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
     async def send_message(self, session_id: str, message: str, context: Dict[str, Any] = None) -> str:
         """Send a message to the AI coach and get a response with enhanced knowledge"""
         try:
-            # Create a new chat instance for each session
-            chat = LlmChat(
-                api_key=self.api_key,
-                session_id=session_id,
-                system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(4000)
+            # Get or create chat instance for this session
+            if session_id not in self.chat_sessions:
+                self.chat_sessions[session_id] = LlmChat(
+                    api_key=self.api_key,
+                    session_id=session_id,
+                    system_message=self.system_message
+                ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(4000)
+            
+            chat = self.chat_sessions[session_id]
             
             # Build enhanced context - keep it focused and concise
             enhanced_context = ""
