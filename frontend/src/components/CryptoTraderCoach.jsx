@@ -315,11 +315,13 @@ const CryptoTraderCoach = () => {
       const response = await axios.post(`${API}/campaigns/${campaignId}/execute`);
       
       if (response.data.success && response.data.trades_executed > 0) {
+        // Add campaign execution message
+        const executionTimestamp = new Date();
         setChatMessages(prev => [...prev, {
           id: Date.now(),
           role: 'assistant',
           message: `⚡ TRADES EXECUTED!\n\nCampaign: ${campaignId}\nTrades: ${response.data.trades_executed}\n\nJust executed ${response.data.trades_executed} high-confidence trades based on current market analysis. Monitoring positions for optimal exits.`,
-          timestamp: new Date().toISOString()
+          timestamp: executionTimestamp.toISOString()
         }]);
       }
     } catch (error) {
