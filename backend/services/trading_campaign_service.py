@@ -272,7 +272,7 @@ RECOMMENDATION: Only proceed if you can afford to lose the entire R{capital:,.0f
                     "amount": position_size,
                     "price": opportunity["entry_price"],
                     "reason": opportunity["reason"],
-                    "executed_at": datetime.now().isoformat()
+                    "executed_at": datetime.utcnow().isoformat()
                 }
             else:
                 return {"success": False, "error": result["error"]}
