@@ -150,14 +150,11 @@ Be professional, direct, and use the actual data provided to answer their questi
         try:
             # Get or create chat instance for this session
             if session_id not in self.chat_sessions:
-                print(f"DEBUG: Creating NEW chat session for {session_id}")
                 self.chat_sessions[session_id] = LlmChat(
                     api_key=self.api_key,
                     session_id=session_id,
                     system_message=self.system_message
                 ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(4000)
-            else:
-                print(f"DEBUG: Using EXISTING chat session for {session_id}")
             
             chat = self.chat_sessions[session_id]
             
