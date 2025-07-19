@@ -244,10 +244,7 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
                 except Exception as e:
                     print(f"Trade suggestion error: {e}")
             
-            # Build enhanced context only for relevant requests
-            enhanced_context = ""
-            
-            # Check if user is asking for portfolio-related information
+            # Check if user is asking for portfolio-related information and add to existing context
             portfolio_keywords = ['portfolio', 'holdings', 'balance', 'value', 'allocation', 'assets', 'my coins', 'my crypto']
             requests_portfolio = any(keyword in message.lower() for keyword in portfolio_keywords)
             
@@ -259,6 +256,7 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
             detail_keywords = ['detailed', 'full', 'breakdown', 'complete', 'comprehensive', 'analyze']
             requests_details = any(keyword in message.lower() for keyword in detail_keywords)
             
+            # Add portfolio context only when requested (append to existing enhanced_context)
             if context and (requests_portfolio or requests_details):
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
