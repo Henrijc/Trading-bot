@@ -149,7 +149,7 @@ const LoginSystem = ({ onLoginSuccess }) => {
             value={loginData.username}
             onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
             className="bg-gray-700 border-amber-600/40 text-amber-100"
-            disabled
+            placeholder="Enter your username"
           />
         </div>
         
