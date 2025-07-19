@@ -171,6 +171,7 @@ class TimestampConsistencyTester:
             # Send a chat message with explicit context check
             chat_request = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'Can you analyze my portfolio performance?',
                 'context': None  # Force backend to generate context with timestamp
             }
