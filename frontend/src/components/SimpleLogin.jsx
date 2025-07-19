@@ -116,7 +116,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         <h2 style={{ 
           color: '#f0ad4e', 
           textAlign: 'center', 
-          marginBottom: '20px',
+          marginBottom: '30px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -124,20 +124,6 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         }}>
           🔐 Henrijc's Secure Login
         </h2>
-        
-        <div style={{
-          background: '#1e4d72',
-          padding: '15px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          fontSize: '12px',
-          color: '#b3d9ff'
-        }}>
-          <strong>Your Login Details:</strong><br/>
-          Username: Henrijc<br/>
-          Password: H3nj3n<br/>
-          2FA Secret: OPRYF3QGNFGQGFUPVRPWU2C33C4HWHFP
-        </div>
 
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', color: '#f0ad4e', marginBottom: '5px' }}>
