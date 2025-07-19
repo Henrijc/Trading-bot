@@ -339,21 +339,22 @@ const CryptoTraderCoach = () => {
       });
       
       if (response.data.success) {
-        // Update local state
+        // Update local state immediately for dashboard refresh
         setMonthlyTargetState(newTargetData.monthly_target);
         setWeeklyTargetState(newTargetData.weekly_target);
         setShowTargetAdjustmentModal(false);
+        
+        // Force reload all data to update dashboard progress bars and calculations
+        await loadTargetSettings();
+        await loadInitialData();
         
         // Add AI message about manual target update
         setChatMessages(prev => [...prev, {
           id: Date.now(),
           role: 'assistant',
-          message: `🎯 TARGETS UPDATED MANUALLY!\n\nNew Monthly Target: ${formatCurrency(newTargetData.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargetData.weekly_target)}\n\nI'll now adjust my trading recommendations to help you achieve these new targets. Let's make it happen!`,
+          message: `🎯 TARGETS UPDATED MANUALLY!\n\nNew Monthly Target: ${formatCurrency(newTargetData.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargetData.weekly_target)}\n\nPerfect! I've updated the dashboard with your new targets. All progress bars and calculations now reflect your new goals. Let's crush these targets together!`,
           timestamp: new Date().toISOString()
         }]);
-        
-        // Reload target settings to sync with backend
-        await loadTargetSettings();
       }
     } catch (error) {
       console.error('Error updating targets manually:', error);
