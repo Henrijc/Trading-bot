@@ -351,6 +351,23 @@ class LunoService:
                     if is_staked:
                         asset_name += f" (Staked)"
                     
+                    # Add to holdings
+                    holdings.append({
+                        'symbol': symbol,
+                        'name': asset_name,
+                        'amount': total_amount,
+                        'current_price': current_price,
+                        'value': value,
+                        'change_24h': market_info.get('change_24h', 0),
+                        'allocation': 0,  # Will be calculated after total_value is known
+                        'accounts': len(accounts),
+                        'is_staked': is_staked,
+                        'source': market_info.get('source', 'Cross-converted' if symbol in missing_assets else 'Luno')
+                    })
+                else:
+                    print(f"Warning: Could not get price for {symbol} with balance {total_amount}")
+            
+                    
                     holdings.append({
                         'symbol': symbol,
                         'name': asset_name,
