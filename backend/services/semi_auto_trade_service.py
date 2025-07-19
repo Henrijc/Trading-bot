@@ -61,7 +61,7 @@ class SemiAutoTradeService:
                                     "trend": signals.get('trend_analysis', {}).get('trend', 'neutral'),
                                     "macd_signal": signals.get('technical_indicators', {}).get('macd_signal', 'neutral')
                                 },
-                                "created_at": datetime.now().isoformat()
+                                "created_at": datetime.utcnow().isoformat()
                             }
                             
                             # Only suggest if risk/reward is favorable (at least 1.5:1)
