@@ -175,6 +175,14 @@ YOU HAVE ACCESS TO LIVE DATA - USE IT IN EVERY RESPONSE.{training_context}"""
             # Build enhanced context - keep it focused and concise
             enhanced_context = ""
             
+            # Add recent memories for context continuity
+            try:
+                recent_memories = await self.memory_service.get_recent_memories(days=3)
+                if recent_memories:
+                    enhanced_context += f"**RECENT MEMORY (Last 3 Days):**\n{chr(10).join(recent_memories[:2])}\n\n"
+            except Exception as e:
+                print(f"Memory service error: {e}")
+            
             # Add web search for market-related queries
             web_research = ""
             market_keywords = ['market', 'analysis', 'price', 'bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'trading', 'news', 'sentiment', 'trend']
