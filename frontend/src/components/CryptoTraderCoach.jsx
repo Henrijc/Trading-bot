@@ -418,12 +418,22 @@ const CryptoTraderCoach = () => {
           });
           
           if (adjustResponse.data.success) {
+            // Update local state immediately for dashboard refresh
+            const newTargets = adjustResponse.data.new_targets;
+            setMonthlyTargetState(newTargets.monthly_target);
+            setWeeklyTargetState(newTargets.weekly_target);
+            
+            // Force reload target settings to sync with backend
             await loadTargetSettings();
+            
+            // Force refresh all data to update dashboard
+            await loadInitialData();
+            
             // Add AI message about target adjustment
             setChatMessages(prev => [...prev, {
               id: Date.now() + 1,
               role: 'assistant',
-              message: `🎯 TARGET UPDATED!\n\n${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(adjustResponse.data.new_targets.monthly_target)}\nNew Weekly Target: ${formatCurrency(adjustResponse.data.new_targets.weekly_target)}\n\nI've optimized your targets based on current performance and market conditions.`,
+              message: `🎯 TARGET UPDATED!\n\n${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(newTargets.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargets.weekly_target)}\n\nI've optimized your targets and updated the dashboard. All progress calculations are now based on your new goals!`,
               timestamp: new Date().toISOString()
             }]);
           }
