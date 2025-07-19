@@ -250,6 +250,7 @@ class CriticalFixesTester:
             # Send a message and check timestamp format
             test_message = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'Test message for timestamp validation'
             }
             
