@@ -396,6 +396,7 @@ class TimestampConsistencyTester:
             for message in messages:
                 chat_request = {
                     'session_id': self.test_session_id,
+                    'role': 'user',
                     'message': message,
                     'context': None
                 }
