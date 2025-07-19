@@ -11,6 +11,16 @@ class ChatMessage(BaseModel):
     message: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
+class ConversationSummary(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    session_id: str
+    summary: str
+    key_decisions: List[str] = []
+    goals_discussed: List[str] = []
+    portfolio_context: Dict[str, Any] = {}
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    message_count: int = 0
+
 class ChatMessageCreate(BaseModel):
     session_id: str
     role: str
