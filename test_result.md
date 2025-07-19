@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix three critical issues: 1) Incorrect timestamps in chat, 2) Character limit truncating AI responses, 3) Additional training data in backend not being used by AI"
+user_problem_statement: "Fix AI behavior and interface issues: 1) AI being overly verbose and ignoring user requests for concise responses, 2) Hardcoded targets instead of dynamic values from backend, 3) Timestamps not using browser timezone, 4) Need clean chat interface on login with backend memory retention, 5) Dashboard should update from AI chat interactions not hardcoded values"
 
 backend:
   - task: "Technical Analysis Service Implementation"
