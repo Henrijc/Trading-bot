@@ -11,7 +11,7 @@ const API = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKE
 const LoginSystem = ({ onLoginSuccess }) => {
   const [currentStep, setCurrentStep] = useState('login'); // login, setup_2fa, verify_2fa, analysis
   const [loginData, setLoginData] = useState({
-    username: 'admin',
+    username: 'Henrijc',
     password: '',
     totp_code: '',
     backup_code: ''
