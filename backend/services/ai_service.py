@@ -194,6 +194,62 @@ YOU HAVE ACCESS TO LIVE DATA - USE IT IN EVERY RESPONSE.{training_context}"""
                 except Exception as e:
                     print(f"Web search error: {e}")
             
+            # Check for semi-auto trade requests
+            trade_keywords = ['execute trade', 'do that trade', 'make that trade', 'execute that', 'do it', 'go for it', 'execute all']
+            has_trade_request = any(keyword in message.lower() for keyword in trade_keywords)
+            
+            if has_trade_request:
+                try:
+                    # Import to avoid circular import
+                    from services.semi_auto_trade_service import SemiAutoTradeService
+                    trade_service = SemiAutoTradeService()
+                    
+                    # Check if user wants to execute all pending trades
+                    if 'execute all' in message.lower():
+                        pending_trades = trade_service.get_pending_trades()
+                        if pending_trades:
+                            execution_results = []
+                            for trade in pending_trades:
+                                result = await trade_service.execute_approved_trade(trade['id'], message)
+                                execution_results.append(result)
+                            
+                            success_count = sum(1 for r in execution_results if r.get('success'))
+                            enhanced_context += f"**TRADE EXECUTION RESULTS:**\nExecuted {success_count}/{len(pending_trades)} trades successfully.\n\n"
+                    
+                    # Check for specific trade ID in message
+                    elif 'execute trade' in message.lower():
+                        import re
+                        trade_id_match = re.search(r'execute trade ([a-zA-Z0-9]+)', message.lower())
+                        if trade_id_match:
+                            trade_id = trade_id_match.group(1)
+                            result = await trade_service.execute_approved_trade(trade_id, message)
+                            if result.get('success'):
+                                enhanced_context += f"**TRADE EXECUTED:**\n{result['message']}\n\n"
+                            else:
+                                enhanced_context += f"**TRADE FAILED:**\n{result.get('error', 'Unknown error')}\n\n"
+                    
+                except Exception as e:
+                    print(f"Trade execution error: {e}")
+            
+            # Check for trade suggestion requests
+            suggest_keywords = ['suggest trades', 'trading opportunities', 'what should i trade', 'any trades', 'trading suggestions', 'analyze market']
+            has_suggest_request = any(keyword in message.lower() for keyword in suggest_keywords)
+            
+            if has_suggest_request:
+                try:
+                    from services.semi_auto_trade_service import SemiAutoTradeService
+                    trade_service = SemiAutoTradeService()
+                    
+                    portfolio_data = await self.luno_service.get_portfolio_data()
+                    suggestions_result = await trade_service.analyze_and_suggest_trades(portfolio_data, message)
+                    
+                    if suggestions_result.get('success') and suggestions_result.get('suggestions'):
+                        approval_message = await trade_service.generate_trade_approval_message(suggestions_result['suggestions'])
+                        enhanced_context += f"**TRADE SUGGESTIONS:**\n{approval_message}\n\n"
+                    
+                except Exception as e:
+                    print(f"Trade suggestion error: {e}")
+            
             if context:
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
