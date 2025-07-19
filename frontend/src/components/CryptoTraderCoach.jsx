@@ -201,17 +201,35 @@ const CryptoTraderCoach = () => {
 
   const loadChatHistory = async () => {
     try {
+      console.log('Loading chat history for session:', sessionId);
       const response = await axios.get(`${API}/chat/history/${sessionId}`);
-      setChatMessages(response.data);
+      console.log('Chat history response:', response.data);
+      
+      if (response.data && response.data.length > 0) {
+        setChatMessages(response.data);
+        console.log('Chat history loaded:', response.data.length, 'messages');
+      } else {
+        // Start with a welcome message if no history
+        const welcomeMessage = [{
+          id: 1,
+          role: 'assistant',
+          message: 'Hello! I am your AI Trading Coach and I am here to help you reach your R100,000 monthly target. I can analyze your portfolio, research market conditions, and help you make informed trading decisions. What would you like to know about your investments or the crypto market?',
+          timestamp: new Date().toISOString()
+        }];
+        setChatMessages(welcomeMessage);
+        console.log('No chat history found, starting with welcome message');
+      }
     } catch (error) {
       console.error('Error loading chat history:', error);
       // Start with a welcome message if no history
-      setChatMessages([{
+      const welcomeMessage = [{
         id: 1,
         role: 'assistant',
         message: 'Hello! I am your AI Trading Coach and I am here to help you reach your R100,000 monthly target. I can analyze your portfolio, research market conditions, and help you make informed trading decisions. What would you like to know about your investments or the crypto market?',
         timestamp: new Date().toISOString()
-      }]);
+      }];
+      setChatMessages(welcomeMessage);
+      console.log('Error loading chat history, starting with welcome message');
     }
   };
 
