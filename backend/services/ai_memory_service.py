@@ -132,9 +132,13 @@ class AIMemoryService:
 Concise, factual summary in 3-4 sentences that the AI can reference later to provide better advice.
 """
             
+            # Dynamic import to avoid circular dependency
+            from services.ai_service import AICoachService
+            ai_service = AICoachService()
+            
             # Use AI to generate memory summary
-            chat = self.ai_service._create_chat_session("memory_consolidation")
-            user_message = self.ai_service._create_user_message(prompt)
+            chat = ai_service._create_chat_session("memory_consolidation")
+            user_message = ai_service._create_user_message(prompt)
             response = await chat.send_message(user_message)
             
             return response.strip()
