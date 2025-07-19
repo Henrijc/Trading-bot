@@ -168,6 +168,7 @@ class CriticalFixesTester:
             # Send follow-up message that requires previous context
             followup_message = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'What trading strategy would you recommend for me based on what I told you earlier?'
             }
             
