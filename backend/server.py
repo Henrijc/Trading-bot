@@ -497,6 +497,37 @@ async def toggle_autotrade(enabled: bool):
         print(f"Error toggling autotrade: {e}")
         raise HTTPException(status_code=500, detail="Failed to toggle autotrade")
 
+# AI Memory endpoints
+@api_router.post("/ai/memory/consolidate")
+async def consolidate_daily_memory():
+    """Manually trigger daily memory consolidation"""
+    try:
+        result = await memory_service.consolidate_daily_memory()
+        return result
+    except Exception as e:
+        print(f"Error consolidating memory: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ai/memory/recent")
+async def get_recent_memories(days: int = 7):
+    """Get recent daily memories"""
+    try:
+        memories = await memory_service.get_recent_memories(days)
+        return {"memories": memories, "days": days}
+    except Exception as e:
+        print(f"Error getting recent memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/ai/memory/schedule")
+async def schedule_memory_consolidation():
+    """Schedule daily memory consolidation"""
+    try:
+        result = await memory_service.schedule_daily_consolidation()
+        return result
+    except Exception as e:
+        print(f"Error scheduling memory consolidation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Import the new models at the top
 from models import AutoTradingSettings, AutoTradeLog, AutoTradingSettingsCreate
 
