@@ -401,48 +401,6 @@ const CryptoTraderCoach = () => {
       console.log('AI response received:', response.data);
       setChatMessages(prev => [...prev, response.data]);
       
-      // Enhanced target adjustment detection
-      const message = response.data.message.toLowerCase();
-      const targetKeywords = ['adjust', 'change', 'update', 'set', 'modify'];
-      const targetWords = ['target', 'goal', 'monthly', 'weekly'];
-      const hasTargetAdjustment = targetKeywords.some(keyword => message.includes(keyword)) && 
-                                 targetWords.some(word => message.includes(word));
-      
-      // Also check if the AI specifically suggests a target change
-      const suggestsChange = message.includes('recommend') && (message.includes('target') || message.includes('goal'));
-      
-      if (hasTargetAdjustment || suggestsChange) {
-        try {
-          const adjustResponse = await axios.post(`${API}/ai/adjust-targets`, {
-            reason: inputMessage,
-            ai_suggestion: response.data.message
-          });
-          
-          if (adjustResponse.data.success) {
-            // Update local state immediately for dashboard refresh
-            const newTargets = adjustResponse.data.new_targets;
-            setMonthlyTargetState(newTargets.monthly_target);
-            setWeeklyTargetState(newTargets.weekly_target);
-            
-            // Force reload target settings to sync with backend
-            await loadTargetSettings();
-            
-            // Force refresh all data to update dashboard
-            await loadInitialData();
-            
-            // Add AI message about target adjustment
-            setChatMessages(prev => [...prev, {
-              id: Date.now() + 1,
-              role: 'assistant',
-              message: `🎯 TARGET UPDATED!\n\n${adjustResponse.data.message}\n\nNew Monthly Target: ${formatCurrency(newTargets.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargets.weekly_target)}\n\nI've optimized your targets and updated the dashboard. All progress calculations are now based on your new goals!`,
-              timestamp: new Date().toISOString()
-            }]);
-          }
-        } catch (error) {
-          console.error('Error adjusting targets:', error);
-        }
-      }
-      
       // Check if AI suggests a trade
       if (response.data.message.includes('BUY') || response.data.message.includes('SELL')) {
         // Add a follow-up message with trading options
