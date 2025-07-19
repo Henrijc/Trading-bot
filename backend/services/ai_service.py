@@ -251,7 +251,7 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
                     print(f"Trade suggestion error: {e}")
             
             # Check if user is asking for portfolio-related information and add to existing context
-            portfolio_keywords = ['portfolio', 'holdings', 'balance', 'value', 'allocation', 'assets', 'my coins', 'my crypto']
+            portfolio_keywords = ['portfolio', 'holdings', 'balance', 'value', 'allocation', 'assets', 'my coins', 'my crypto', 'profile', 'staking', 'stake', 'staked', 'examine', 'check', 'see', 'show me']
             requests_portfolio = any(keyword in message.lower() for keyword in portfolio_keywords)
             
             # Check if user is asking for market analysis
