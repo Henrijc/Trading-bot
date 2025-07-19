@@ -110,6 +110,13 @@ class AIKnowledgeBase:
         """Get comprehensive knowledge context for AI"""
         context_parts = []
         
+        # Load comprehensive training data first
+        training_data = self.get_training_data()
+        if training_data:
+            # Extract the most relevant sections for context
+            # This is the comprehensive training data that should guide AI behavior
+            context_parts.append(f"**COMPREHENSIVE AI TRAINING DATA:**\n{training_data[:8000]}")  # Use first 8k chars to stay within limits
+        
         # Trading strategies
         strategies = self.get_trading_strategies()
         if strategies:
