@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CryptoTraderCoach from './components/CryptoTraderCoach.jsx';
-import LoginSystem from './components/LoginSystem.jsx';
+import SimpleLogin from './components/SimpleLogin.jsx';
 import './App.css';
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (session) => {
+    localStorage.setItem('auth_token', session.token);
     setIsAuthenticated(true);
     setUserSession(session);
   };
@@ -28,7 +29,7 @@ function App() {
   };
 
   if (!isAuthenticated) {
-    return <LoginSystem onLoginSuccess={handleLoginSuccess} />;
+    return <SimpleLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
