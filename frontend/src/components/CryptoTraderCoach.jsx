@@ -282,7 +282,7 @@ const CryptoTraderCoach = () => {
         setChatMessages(prev => [...prev, {
           id: Date.now(),
           role: 'assistant',
-          message: `🎯 TRADING CAMPAIGN CREATED!\n\n${response.data.campaign.name}\n\nAllocated Capital: R${newCampaignData.allocated_capital:,.0f}\nProfit Target: R${newCampaignData.profit_target:,.0f}\nTimeframe: ${newCampaignData.timeframe_days} days\n\n${response.data.risk_warning}\n\nI'm now monitoring the markets for high-probability opportunities. Let's make this work!`,
+          message: `🎯 TRADING CAMPAIGN CREATED!\n\n${response.data.campaign.name}\n\nAllocated Capital: R${newCampaignData.allocated_capital.toLocaleString()}\nProfit Target: R${newCampaignData.profit_target.toLocaleString()}\nTimeframe: ${newCampaignData.timeframe_days} days\n\n${response.data.risk_warning}\n\nI'm now monitoring the markets for high-probability opportunities. Let's make this work!`,
           timestamp: new Date().toISOString()
         }]);
         
