@@ -237,11 +237,12 @@ const CryptoTraderCoach = () => {
     } catch (error) {
       console.error('Error loading chat history:', error);
       // Start with a clean welcome message if error loading history
+      const errorTimestamp = new Date();
       const welcomeMessage = [{
         id: 1,
         role: 'assistant',
         message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
-        timestamp: new Date().toISOString()
+        timestamp: errorTimestamp.toISOString()
       }];
       setChatMessages(welcomeMessage);
       console.log('Error loading chat history, starting with welcome message');
