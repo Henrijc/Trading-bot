@@ -18,6 +18,7 @@ from services.luno_service import LunoService
 from services.technical_analysis_service import TechnicalAnalysisService
 from services.ai_knowledge_base import AIKnowledgeBase
 from services.trading_campaign_service import TradingCampaignService
+from services.ai_memory_service import AIMemoryService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
