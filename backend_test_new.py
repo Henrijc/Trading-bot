@@ -360,6 +360,7 @@ class AIBehaviorTester:
             # Test AI target adjustment request
             adjustment_request = {
                 'session_id': f"{self.test_session_id}_targets",
+                'role': 'user',
                 'message': "I want to increase my monthly target to R150000 based on recent performance"
             }
             
