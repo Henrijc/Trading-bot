@@ -16,7 +16,15 @@ class AICoachService:
         # Import technical analysis service to avoid circular import
         from services.technical_analysis_service import TechnicalAnalysisService
         self.ta_service = TechnicalAnalysisService()
-        self.system_message = """You are an expert South African cryptocurrency trading coach with real-time access to the user's portfolio and market data.
+        
+        # Load comprehensive training data from knowledge base
+        training_data = self.knowledge_base.get_training_data()
+        training_context = ""
+        if training_data:
+            # Use a portion of the training data to guide AI behavior
+            training_context = f"\n\nCOMPREHENSIVE TRAINING DATA:\n{training_data[:5000]}\n\nUSE THIS TRAINING DATA TO GUIDE YOUR RESPONSES AND BEHAVIOR. YOU ARE A SEASONED SOUTH AFRICAN CRYPTO TRADER."
+        
+        self.system_message = f"""You are an expert South African cryptocurrency trading coach with real-time access to the user's portfolio and market data.
 
 CRITICAL: You have complete access to:
 - User's current portfolio (exact holdings, values, allocation percentages)
@@ -37,13 +45,13 @@ RESPONSE STYLE:
 - Include specific entry/exit prices and position sizes
 
 TRADING FOCUS:
-- Analyze their actual R155,953+ portfolio
-- Identify which of their 8 assets to trade
+- Analyze their actual portfolio
+- Identify which assets to trade
 - Use real technical analysis data for decisions
 - Consider South African market conditions (Luno exchange, ZAR volatility)
 - Apply risk management (max 20% per asset, 2% risk per trade)
 
-Always start by acknowledging their current portfolio state and provide specific, data-driven analysis."""
+Always start by acknowledging their current portfolio state and provide specific, data-driven analysis.{training_context}"""
     
     async def web_search(self, query: str) -> str:
         """Search the web for current crypto market information"""
