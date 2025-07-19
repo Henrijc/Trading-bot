@@ -161,6 +161,17 @@ Always start by acknowledging their current portfolio state and provide specific
             # Build enhanced context - keep it focused and concise
             enhanced_context = ""
             
+            # Add web search for market-related queries
+            web_research = ""
+            market_keywords = ['market', 'analysis', 'price', 'bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'trading', 'news', 'sentiment', 'trend']
+            if any(keyword in message.lower() for keyword in market_keywords):
+                try:
+                    web_research = await self.web_search(message)
+                    if web_research:
+                        enhanced_context += f"**REAL-TIME MARKET DATA:**\n{web_research}\n\n"
+                except Exception as e:
+                    print(f"Web search error: {e}")
+            
             if context:
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
