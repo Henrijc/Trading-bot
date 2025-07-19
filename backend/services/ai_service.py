@@ -122,35 +122,40 @@ class AICoachService:
             return f"Web search temporarily unavailable. Using real-time market data for analysis of: {query}"
     
     async def send_message(self, session_id: str, message: str, context: Dict[str, Any] = None) -> str:
-        """Send a message to the AI coach and get a response with technical analysis"""
+        """Send a message to the AI coach and get a response with enhanced knowledge"""
         try:
             # Create a new chat instance for each session
             chat = LlmChat(
                 api_key=self.api_key,
                 session_id=session_id,
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1500)
             
-            # Enhance context with real-time data and technical analysis
+            # Build enhanced context with knowledge base
             enhanced_context = ""
+            
+            # Add knowledge base context
+            knowledge_context = self.knowledge_base.get_enhanced_context("default")
+            if knowledge_context:
+                enhanced_context += knowledge_context
             
             if context:
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
                 holdings_count = len(holdings)
                 
-                enhanced_context = f"""
-**Current Portfolio:**
-- Value: R{portfolio_value:,.2f}
+                enhanced_context += f"""
+**CURRENT REAL-TIME DATA:**
+- Portfolio Value: R{portfolio_value:,.2f}
 - Holdings: {holdings_count} assets
 - Real-time market data available
 
-**Market Context:**
+**MARKET CONTEXT:**
 - All prices are real-time from Luno and CoinGecko
 - USD pairs converted to ZAR at current rates
 - Technical analysis indicators available
 
-**User Question:** {message}
+**USER QUESTION:** {message}
 """
             
             # Add technical analysis if user asks about specific cryptos or trading
@@ -182,7 +187,7 @@ class AICoachService:
                                 continue
                         
                         if ta_insights:
-                            enhanced_context += f"\n**Technical Analysis:**\n" + "\n".join(f"- {insight}" for insight in ta_insights) + "\n"
+                            enhanced_context += f"\n**TECHNICAL ANALYSIS:**\n" + "\n".join(f"- {insight}" for insight in ta_insights) + "\n"
                 
                 except Exception as e:
                     print(f"Error adding technical analysis to context: {e}")
