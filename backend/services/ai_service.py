@@ -612,80 +612,92 @@ Keep recommendations under R{settings.get('max_trade_amount', 1000):,.2f} per tr
             }
 
     async def adjust_targets(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Allow AI to analyze and adjust targets based on real performance"""
+        """Allow AI to analyze and adjust targets based on real performance and user requests"""
         try:
             current_value = context.get("current_portfolio", 0)
             current_target = context.get("current_monthly_target", 100000)
             reason = context.get("request", "")
+            ai_suggestion = context.get("ai_suggestion", "")
+            
+            # Parse user request for specific target amounts
+            import re
+            user_target_match = re.search(r'[Rr]?\s?(\d{1,3}(?:,?\d{3})*(?:k|K)?)', reason)
+            specific_target = None
+            
+            if user_target_match:
+                target_str = user_target_match.group(1).replace(',', '').upper()
+                if 'K' in target_str:
+                    specific_target = int(target_str.replace('K', '')) * 1000
+                else:
+                    specific_target = int(target_str)
             
             # Get market conditions for context
             market_research = await self.web_search("cryptocurrency market outlook 2025")
             
-            prompt = f"""Analyze real trading performance and determine if target adjustments are needed.
+            prompt = f"""You are analyzing a target adjustment request from a South African crypto trader.
 
-**Current Situation:**
+**CURRENT SITUATION:**
 - Portfolio Value: R{current_value:,.2f}
-- Monthly Target: R{current_target:,.2f}
+- Current Monthly Target: R{current_target:,.2f}
 - Progress: {(current_value / current_target * 100):.1f}%
-- Reason for Review: {reason}
+- User Request: "{reason}"
+- Specific Target Requested: {f"R{specific_target:,.2f}" if specific_target else "Not specified"}
 
-**Market Context:**
+**MARKET CONTEXT:**
 {market_research}
 
-**Your Task:**
-Based on REAL data, analyze if the monthly target should be adjusted:
+**YOUR TASK:**
+Analyze this request and determine the optimal monthly target:
 
-1. **Should targets be adjusted?** (Yes/No)
-2. **New Monthly Target** (if adjusting)
-3. **Reasoning** (why this adjustment makes sense)
-4. **Action Plan** (how to achieve the new target)
+**DECISION RULES:**
+1. If user specifies exact amount (e.g., "change to R150k"), use that if reasonable
+2. If user says "adjust based on performance", analyze current progress
+3. Consider market conditions and risk management
+4. Ensure target is challenging but achievable
 
-**Guidelines:**
-- Be realistic based on current performance
-- Consider actual market conditions
-- Ensure targets are achievable but challenging
-- Factor in risk management
+**RESPONSE FORMAT:**
+If adjusting: "ADJUST: New monthly target should be R[amount] because [detailed reason]"
+If maintaining: "MAINTAIN: Current target is appropriate because [reason]"
 
-**Response Format:**
-If adjusting: "ADJUST: New monthly target should be R[amount] because [reason]"
-If not adjusting: "MAINTAIN: Current target is appropriate because [reason]"
+**FACTORS TO CONSIDER:**
+- Current portfolio performance vs target
+- Market volatility and conditions
+- Risk management (target should be 50-200% of current portfolio value)
+- User's trading experience and goals
+- South African market conditions (ZAR volatility, Luno liquidity)
 
-Then provide detailed explanation and action plan."""
+Provide a detailed explanation with specific reasoning."""
             
             chat = LlmChat(
                 api_key=self.api_key,
                 session_id="target_adjustment",
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1200)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1500)
             
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
             
-            # Parse AI response to extract new targets
+            # Parse AI response to extract new targets - try multiple patterns
+            new_monthly_target = None
+            
+            # Pattern 1: ADJUST: ... R[amount]
             if "ADJUST:" in response:
-                # Extract new target amount
                 import re
                 target_match = re.search(r'R([\d,]+)', response)
                 if target_match:
                     new_monthly_target = int(target_match.group(1).replace(',', ''))
-                    new_weekly_target = new_monthly_target / 4
-                    new_daily_target = new_weekly_target / 7
-                    
-                    return {
-                        "new_targets": {
-                            "monthly_target": new_monthly_target,
-                            "weekly_target": new_weekly_target,
-                            "daily_target": new_daily_target
-                        },
-                        "explanation": response,
-                        "adjusted": True
-                    }
             
-            # Also check for specific target mentions in the response
-            import re
-            target_match = re.search(r'target should be R([\d,]+)', response.lower())
-            if target_match:
-                new_monthly_target = int(target_match.group(1).replace(',', ''))
+            # Pattern 2: If user specified a target, use it (if AI agreed)
+            elif specific_target and ("reasonable" in response.lower() or "appropriate" in response.lower()):
+                new_monthly_target = specific_target
+            
+            # Pattern 3: Look for "target should be" anywhere in response
+            if not new_monthly_target:
+                target_match = re.search(r'target should be R([\d,]+)', response.lower())
+                if target_match:
+                    new_monthly_target = int(target_match.group(1).replace(',', ''))
+            
+            if new_monthly_target and new_monthly_target != current_target:
                 new_weekly_target = new_monthly_target / 4
                 new_daily_target = new_weekly_target / 7
                 
@@ -696,17 +708,20 @@ Then provide detailed explanation and action plan."""
                         "daily_target": new_daily_target
                     },
                     "explanation": response,
-                    "adjusted": True
+                    "adjusted": True,
+                    "user_requested": specific_target is not None
                 }
             
             return {
                 "explanation": response,
-                "adjusted": False
+                "adjusted": False,
+                "reason": "No adjustment needed or AI recommended maintaining current target"
             }
             
         except Exception as e:
             print(f"Error in target adjustment: {e}")
             return {
                 "explanation": "I couldn't analyze the targets right now. Let's keep the current targets for now.",
-                "adjusted": False
+                "adjusted": False,
+                "error": str(e)
             }
