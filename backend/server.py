@@ -997,7 +997,7 @@ async def get_market_technical_overview():
         
         return {
             'market_overview': overview,
-            'timestamp': datetime.now().isoformat(),
+            'timestamp': datetime.utcnow().isoformat(),
             'analyzed_assets': len(overview)
         }
         
