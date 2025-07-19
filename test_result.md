@@ -207,9 +207,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Technical Analysis Service Implementation"
-    - "Technical Analysis API Endpoints"
-    - "AI Service Technical Analysis Integration"
+    - "AI Response Style Fix - Make Concise by Default"
+    - "Remove Hardcoded Targets and Make Dynamic"
+    - "Fix Timestamp to Use Browser Timezone"
+    - "Clean Chat Interface on Login"
+    - "Make Dashboard Update from AI Chat"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
