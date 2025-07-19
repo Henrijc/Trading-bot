@@ -215,7 +215,7 @@ class SemiAutoTradeService:
                 "executed_price": trade_instruction.get("amount", 0) / 0.001,  # Sample price calculation
                 "executed_amount": trade_instruction.get("amount", 0),
                 "fees": trade_instruction.get("amount", 0) * 0.001,  # 0.1% fee
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
