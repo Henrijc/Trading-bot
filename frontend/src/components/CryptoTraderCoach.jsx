@@ -52,6 +52,11 @@ const CryptoTraderCoach = () => {
     timeframe_days: 7,
     risk_level: 'aggressive'
   });
+  const [showTargetAdjustmentModal, setShowTargetAdjustmentModal] = useState(false);
+  const [newTargetData, setNewTargetData] = useState({
+    monthly_target: 100000,
+    weekly_target: 25000
+  });
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
