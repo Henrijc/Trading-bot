@@ -485,7 +485,7 @@ class ComprehensiveBackendTester:
                     self.log_test("Chat Message Timestamp Consistency", False, "No timestamp in response")
                     return False
                 
-                if not self.is_valid_utc_timestamp(ai_timestamp):
+                if not self.is_valid_utc_timestamp(ai_timestamp, allow_historical=False):
                     self.log_test("Chat Message Timestamp Consistency", False, 
                                 f"Invalid timestamp: {ai_timestamp}")
                     return False
