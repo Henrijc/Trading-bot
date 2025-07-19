@@ -312,6 +312,7 @@ class CriticalFixesTester:
             for i, message_text in enumerate(messages):
                 message = {
                     'session_id': self.test_session_id,
+                    'role': 'user',
                     'message': message_text
                 }
                 
