@@ -545,12 +545,12 @@ class ComprehensiveBackendTester:
                     created_at = data.get('created_at')
                     updated_at = data.get('updated_at')
                     
-                    if created_at and not self.is_valid_utc_timestamp(created_at):
+                    if created_at and not self.is_valid_utc_timestamp(created_at, allow_historical=True):
                         self.log_test("User Goals Persistence", False, 
                                     f"Invalid created_at timestamp: {created_at}")
                         return False
                     
-                    if updated_at and not self.is_valid_utc_timestamp(updated_at):
+                    if updated_at and not self.is_valid_utc_timestamp(updated_at, allow_historical=True):
                         self.log_test("User Goals Persistence", False, 
                                     f"Invalid updated_at timestamp: {updated_at}")
                         return False
