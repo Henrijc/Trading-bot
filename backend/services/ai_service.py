@@ -129,7 +129,7 @@ class AICoachService:
                 api_key=self.api_key,
                 session_id=session_id,
                 system_message=self.system_message
-            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1500)
+            ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(2500)
             
             # Build enhanced context with knowledge base
             enhanced_context = ""
