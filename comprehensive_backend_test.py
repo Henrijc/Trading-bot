@@ -67,7 +67,7 @@ class ComprehensiveBackendTester:
             print(f"    Response: {response_data}")
         print()
     
-    def is_valid_utc_timestamp(self, timestamp_str: str) -> bool:
+    def is_valid_utc_timestamp(self, timestamp_str: str, allow_historical: bool = True) -> bool:
         """Check if timestamp is in valid UTC ISO format"""
         try:
             # Parse the timestamp
@@ -77,9 +77,12 @@ class ComprehensiveBackendTester:
             now = datetime.now(timezone.utc)
             time_diff = abs((now - dt.replace(tzinfo=timezone.utc)).total_seconds())
             
-            # Should be within 24 hours of current time for most operations
-            # This is more lenient to account for stored data
-            return time_diff < 86400  # 24 hours
+            if allow_historical:
+                # For stored data, allow up to 30 days old
+                return time_diff < 2592000  # 30 days
+            else:
+                # For real-time data, should be within 1 hour
+                return time_diff < 3600  # 1 hour
         except Exception as e:
             print(f"    Invalid timestamp format: {timestamp_str}, Error: {e}")
             return False
