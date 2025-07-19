@@ -223,11 +223,11 @@ const CryptoTraderCoach = () => {
         setChatMessages(response.data);
         console.log('Chat history loaded:', response.data.length, 'messages');
       } else {
-        // Start with a welcome message if no history
+        // Start with a clean welcome message if no history
         const welcomeMessage = [{
           id: 1,
           role: 'assistant',
-          message: 'Hello! I am your AI Trading Coach and I am here to help you reach your R100,000 monthly target. I can analyze your portfolio, research market conditions, and help you make informed trading decisions. What would you like to know about your investments or the crypto market?',
+          message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
           timestamp: new Date().toISOString()
         }];
         setChatMessages(welcomeMessage);
