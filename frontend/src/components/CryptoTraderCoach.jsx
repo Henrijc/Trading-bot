@@ -554,6 +554,13 @@ const CryptoTraderCoach = () => {
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <Button
+                onClick={handleNewSession}
+                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold border border-green-500/50 shadow-lg shadow-green-500/25 transition-all duration-300"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Session
+              </Button>
+              <Button
                 onClick={handleRefresh}
                 className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold border border-amber-500/50 shadow-lg shadow-amber-500/25 transition-all duration-300"
               >
