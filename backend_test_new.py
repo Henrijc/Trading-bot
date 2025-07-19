@@ -68,6 +68,7 @@ class AIBehaviorTester:
             # Test simple price question - should be concise
             simple_request = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': "What's BTC price?"
             }
             
