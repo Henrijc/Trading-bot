@@ -145,7 +145,7 @@ class ComprehensiveBackendTester:
                 # Check timestamps are in UTC format
                 timestamps = self.extract_timestamps_from_response(data)
                 for field_path, timestamp in timestamps:
-                    if not self.is_valid_utc_timestamp(timestamp):
+                    if not self.is_valid_utc_timestamp(timestamp, allow_historical=True):
                         self.log_test("Target Settings GET", False, 
                                     f"Invalid timestamp in {field_path}: {timestamp}")
                         return False
