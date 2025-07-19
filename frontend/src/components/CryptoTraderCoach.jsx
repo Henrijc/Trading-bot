@@ -766,13 +766,13 @@ const CryptoTraderCoach = () => {
                         </div>
                         <div className="text-center p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
                           <div className="text-2xl font-bold font-mono text-blue-400">
-                            {formatCurrency(monthlyTargetState)}
+                            {formatCurrency(monthlyTargetState || 100000)}
                           </div>
                           <div className="text-sm text-blue-300/80">Monthly Target</div>
                         </div>
                         <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-amber-600/30">
                           <div className="text-2xl font-bold font-mono text-amber-400">
-                            {formatCurrency(monthlyTargetState - currentMonthProgress)}
+                            {formatCurrency((monthlyTargetState || 100000) - currentMonthProgress)}
                           </div>
                           <div className="text-sm text-amber-300/80">Remaining</div>
                         </div>
@@ -780,14 +780,14 @@ const CryptoTraderCoach = () => {
                       <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
                         <div 
                           className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 transition-all duration-1000 ease-out shadow-lg relative"
-                          style={{width: `${Math.min((currentMonthProgress / monthlyTargetState) * 100, 100)}%`}}
+                          style={{width: `${Math.min((currentMonthProgress / (monthlyTargetState || 100000)) * 100, 100)}%`}}
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                         </div>
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold font-mono bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
-                          {((currentMonthProgress / monthlyTargetState) * 100).toFixed(1)}%
+                          {((currentMonthProgress / (monthlyTargetState || 100000)) * 100).toFixed(1)}%
                         </div>
                         <div className="text-amber-400/80 text-sm mt-1 font-medium">
                           Progress Towards Freedom
