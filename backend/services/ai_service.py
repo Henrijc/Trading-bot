@@ -376,7 +376,8 @@ Focus on actionable information and specific details that would be useful contex
             # Use a simple chat instance for summarization
             summary_chat = LlmChat(
                 api_key=self.api_key,
-                session_id="summary_session"
+                session_id="summary_session",
+                system_message="You are an AI assistant that creates structured summaries of conversations."
             ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(1000)
             
             response = await summary_chat.send_message(summary_prompt)
