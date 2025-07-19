@@ -43,6 +43,15 @@ const CryptoTraderCoach = () => {
   const [technicalIndicators, setTechnicalIndicators] = useState(null);
   const [marketOverview, setMarketOverview] = useState(null);
   const [dataLoadingComplete, setDataLoadingComplete] = useState(false);
+  const [activeCampaigns, setActiveCampaigns] = useState([]);
+  const [campaignProgress, setCampaignProgress] = useState(null);
+  const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
+  const [newCampaignData, setNewCampaignData] = useState({
+    allocated_capital: 10000,
+    profit_target: 10000,
+    timeframe_days: 7,
+    risk_level: 'aggressive'
+  });
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
