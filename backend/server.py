@@ -47,8 +47,13 @@ security_service = SecurityService()
 # Security middleware
 security = HTTPBearer()
 
-# Create the main app without a prefix
-app = FastAPI(title="Crypto Trading Coach API", version="1.0.0")
+# Create the main app with security headers
+app = FastAPI(
+    title="Crypto Trading Coach API",
+    version="1.0.0",
+    docs_url=None,  # Disable docs in production
+    redoc_url=None,  # Disable redoc in production
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
