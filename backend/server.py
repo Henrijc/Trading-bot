@@ -44,6 +44,7 @@ campaign_service = TradingCampaignService()
 memory_service = AIMemoryService()
 semi_auto_service = SemiAutoTradeService()
 security_service = SecurityService()
+auth_service = AuthenticationService()
 
 # Security middleware
 security = HTTPBearer()
