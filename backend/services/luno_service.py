@@ -376,7 +376,7 @@ class LunoService:
                 'total_value': total_value,
                 'currency': 'ZAR',
                 'holdings': holdings,
-                'last_updated': datetime.now().isoformat()
+                'last_updated': datetime.utcnow().isoformat()
             }
             
         except Exception as e:
