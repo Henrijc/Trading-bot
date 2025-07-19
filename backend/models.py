@@ -108,7 +108,49 @@ class RiskMetrics(BaseModel):
     recommendations: List[str]
     calculated_at: datetime = Field(default_factory=datetime.utcnow)
 
-# Auto Trading Models
+# Targeted Trading Campaign Models
+class TradingCampaign(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = "default"
+    name: str
+    allocated_capital: float  # Amount allocated (e.g., 10000 ZAR)
+    profit_target: float      # Target profit (e.g., 10000 ZAR)
+    timeframe_days: int       # Timeframe in days (e.g., 7 for 1 week)
+    start_date: datetime = Field(default_factory=datetime.utcnow)
+    end_date: datetime
+    current_value: float = 0.0
+    total_profit_loss: float = 0.0
+    trades_executed: int = 0
+    win_rate: float = 0.0
+    status: str = "active"  # active, completed, failed, paused
+    risk_level: str = "aggressive"  # conservative, moderate, aggressive
+    strategy_type: str = "momentum_scalping"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CampaignTrade(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    campaign_id: str
+    symbol: str
+    action: str  # BUY, SELL
+    amount: float
+    entry_price: float
+    exit_price: Optional[float] = None
+    profit_loss: Optional[float] = None
+    executed_at: datetime = Field(default_factory=datetime.utcnow)
+    closed_at: Optional[datetime] = None
+    status: str = "open"  # open, closed, failed
+    strategy_reason: str
+
+class CampaignProgress(BaseModel):
+    campaign_id: str
+    current_capital: float
+    profit_target: float
+    days_remaining: int
+    progress_percentage: float
+    daily_pnl: List[Dict[str, Any]] = []
+    recent_trades: List[CampaignTrade] = []
+    risk_metrics: Dict[str, float] = {}
+    next_actions: List[str] = []
 class AutoTradingSettings(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
