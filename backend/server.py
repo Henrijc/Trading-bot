@@ -149,6 +149,9 @@ async def clear_chat_history(session_id: str):
             {"session_id": session_id}
         )
         
+        # Also clear the AI session to start fresh
+        ai_service.clear_session(session_id)
+        
         return {
             "success": True, 
             "message": f"Cleared {result.deleted_count} messages for session {session_id}",
