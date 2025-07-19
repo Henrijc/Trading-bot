@@ -752,6 +752,63 @@ async def get_market_technical_overview():
         print(f"Error getting market technical overview: {e}")
         raise HTTPException(status_code=500, detail="Failed to get market technical overview")
 
+# Knowledge Base Management endpoints
+@api_router.get("/knowledge/categories")
+async def get_knowledge_categories():
+    """Get all available knowledge categories and files"""
+    try:
+        categories = knowledge_base.list_knowledge_files()
+        return categories
+    except Exception as e:
+        print(f"Error getting knowledge categories: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get knowledge categories")
+
+@api_router.get("/knowledge/{category}")
+async def get_knowledge_category(category: str):
+    """Get all knowledge from a specific category"""
+    try:
+        knowledge = knowledge_base.load_category_knowledge(category)
+        return knowledge
+    except Exception as e:
+        print(f"Error getting knowledge category {category}: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get knowledge category: {category}")
+
+@api_router.get("/knowledge/{category}/{filename}")
+async def get_knowledge_file(category: str, filename: str):
+    """Get a specific knowledge file"""
+    try:
+        content = knowledge_base.load_knowledge_file(category, filename)
+        if not content:
+            raise HTTPException(status_code=404, detail="Knowledge file not found")
+        return {"category": category, "filename": filename, "content": content}
+    except Exception as e:
+        print(f"Error getting knowledge file {category}/{filename}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get knowledge file")
+
+@api_router.post("/knowledge/{category}/{filename}")
+async def add_knowledge_file(category: str, filename: str, request: dict):
+    """Add or update a knowledge file"""
+    try:
+        content = request.get('content', '')
+        if not content:
+            raise HTTPException(status_code=400, detail="Content is required")
+        
+        knowledge_base.add_knowledge_file(category, filename, content)
+        return {"message": f"Knowledge file {category}/{filename} added successfully"}
+    except Exception as e:
+        print(f"Error adding knowledge file {category}/{filename}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to add knowledge file")
+
+@api_router.get("/knowledge/enhanced-context")
+async def get_enhanced_context():
+    """Get the full enhanced context that the AI uses"""
+    try:
+        context = knowledge_base.get_enhanced_context("default")
+        return {"enhanced_context": context}
+    except Exception as e:
+        print(f"Error getting enhanced context: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get enhanced context")
+
 # Include the router in the main app
 app.include_router(api_router)
 
