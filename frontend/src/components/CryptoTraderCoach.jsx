@@ -351,11 +351,12 @@ const CryptoTraderCoach = () => {
         await loadInitialData();
         
         // Add AI message about manual target update
+        const targetUpdateTimestamp = new Date();
         setChatMessages(prev => [...prev, {
           id: Date.now(),
           role: 'assistant',
           message: `🎯 TARGETS UPDATED MANUALLY!\n\nNew Monthly Target: ${formatCurrency(newTargetData.monthly_target)}\nNew Weekly Target: ${formatCurrency(newTargetData.weekly_target)}\n\nPerfect! I've updated the dashboard with your new targets. All progress bars and calculations now reflect your new goals. Let's crush these targets together!`,
-          timestamp: new Date().toISOString()
+          timestamp: targetUpdateTimestamp.toISOString()
         }]);
       }
     } catch (error) {
