@@ -474,7 +474,7 @@ class TechnicalAnalysisService:
             return {
                 'symbol': symbol,
                 'current_price': safe_convert(current_price),
-                'timestamp': datetime.now().isoformat(),
+                'timestamp': datetime.utcnow().isoformat(),
                 'trend_analysis': trend,
                 'technical_indicators': {
                     'rsi': safe_convert(rsi.iloc[-1] if not rsi.empty else None),
