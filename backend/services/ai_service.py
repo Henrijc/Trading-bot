@@ -518,7 +518,7 @@ Focus on achieving R100,000 monthly target through practical, data-driven steps 
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
             
-            return {"strategy": response, "technical_analysis": technical_insights, "generated_at": datetime.now().isoformat()}
+            return {"strategy": response, "technical_analysis": technical_insights, "generated_at": datetime.utcnow().isoformat()}
             
         except Exception as e:
             print(f"Error generating daily strategy: {e}")
