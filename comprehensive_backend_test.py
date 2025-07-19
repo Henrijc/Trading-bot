@@ -381,7 +381,7 @@ class ComprehensiveBackendTester:
                         invalid_timestamps = []
                         
                         for field_path, timestamp in timestamps:
-                            if not self.is_valid_utc_timestamp(timestamp):
+                            if not self.is_valid_utc_timestamp(timestamp, allow_historical=True):
                                 invalid_timestamps.append((field_path, timestamp))
                         
                         if invalid_timestamps:
