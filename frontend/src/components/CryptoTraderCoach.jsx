@@ -425,22 +425,23 @@ const CryptoTraderCoach = () => {
       
       // Check if AI suggests a trade
       if (response.data.message.includes('BUY') || response.data.message.includes('SELL')) {
-        // Add a follow-up message with trading options
+        const tradeTimestamp = new Date();
         setChatMessages(prev => [...prev, {
           id: Date.now() + 2,
           role: 'assistant',
           message: `Ready to Execute Trade?\n\nI can help you execute this trade on Luno. Just confirm and I will place the order for you.\n\nNote: This will be a real trade on your Luno account. Always double-check before confirming.`,
-          timestamp: new Date().toISOString()
+          timestamp: tradeTimestamp.toISOString()
         }]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
       // Add error message
+      const errorTimestamp = new Date();
       setChatMessages(prev => [...prev, {
         id: Date.now(),
         role: 'assistant',
         message: 'Connection error. Please try again.',
-        timestamp: new Date().toISOString()
+        timestamp: errorTimestamp.toISOString()
       }]);
     } finally {
       setIsLoading(false);
