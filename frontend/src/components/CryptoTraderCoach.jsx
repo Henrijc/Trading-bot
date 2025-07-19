@@ -368,11 +368,27 @@ const CryptoTraderCoach = () => {
     
     console.log('Sending message:', inputMessage, 'for session:', sessionId);
     
+    // Create single Date object as source of truth
+    const messageTimestamp = new Date();
+    
+    // Use for backend transmission (UTC)
+    const timestampForBackend = messageTimestamp.toISOString();
+    
+    // Use for immediate display (local timezone) 
+    const timestampForDisplay = messageTimestamp.toLocaleString(undefined, { 
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    
     const userMessage = {
       id: Date.now(),
       role: 'user',
       message: inputMessage,
-      timestamp: new Date().toISOString()
+      timestamp: timestampForBackend // Store UTC for consistency with backend
     };
     
     setChatMessages(prev => [...prev, userMessage]);
