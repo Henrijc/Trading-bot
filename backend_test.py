@@ -111,6 +111,7 @@ class TimestampConsistencyTester:
             # Send a chat message
             chat_request = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': 'What is the current BTC price?',
                 'context': None  # Let backend generate fresh context
             }
