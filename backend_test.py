@@ -230,6 +230,7 @@ class TimestampConsistencyTester:
             for i, message in enumerate(messages):
                 chat_request = {
                     'session_id': self.test_session_id,
+                    'role': 'user',
                     'message': message,
                     'context': None
                 }
