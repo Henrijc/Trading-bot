@@ -311,6 +311,8 @@ Number of Holdings: {len(holdings)} assets
             # Always add the user's message
             final_message = enhanced_context + f"**USER MESSAGE:** {message}"
             
+            print(f"DEBUG: Final message to AI (first 500 chars): {final_message[:500]}")
+            
             user_message = UserMessage(text=final_message)
             
             # Send message and get response
