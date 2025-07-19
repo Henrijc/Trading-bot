@@ -1,16 +1,30 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Crypto Trading Coach
-TIMESTAMP CONSISTENCY TESTING - Focus on timestamp fix:
-Testing the critical timestamp inconsistency fix where backend was using datetime.now() 
-instead of datetime.utcnow() causing 2-hour discrepancy between user and AI message timestamps.
+COMPREHENSIVE TIMESTAMP AND GOAL UPDATING FUNCTIONALITY TESTING
 
-FIXES TESTED:
-1. server.py lines 79 and 89: datetime.utcnow().isoformat() for context timestamps
-2. ai_service.py lines 521, 561, 681, 773: datetime.utcnow() for consistent UTC timestamps
-3. Verify all timestamps are in proper UTC format
-4. Test multiple chat messages in sequence for timestamp consistency
-5. Verify context timestamp uses UTC instead of local server time
+CRITICAL TESTING FOCUS:
+1. Test /api/chat/send with real user goal update request: "Change my monthly profit goal to R8000"
+2. Verify AI can access and process real-time portfolio data (no generic error responses)
+3. Test that all timestamps across different services now use consistent UTC format
+4. Verify /api/targets/settings can be updated and reflects new user goals
+5. Test that AI responses include actual portfolio data and real-time calculations
+6. Check that the AI properly saves and retrieves updated user goals
+
+COMPREHENSIVE FIXES MADE:
+1. luno_service.py lines 379, 388: Changed to datetime.utcnow().isoformat()
+2. technical_analysis_service.py lines 27, 39, 66, 93, 139, 477, 571: Changed to datetime.utcnow()
+3. server.py lines 863, 1000: Changed to datetime.utcnow().isoformat()
+4. semi_auto_trade_service.py lines 64, 181, 218: Changed to datetime.utcnow().isoformat()
+5. trading_campaign_service.py line 275: Changed to datetime.utcnow().isoformat()
+
+SPECIFIC USER GOALS TO VERIFY:
+- Monthly profit target: R8000 (should be updateable)
+- Hold 1000 XRP long-term 
+- 4% risk factor with stop-limit strategy
+- Diversification for generational wealth
+
+AUTHENTICATION: Use existing user "Henrijc" for all tests.
 """
 
 import requests
