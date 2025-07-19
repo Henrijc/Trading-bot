@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Crypto Trading Coach
-Tests the recent changes focusing on:
-1. AI Service Response Style (concise by default)
-2. Dynamic Target Loading (not hardcoded)
-3. New Session Endpoint (DELETE chat history)
-4. Context-Aware Portfolio Data (only when requested)
-5. Target Adjustment System (AI chat integration)
+CRITICAL FIXES TESTING - Focus on urgent issues that were just fixed:
+1. AI Context Continuity - Test AI remembers conversation context across multiple messages
+2. Portfolio Data Access - Test AI can access and reference portfolio data when requested
+3. Target Settings API - Verify dynamic targets (not hardcoded 100,000)
+4. Session Management - Test sessions work properly with context preservation
+5. Timestamp Consistency - Check UTC timestamp format consistency
 """
 
 import requests
