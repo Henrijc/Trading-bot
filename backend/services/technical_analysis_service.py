@@ -90,7 +90,7 @@ class TechnicalAnalysisService:
             
             # Fallback: Create synthetic historical data for technical analysis
             # This allows the indicators to work even when external APIs are down
-            dates = pd.date_range(end=datetime.now(), periods=min(days, 30), freq='D')
+            dates = pd.date_range(end=datetime.utcnow(), periods=min(days, 30), freq='D')
             
             # Use symbol-based baseline prices
             baseline_prices = {
