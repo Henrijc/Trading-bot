@@ -200,6 +200,8 @@ class TimestampConsistencyTester:
                 has_timezone_info = any(tz in message_timestamp for tz in ['+', '-']) or message_timestamp.endswith('Z')
                 is_iso_format = 'T' in message_timestamp
                 
+                print(f"    Debug: timestamp={message_timestamp}, has_timezone_info={has_timezone_info}, is_iso_format={is_iso_format}")
+                
                 if not is_iso_format:
                     self.log_test("Context Timestamp UTC Format", False, 
                                 f"Timestamp is not in ISO format: {message_timestamp}")
