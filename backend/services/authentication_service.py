@@ -93,20 +93,15 @@ class AuthenticationService:
     async def authenticate_user(self, username: str, password: str, totp_code: str = None, backup_code: str = None) -> Dict[str, Any]:
         """Authenticate user with password and 2FA"""
         try:
-            # This would load from database - for now using default admin
-            if username != "admin":
+            # This would load from database - for now using your setup
+            admin_username = os.environ.get("ADMIN_USERNAME", "Henrijc")
+            if username != admin_username:
                 return {"success": False, "error": "User not found"}
             
             # Check password
-            stored_password_hash = os.environ.get("ADMIN_PASSWORD_HASH")
-            if not stored_password_hash:
-                # First time setup - hash the password from env
-                plain_password = os.environ.get("ADMIN_PASSWORD", "admin123")
-                if not self.security_service.verify_password(password, self.security_service.hash_password(plain_password)):
-                    return {"success": False, "error": "Invalid credentials"}
-            else:
-                if not self.security_service.verify_password(password, stored_password_hash):
-                    return {"success": False, "error": "Invalid credentials"}
+            admin_password = os.environ.get("ADMIN_PASSWORD", "H3nj3n")
+            if password != admin_password:
+                return {"success": False, "error": "Invalid credentials"}
             
             # Check 2FA if enabled
             totp_secret = os.environ.get("ADMIN_TOTP_SECRET")
