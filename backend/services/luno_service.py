@@ -230,15 +230,54 @@ class LunoService:
                         'account_id': account_id
                     })
             
-            # Process each asset group
+            # First pass: collect all assets regardless of price availability
+            all_assets = {}
             for asset, accounts in asset_groups.items():
                 # Map asset symbols
                 symbol_mapping = {'XBT': 'BTC'}
                 symbol = symbol_mapping.get(asset, asset)
+                total_amount = sum(acc['amount'] for acc in accounts)
                 
-                if symbol in price_lookup:
-                    current_price = price_lookup[symbol]
-                    total_amount = sum(acc['amount'] for acc in accounts)
+                all_assets[symbol] = {
+                    'accounts': accounts,
+                    'total_amount': total_amount,
+                    'symbol': symbol
+                }
+            
+            # Second pass: get prices (including cross-conversion)
+            enhanced_price_lookup = price_lookup.copy()
+            
+            # Add cross-conversion for missing assets (like HBAR)
+            missing_assets = [symbol for symbol in all_assets.keys() if symbol not in enhanced_price_lookup]
+            
+            for missing_symbol in missing_assets:
+                try:
+                    # Get cross-conversion price via BTC
+                    cross_price = await self._get_cross_conversion_price(missing_symbol, 'BTC')
+                    if cross_price and 'BTC' in enhanced_price_lookup:
+                        btc_zar_price = enhanced_price_lookup['BTC']
+                        enhanced_price_lookup[missing_symbol] = cross_price * btc_zar_price
+                        print(f"Cross-converted {missing_symbol}: {cross_price} BTC × R{btc_zar_price:.2f} = R{enhanced_price_lookup[missing_symbol]:.2f}")
+                except Exception as e:
+                    print(f"Cross-conversion failed for {missing_symbol}: {e}")
+                    # Try direct USD conversion as fallback
+                    try:
+                        usd_prices = self.get_crypto_usd_prices()
+                        usd_to_zar = self.get_usd_to_zar_rate()
+                        if missing_symbol in usd_prices:
+                            enhanced_price_lookup[missing_symbol] = usd_prices[missing_symbol]['usd'] * usd_to_zar
+                            print(f"USD fallback for {missing_symbol}: ${usd_prices[missing_symbol]['usd']} × {usd_to_zar:.2f} = R{enhanced_price_lookup[missing_symbol]:.2f}")
+                    except Exception as fallback_error:
+                        print(f"USD fallback also failed for {missing_symbol}: {fallback_error}")
+            
+            # Third pass: process all assets with enhanced price lookup
+            for symbol, asset_data in all_assets.items():
+                accounts = asset_data['accounts']
+                total_amount = asset_data['total_amount']
+                
+                # Get price (now includes cross-converted prices)
+                if symbol in enhanced_price_lookup:
+                    current_price = enhanced_price_lookup[symbol]
                     value = total_amount * current_price
                     total_value += value
                     
@@ -254,18 +293,27 @@ class LunoService:
                     staking_patterns = any(keyword in account_id.lower() for account_id in account_ids for keyword in staking_keywords)
                     
                     # Special handling for known staked assets
-                    # SOL, ADA, ETH commonly have staking programs
-                    if symbol in ['SOL', 'ADA', 'ETH']:
+                    if symbol in ['SOL', 'ADA', 'ETH', 'HBAR']:
                         # Multiple accounts usually means staking
                         if len(accounts) > 1:
                             is_staked = True
                         # Single account but could still be staked based on patterns
-                        elif staking_patterns or total_amount > 0.1:  # Assume meaningful amounts are staked
+                        elif staking_patterns or total_amount > 0.1:
                             is_staked = True
                     else:
                         is_staked = len(accounts) > 1 or staking_patterns
                     
+                    # Get asset name
                     asset_name = market_info.get('name', symbol)
+                    if not asset_name or asset_name == symbol:
+                        # Fallback names for assets not in market data
+                        name_mapping = {
+                            'HBAR': 'Hedera',
+                            'BTC': 'Bitcoin',
+                            'ETH': 'Ethereum'
+                        }
+                        asset_name = name_mapping.get(symbol, symbol)
+                    
                     if is_staked:
                         asset_name += f" (Staked)"
                     
