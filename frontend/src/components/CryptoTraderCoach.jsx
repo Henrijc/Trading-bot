@@ -466,11 +466,12 @@ const CryptoTraderCoach = () => {
       setSessionId(newSessionId);
       
       // Clear frontend chat messages with new welcome
+      const newSessionTimestamp = new Date();
       setChatMessages([{
         id: 1,
         role: 'assistant',
         message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
-        timestamp: new Date().toISOString()
+        timestamp: newSessionTimestamp.toISOString()
       }]);
       
       console.log('Started new clean session:', newSessionId);
