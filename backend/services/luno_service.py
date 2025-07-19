@@ -198,6 +198,40 @@ class LunoService:
             print(f"Error getting market data: {e}")
             return []
     
+    async def _get_cross_conversion_price(self, from_symbol: str, to_symbol: str = 'BTC') -> float:
+        """Get cross-conversion price (e.g., HBAR/BTC)"""
+        try:
+            # Use CoinGecko for cross-conversion
+            from_id_mapping = {
+                'HBAR': 'hedera-hashgraph',
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum'
+            }
+            
+            to_id_mapping = {
+                'HBAR': 'hedera-hashgraph', 
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum'
+            }
+            
+            from_id = from_id_mapping.get(from_symbol)
+            to_id = to_id_mapping.get(to_symbol)
+            
+            if not from_id or not to_id:
+                return None
+                
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={from_id}&vs_currencies={to_id}"
+            response = self.cache.get(url, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                return data[from_id][to_id]
+                
+        except Exception as e:
+            print(f"Cross-conversion error for {from_symbol}/{to_symbol}: {e}")
+            
+        return None
+
     async def get_portfolio_data(self) -> Dict:
         """Get user's portfolio data from Luno"""
         try:
