@@ -46,15 +46,25 @@ async def root():
 async def send_chat_message(message_data: ChatMessageCreate):
     """Send a message to the AI coach"""
     try:
-        # Get portfolio and market context
-        portfolio_data = await luno_service.get_portfolio_data()
-        market_data = await luno_service.get_market_data()
+        # Use context from frontend if provided, otherwise get fresh data
+        if message_data.context:
+            print(f"Using frontend context for chat message")
+            context = message_data.context
+            # Ensure we have timestamp
+            context["timestamp"] = datetime.now().isoformat()
+        else:
+            print(f"Fetching fresh context for chat message")
+            # Get portfolio and market context
+            portfolio_data = await luno_service.get_portfolio_data()
+            market_data = await luno_service.get_market_data()
+            
+            context = {
+                "portfolio": portfolio_data,
+                "market_data": market_data,
+                "timestamp": datetime.now().isoformat()
+            }
         
-        context = {
-            "portfolio": portfolio_data,
-            "market_data": market_data,
-            "timestamp": datetime.now().isoformat()
-        }
+        print(f"Chat context: Portfolio value = {context.get('portfolio', {}).get('total_value', 'N/A')}")
         
         # Get AI response
         ai_response = await ai_service.send_message(
