@@ -530,6 +530,61 @@ async def schedule_memory_consolidation():
         print(f"Error scheduling memory consolidation: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Semi-Auto Trading endpoints
+@api_router.post("/trade/suggest")
+async def suggest_trades():
+    """Get AI trade suggestions for approval"""
+    try:
+        # Get current portfolio data
+        portfolio_data = await luno_service.get_portfolio_data()
+        
+        # Get trade suggestions
+        result = await semi_auto_service.analyze_and_suggest_trades(portfolio_data)
+        
+        if result.get("success") and result.get("suggestions"):
+            # Generate user-friendly message
+            approval_message = await semi_auto_service.generate_trade_approval_message(result["suggestions"])
+            result["approval_message"] = approval_message
+        
+        return result
+    except Exception as e:
+        print(f"Error getting trade suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/trade/execute/{trade_id}")
+async def execute_trade(trade_id: str, approval_data: dict):
+    """Execute an approved trade"""
+    try:
+        user_approval = approval_data.get("approval", "User approved via API")
+        result = await semi_auto_service.execute_approved_trade(trade_id, user_approval)
+        return result
+    except Exception as e:
+        print(f"Error executing trade: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/trade/pending")
+async def get_pending_trades():
+    """Get all pending trades awaiting approval"""
+    try:
+        pending_trades = semi_auto_service.get_pending_trades()
+        return {"pending_trades": pending_trades, "count": len(pending_trades)}
+    except Exception as e:
+        print(f"Error getting pending trades: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/trade/cancel/{trade_id}")
+async def cancel_trade(trade_id: str):
+    """Cancel a pending trade"""
+    try:
+        success = semi_auto_service.cancel_pending_trade(trade_id)
+        if success:
+            return {"success": True, "message": f"Trade {trade_id} cancelled"}
+        else:
+            return {"success": False, "message": "Trade not found or already executed"}
+    except Exception as e:
+        print(f"Error cancelling trade: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Import the new models at the top
 from models import AutoTradingSettings, AutoTradeLog, AutoTradingSettingsCreate
 
