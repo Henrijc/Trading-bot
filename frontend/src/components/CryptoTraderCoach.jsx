@@ -496,7 +496,15 @@ const CryptoTraderCoach = () => {
                             })}
                           </div>
                           <p className="text-xs opacity-70 mt-3 font-mono border-t border-gray-600/30 pt-2">
-                            {new Date(msg.timestamp).toLocaleTimeString()}
+                            {new Date(msg.timestamp).toLocaleString('en-ZA', { 
+                              timeZone: 'Africa/Johannesburg',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            })}
                           </p>
                         </div>
                       </div>
