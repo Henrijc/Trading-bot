@@ -71,6 +71,36 @@ async def root():
 async def send_chat_message(message_data: ChatMessageCreate):
     """Send a message to the AI coach"""
     try:
+        # Check for goal updates in user message and save them immediately
+        user_message_lower = message_data.message.lower()
+        if any(keyword in user_message_lower for keyword in ['goal', 'target', 'r8000', 'r8,000', '8000', 'monthly']):
+            # Extract potential R8000 goal
+            import re
+            amounts = re.findall(r'r\s*(\d{1,3}(?:,?\d{3})*)', user_message_lower)
+            monthly_amounts = [int(amount.replace(',', '')) for amount in amounts if '8' in amount and len(amount.replace(',', '')) >= 3]
+            
+            if monthly_amounts or '8000' in user_message_lower:
+                target_amount = 8000 if '8000' in user_message_lower else (monthly_amounts[0] if monthly_amounts else None)
+                if target_amount:
+                    try:
+                        # Save the updated goal immediately
+                        target_settings = {
+                            "monthly_target": target_amount,
+                            "weekly_target": target_amount / 4,
+                            "daily_target": target_amount / 30,
+                            "user_id": "Henrijc",
+                            "updated_at": datetime.utcnow().isoformat(),
+                            "goal_notes": "Updated via chat: R8000/month, keep 1000 XRP long-term, 4% risk management"
+                        }
+                        await db.target_settings.replace_one(
+                            {"user_id": "Henrijc"}, 
+                            target_settings, 
+                            upsert=True
+                        )
+                        print(f"Goal automatically saved: Monthly R{target_amount}")
+                    except Exception as goal_save_error:
+                        print(f"Error saving goal: {goal_save_error}")
+        
         # Use context from frontend if provided, otherwise get fresh data
         if message_data.context:
             print(f"Using frontend context for chat message")
