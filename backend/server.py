@@ -860,7 +860,7 @@ async def get_technical_indicators(symbol: str, days: int = 30):
             'symbol': symbol.upper(),
             'indicators': signals_data.get('technical_indicators', {}),
             'current_price': signals_data.get('current_price', 0),
-            'timestamp': signals_data.get('timestamp', datetime.now().isoformat())
+            'timestamp': signals_data.get('timestamp', datetime.utcnow().isoformat())
         }
         
     except Exception as e:
