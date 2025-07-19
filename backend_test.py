@@ -197,10 +197,13 @@ class TimestampConsistencyTester:
                 
                 # Check if timestamp looks like UTC (should not have timezone offset other than Z or +00:00)
                 # Valid UTC formats: 2025-07-19T15:03:44.620765 (no timezone), 2025-07-19T15:03:44.620765Z, 2025-07-19T15:03:44.620765+00:00
-                has_timezone_info = any(tz in message_timestamp for tz in ['+', '-']) or message_timestamp.endswith('Z')
+                has_plus_minus = any(tz in message_timestamp for tz in ['+', '-'])
+                has_z_suffix = message_timestamp.endswith('Z')
+                has_timezone_info = has_plus_minus or has_z_suffix
                 is_iso_format = 'T' in message_timestamp
                 
-                print(f"    Debug: timestamp={message_timestamp}, has_timezone_info={has_timezone_info}, is_iso_format={is_iso_format}")
+                print(f"    Debug: timestamp={message_timestamp}")
+                print(f"    Debug: has_plus_minus={has_plus_minus}, has_z_suffix={has_z_suffix}, has_timezone_info={has_timezone_info}")
                 
                 if not is_iso_format:
                     self.log_test("Context Timestamp UTC Format", False, 
