@@ -770,7 +770,7 @@ Keep recommendations under R{settings.get('max_trade_amount', 1000):,.2f} per tr
                 'reason': opportunity['reason'],
                 'success': 'error' not in trade_result,
                 'luno_order_id': trade_result.get('order_id'),
-                'executed_at': datetime.now()
+                'executed_at': datetime.utcnow()
             }
             
             return {
