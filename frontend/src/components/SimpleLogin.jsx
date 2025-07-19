@@ -209,7 +209,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         </button>
 
         <div style={{ textAlign: 'center', marginTop: '15px', color: '#999', fontSize: '11px' }}>
-          💡 Add to Google Authenticator: OPRYF3QGNFGQGFUPVRPWU2C33C4HWHFP
+          💡 Secure 2FA Authentication Enabled
         </div>
       </div>
     </div>
