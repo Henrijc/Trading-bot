@@ -457,31 +457,41 @@ const CryptoTraderCoach = () => {
     try {
       setIsLoading(true);
       
-      // Clear backend chat history for current session
-      await axios.delete(`${API}/chat/history/${sessionId}`);
+      // Fork session: Summarize and clear for fresh start while maintaining context
+      const response = await axios.delete(`${API}/chat/history/${sessionId}`);
+      
+      if (response.data.summary_created) {
+        console.log('Session forked with summary:', response.data.summary?.summary);
+      }
       
       // Create new session ID
       const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      // Update localStorage
+      // Update localStorage and React state
       localStorage.setItem('ai_trading_coach_session_id', newSessionId);
-      
-      // Update React state
       setSessionId(newSessionId);
       
-      // Clear frontend chat messages with new welcome
+      // Clear frontend chat messages with context-aware welcome
       const newSessionTimestamp = new Date();
       setChatMessages([{
         id: 1,
         role: 'assistant',
-        message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
+        message: 'Hello! Starting a fresh conversation. I have context from our previous discussions and I\'m ready to help with your trading strategy. What would you like to focus on today?',
         timestamp: newSessionTimestamp.toISOString()
       }]);
       
-      console.log('Started new clean session:', newSessionId);
+      console.log('Session forked successfully:', newSessionId);
       
     } catch (error) {
-      console.error('Error starting new session:', error);
+      console.error('Error forking session:', error);
+      // Fallback to simple refresh if forking fails
+      const newSessionTimestamp = new Date();
+      setChatMessages([{
+        id: 1,
+        role: 'assistant', 
+        message: 'Hello! I\'m your AI Trading Coach. I\'m ready to help with market analysis, trading strategies, and portfolio guidance. What can I assist you with today?',
+        timestamp: newSessionTimestamp.toISOString()
+      }]);
     } finally {
       setIsLoading(false);
     }
