@@ -267,6 +267,9 @@ Be professional, direct, and responsive to what the user actually needs.{trainin
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
                 
+                print(f"DEBUG: requests_portfolio={requests_portfolio}, requests_details={requests_details}")
+                print(f"DEBUG: portfolio_value={portfolio_value}, holdings count={len(holdings)}")
+                
                 # Build concise portfolio context only when requested
                 enhanced_context += f"""**CURRENT PORTFOLIO DATA:**
 Portfolio Value: R{portfolio_value:,.2f}
@@ -281,6 +284,9 @@ Number of Holdings: {len(holdings)} assets
                     enhanced_context += f"\n- {symbol}: R{value:,.2f} ({allocation:.1f}%)"
                 
                 enhanced_context += f"\n\n"
+                print(f"DEBUG: enhanced_context length after portfolio: {len(enhanced_context)}")
+            else:
+                print(f"DEBUG: Portfolio context NOT added. context={context is not None}, requests_portfolio={requests_portfolio}, requests_details={requests_details}")
             
             # Add technical analysis for relevant crypto discussions only when needed
             if any(keyword in message.lower() for keyword in ['btc', 'bitcoin', 'eth', 'ethereum', 'trade', 'buy', 'sell']) or requests_details:
