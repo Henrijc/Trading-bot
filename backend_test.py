@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Script for Technical Analysis Engine
-Tests all technical analysis endpoints and functionality
+Backend API Testing Script for Crypto Trading Coach
+Tests all backend endpoints and functionality including the three critical fixes:
+1. AI Service Response Length (no truncation)
+2. AI Knowledge Base Integration (training data usage)
+3. Portfolio API (correct data loading)
+4. Chat History Timestamps (proper storage)
 """
 
 import requests
 import json
 import time
 import sys
+import uuid
 from datetime import datetime
 from typing import Dict, Any, List
 
