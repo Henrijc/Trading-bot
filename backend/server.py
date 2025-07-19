@@ -339,6 +339,69 @@ async def ai_research(request: dict):
         print(f"Error in AI research: {e}")
         raise HTTPException(status_code=500, detail="Failed to perform research")
 
+# Trading Campaign endpoints
+@api_router.post("/campaigns/create")
+async def create_trading_campaign(
+    allocated_capital: float,
+    profit_target: float,
+    timeframe_days: int,
+    risk_level: str = "aggressive",
+    name: str = None
+):
+    """Create a new targeted trading campaign"""
+    try:
+        result = await campaign_service.create_campaign(
+            allocated_capital=allocated_capital,
+            profit_target=profit_target,
+            timeframe_days=timeframe_days,
+            risk_level=risk_level,
+            name=name
+        )
+        return result
+    except Exception as e:
+        print(f"Error creating campaign: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/campaigns/{campaign_id}/progress")
+async def get_campaign_progress(campaign_id: str):
+    """Get real-time progress of a trading campaign"""
+    try:
+        result = await campaign_service.get_campaign_progress(campaign_id)
+        return result
+    except Exception as e:
+        print(f"Error getting campaign progress: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/campaigns/{campaign_id}/execute")
+async def execute_campaign_trades(campaign_id: str, max_trades: int = 3):
+    """Execute trades for an active campaign"""
+    try:
+        result = await campaign_service.execute_campaign_trades(campaign_id, max_trades)
+        return result
+    except Exception as e:
+        print(f"Error executing campaign trades: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/campaigns/{campaign_id}/pause")
+async def pause_campaign(campaign_id: str):
+    """Pause an active campaign"""
+    try:
+        result = await campaign_service.pause_campaign(campaign_id)
+        return result
+    except Exception as e:
+        print(f"Error pausing campaign: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/campaigns/{campaign_id}/resume")
+async def resume_campaign(campaign_id: str):
+    """Resume a paused campaign"""
+    try:
+        result = await campaign_service.resume_campaign(campaign_id)
+        return result
+    except Exception as e:
+        print(f"Error resuming campaign: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Auto Trading endpoints
 @api_router.get("/autotrade/settings", response_model=AutoTradingSettings)
 async def get_autotrade_settings():
