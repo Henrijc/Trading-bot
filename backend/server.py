@@ -136,6 +136,24 @@ async def get_chat_history(session_id: str, limit: int = 50):
         print(f"Error getting chat history: {e}")
         raise HTTPException(status_code=500, detail="Failed to get chat history")
 
+@api_router.delete("/chat/history/{session_id}")
+async def clear_chat_history(session_id: str):
+    """Clear chat history for a session to start fresh"""
+    try:
+        result = await db.chat_messages.delete_many(
+            {"session_id": session_id}
+        )
+        
+        return {
+            "success": True, 
+            "message": f"Cleared {result.deleted_count} messages for session {session_id}",
+            "deleted_count": result.deleted_count
+        }
+        
+    except Exception as e:
+        print(f"Error clearing chat history: {e}")
+        raise HTTPException(status_code=500, detail="Failed to clear chat history")
+
 # Market Data endpoints
 @api_router.get("/market/data")
 async def get_market_data():
