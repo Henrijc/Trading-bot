@@ -161,17 +161,35 @@ Be professional, direct, and use the actual data provided to answer their questi
             # Build enhanced context - keep it focused and concise
             enhanced_context = ""
             
-            # Add recent memories for context continuity
+            # Add previous conversation summaries for continuity
             try:
-                # Dynamic import to avoid circular dependency
-                from services.ai_memory_service import AIMemoryService
-                memory_service = AIMemoryService()
+                # Get recent conversation summaries (last 30 days)
+                from motor.motor_asyncio import AsyncIOMotorClient
+                import os
+                client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
+                db = client.ai_trading_coach
                 
-                recent_memories = await memory_service.get_recent_memories(days=3)
-                if recent_memories:
-                    enhanced_context += f"**RECENT MEMORY (Last 3 Days):**\n{chr(10).join(recent_memories[:2])}\n\n"
+                # Get summaries for this user (we can expand this later for multi-user)
+                summaries = await db.conversation_summaries.find().sort("timestamp", -1).limit(5).to_list(None)
+                
+                if summaries:
+                    enhanced_context += "**PREVIOUS CONVERSATION CONTEXT:**\n"
+                    for summary in reversed(summaries):  # Most recent first
+                        enhanced_context += f"• {summary.get('summary', '')}\n"
+                        
+                        goals = summary.get('goals_discussed', [])
+                        if goals:
+                            enhanced_context += f"  Goals mentioned: {', '.join(goals)}\n"
+                            
+                        decisions = summary.get('key_decisions', [])
+                        if decisions:
+                            enhanced_context += f"  Decisions made: {', '.join(decisions)}\n"
+                    
+                    enhanced_context += "\n"
+                    
             except Exception as e:
-                print(f"Memory service error: {e}")
+                print(f"Error loading conversation summaries: {e}")
+                pass
             
             # Add web search for market-related queries
             web_research = ""
