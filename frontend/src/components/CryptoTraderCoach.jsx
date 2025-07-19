@@ -21,7 +21,7 @@ const CryptoTraderCoach = () => {
   const [dailyStrategy, setDailyStrategy] = useState(null);
   const [weeklyTargets, setWeeklyTargets] = useState(null);
   const [riskMetrics, setRiskMetrics] = useState(null);
-  const [sessionId] = useState(() => {
+  const [sessionId, setSessionId] = useState(() => {
     // Try to get existing session ID from localStorage
     let existingSessionId = localStorage.getItem('ai_trading_coach_session_id');
     if (!existingSessionId) {
