@@ -120,83 +120,47 @@ Always start by acknowledging their current portfolio state and provide specific
                 system_message=self.system_message
             ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(2500)
             
-            # Build enhanced context with knowledge base
+            # Build enhanced context - keep it focused and concise
             enhanced_context = ""
-            
-            # Add knowledge base context
-            knowledge_context = self.knowledge_base.get_enhanced_context("default")
-            if knowledge_context:
-                enhanced_context += knowledge_context
             
             if context:
                 portfolio_value = context.get('portfolio', {}).get('total_value', 0)
                 holdings = context.get('portfolio', {}).get('holdings', [])
-                holdings_count = len(holdings)
                 
-                enhanced_context += f"""
-**CURRENT REAL-TIME DATA:**
-- Portfolio Value: R{portfolio_value:,.2f}
-- Holdings: {holdings_count} assets
-- Real-time market data available
+                # Build concise portfolio context
+                enhanced_context = f"""**CURRENT PORTFOLIO DATA:**
+Portfolio Value: R{portfolio_value:,.2f}
+Number of Holdings: {len(holdings)} assets
 
-**MARKET CONTEXT:**
-- All prices are real-time from Luno and CoinGecko
-- USD pairs converted to ZAR at current rates
-- Technical analysis indicators available
-
-**USER QUESTION:** {message}
-"""
+**HOLDINGS BREAKDOWN:**"""
+                
+                for holding in holdings:
+                    symbol = holding.get('symbol', 'Unknown')
+                    value = holding.get('value', 0)
+                    allocation = holding.get('allocation', 0)
+                    enhanced_context += f"\n- {symbol}: R{value:,.2f} ({allocation:.1f}%)"
+                
+                enhanced_context += f"\n\n**USER QUESTION:** {message}\n"
             
-            # Add technical analysis if user asks about specific cryptos or trading
-            crypto_keywords = ['bitcoin', 'btc', 'ethereum', 'eth', 'cardano', 'ada', 'solana', 'sol', 'xrp', 'ripple', 'trade', 'buy', 'sell', 'analysis', 'indicator', 'rsi', 'macd']
-            if any(keyword in message.lower() for keyword in crypto_keywords):
+            # Add technical analysis for relevant crypto discussions
+            if any(keyword in message.lower() for keyword in ['btc', 'bitcoin', 'eth', 'ethereum', 'trade', 'buy', 'sell', 'market']):
                 try:
-                    # Get portfolio holdings to analyze
                     if context and context.get('portfolio', {}).get('holdings'):
                         holdings = context['portfolio']['holdings']
-                        ta_insights = []
-                        
-                        # Analyze top holdings
-                        for holding in holdings[:3]:  # Top 3 holdings
+                        # Get TA for top 2 holdings only to keep context manageable
+                        for holding in holdings[:2]:
                             symbol = holding['symbol']
                             try:
                                 signals = await self.ta_service.generate_trading_signals(symbol, 30)
                                 if 'error' not in signals:
-                                    recommendation = signals.get('recommendation', {})
-                                    trend = signals.get('trend_analysis', {})
-                                    rsi = signals.get('technical_indicators', {}).get('rsi')
-                                    
-                                    insight = f"{symbol}: {recommendation.get('action', 'HOLD')} "
-                                    if rsi:
-                                        insight += f"(RSI: {rsi:.1f}) "
-                                    insight += f"Trend: {trend.get('trend', 'neutral')}"
-                                    ta_insights.append(insight)
-                            except Exception as e:
-                                print(f"Error getting TA for {symbol}: {e}")
+                                    rec = signals.get('recommendation', {})
+                                    rsi = signals.get('technical_indicators', {}).get('rsi', 0)
+                                    trend = signals.get('trend_analysis', {}).get('trend', 'neutral')
+                                    enhanced_context += f"\n**{symbol} TECHNICAL ANALYSIS:**\nRecommendation: {rec.get('action', 'HOLD')}, RSI: {rsi:.1f}, Trend: {trend}"
+                            except:
                                 continue
-                        
-                        if ta_insights:
-                            enhanced_context += f"\n**TECHNICAL ANALYSIS:**\n" + "\n".join(f"- {insight}" for insight in ta_insights) + "\n"
-                
-                except Exception as e:
-                    print(f"Error adding technical analysis to context: {e}")
-            
-            # If the message contains requests for market research, do web searches
-            if any(keyword in message.lower() for keyword in ['news', 'market', 'trend', 'analysis', 'research']):
-                search_query = f"cryptocurrency market news {datetime.now().strftime('%Y-%m-%d')}"
-                web_results = await self.web_search(search_query)
-                enhanced_context += f"\n**Latest Market Research:**\n{web_results}\n"
-            
-            # If asking about specific cryptos, get current prices and technical signals
-            if any(keyword in message.lower() for keyword in crypto_keywords):
-                try:
-                    market_data = await self.luno_service.get_market_data()
-                    prices_info = "\n**Current Prices:**\n"
-                    for crypto in market_data[:5]:  # Top 5 cryptos
-                        prices_info += f"- {crypto['symbol']}: R{crypto['price']:,.2f} ({crypto['change_24h']:+.2f}%)\n"
-                    enhanced_context += prices_info
-                except Exception as e:
-                    print(f"Error getting market data: {e}")
+                except:
+                    pass
             
             user_message = UserMessage(text=enhanced_context if enhanced_context else message)
             
