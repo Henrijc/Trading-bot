@@ -214,9 +214,53 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
-agent_communication:
-    - agent: "main"
-    - message: "Implemented comprehensive Technical Analysis Engine with multiple indicators, API endpoints, and AI integration. Ready for backend testing to verify all endpoints work correctly."
+  - task: "Chat Timestamp Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reported chat timestamps are incorrect"
+
+  - task: "Chat Character Limit Removal"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reported AI responses are being truncated by character limits"
+
+  - task: "AI Knowledge Base Integration"
+    implemented: false
+    working: false
+    file: "/app/backend/services/ai_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User provided extensive training data file but AI is not using it"
+
+  - task: "Portfolio Data Loading Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "Portfolio value shows R 0.00 in header, data loading issue observed"
     - agent: "testing"
     - message: "TESTING COMPLETED: Technical Analysis Engine backend is fully functional. All core components tested and working: 1) Technical Analysis Service with all indicators (RSI, MACD, Bollinger Bands, Moving Averages, Support/Resistance, Trend Analysis) - 83.3% success rate in direct testing. 2) All API endpoints responding correctly (/technical/signals, /technical/portfolio, /technical/indicators, /technical/strategy, /technical/backtest, /technical/market-overview). 3) Portfolio analysis working with 8 assets. 4) Strategy endpoints returning proper configurations. 5) AI service integration working correctly. 6) All dependencies properly installed. External API rate limiting from CoinGecko is expected behavior and doesn't affect core functionality. System is ready for production use."
     - agent: "testing"
