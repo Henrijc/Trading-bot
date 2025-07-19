@@ -749,7 +749,7 @@ const CryptoTraderCoach = () => {
                       <Target className="text-amber-500" size={24} />
                       Monthly Target Progress
                       <div className="ml-auto bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
-                        R100,000 Goal
+                        {formatCurrency(monthlyTargetState || 100000)} Goal
                       </div>
                     </CardTitle>
                   </CardHeader>
