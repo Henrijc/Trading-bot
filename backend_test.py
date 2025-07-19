@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Crypto Trading Coach
-CRITICAL FIXES TESTING - Focus on urgent issues that were just fixed:
-1. AI Context Continuity - Test AI remembers conversation context across multiple messages
-2. Portfolio Data Access - Test AI can access and reference portfolio data when requested
-3. Target Settings API - Verify dynamic targets (not hardcoded 100,000)
-4. Session Management - Test sessions work properly with context preservation
-5. Timestamp Consistency - Check UTC timestamp format consistency
+TIMESTAMP CONSISTENCY TESTING - Focus on timestamp fix:
+Testing the critical timestamp inconsistency fix where backend was using datetime.now() 
+instead of datetime.utcnow() causing 2-hour discrepancy between user and AI message timestamps.
+
+FIXES TESTED:
+1. server.py lines 79 and 89: datetime.utcnow().isoformat() for context timestamps
+2. ai_service.py lines 521, 561, 681, 773: datetime.utcnow() for consistent UTC timestamps
+3. Verify all timestamps are in proper UTC format
+4. Test multiple chat messages in sequence for timestamp consistency
+5. Verify context timestamp uses UTC instead of local server time
 """
 
 import requests
@@ -14,8 +18,9 @@ import json
 import time
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List
+import re
 
 # Get backend URL from environment
 BACKEND_URL = "https://1332115b-e3f3-4f5e-8359-0e7c1c19e898.preview.emergentagent.com/api"
