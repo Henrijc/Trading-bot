@@ -152,8 +152,13 @@ class CriticalFixesTester:
             response1 = self.session.post(f"{self.base_url}/chat/send", json=first_message)
             
             if response1.status_code != 200:
-                self.log_test("AI Context Continuity - First Message", False, 
-                            f"Failed to send first message: {response1.status_code}")
+                try:
+                    error_data = response1.json()
+                    self.log_test("AI Context Continuity - First Message", False, 
+                                f"Failed to send first message: {response1.status_code}, Error: {error_data}")
+                except:
+                    self.log_test("AI Context Continuity - First Message", False, 
+                                f"Failed to send first message: {response1.status_code}, Response: {response1.text}")
                 return False
             
             # Wait a moment for processing
