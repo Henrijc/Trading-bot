@@ -249,11 +249,11 @@ test_plan:
 
   - task: "Fix Timestamp to Use Browser Timezone"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/CryptoTraderCoach.jsx"
-    stuck_count: 0
+    working: false
+    file: "/app/frontend/src/components/CryptoTraderCoach.jsx, /app/backend/server.py, /app/backend/services/ai_service.py"
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
         - agent: "user"
@@ -264,6 +264,12 @@ test_plan:
         - working: true
         - agent: "testing"
         - comment: "TESTED: This is a frontend change that affects timestamp display in the UI. Backend testing confirms that timestamps are properly stored and retrieved. The change from hardcoded 'Africa/Johannesburg' to browser timezone (undefined parameter) is implemented in the frontend code. Backend APIs return proper ISO timestamps that can be formatted according to user's browser timezone."
+        - working: false
+        - agent: "user"
+        - comment: "User still reports 2-hour timestamp discrepancy between user and AI messages despite previous fix attempts"
+        - working: false
+        - agent: "main"
+        - comment: "ROOT CAUSE IDENTIFIED: Backend server.py was using datetime.now().isoformat() instead of datetime.utcnow().isoformat() for context timestamps on lines 79 and 89. This created inconsistency where ChatMessage model used UTC but server context used local time (UTC+2). FIXED: Updated server.py lines 79 and 89 to use datetime.utcnow().isoformat(). Also fixed timestamp consistency in ai_service.py (lines 521, 561, 681, 773) to use datetime.utcnow() for all timestamp generation."
 
   - task: "Clean Chat Interface on Login"
     implemented: true
