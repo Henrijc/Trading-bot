@@ -558,7 +558,7 @@ Focus on real-world risk management for achieving R100,000 monthly target."""
             user_message = UserMessage(text=prompt)
             response = await chat.send_message(user_message)
             
-            return {"analysis": response, "generated_at": datetime.now().isoformat()}
+            return {"analysis": response, "generated_at": datetime.utcnow().isoformat()}
             
         except Exception as e:
             print(f"Error analyzing portfolio risk: {e}")
