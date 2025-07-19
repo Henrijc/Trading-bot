@@ -63,7 +63,7 @@ class TechnicalAnalysisService:
                     }, index=dates)
                     
                     # Cache the data
-                    self.cache[cache_key] = (df, datetime.now())
+                    self.cache[cache_key] = (df, datetime.utcnow())
                     return df
             except Exception as e:
                 print(f"Error using Luno market data: {e}")
