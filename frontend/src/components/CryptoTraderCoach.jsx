@@ -33,8 +33,8 @@ const CryptoTraderCoach = () => {
   });
   const [activeTab, setActiveTab] = useState('overview');
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [monthlyTargetState, setMonthlyTargetState] = useState(100000);
-  const [weeklyTargetState, setWeeklyTargetState] = useState(25000);
+  const [monthlyTargetState, setMonthlyTargetState] = useState(null);
+  const [weeklyTargetState, setWeeklyTargetState] = useState(null);
   const [targetSettings, setTargetSettings] = useState(null);
   const [autoTradeSettings, setAutoTradeSettings] = useState(null);
   const [showAutoTradeModal, setShowAutoTradeModal] = useState(false);
