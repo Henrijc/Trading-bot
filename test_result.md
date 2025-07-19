@@ -206,12 +206,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "AI Response Style Fix - Make Concise by Default"
-    - "Remove Hardcoded Targets and Make Dynamic"
-    - "Fix Timestamp to Use Browser Timezone"
-    - "Clean Chat Interface on Login"
-    - "Make Dashboard Update from AI Chat"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
