@@ -24,7 +24,7 @@ class TechnicalAnalysisService:
             cache_key = f"{symbol}_{days}"
             if cache_key in self.cache:
                 cached_data, timestamp = self.cache[cache_key]
-                if datetime.now() - timestamp < timedelta(seconds=self.cache_ttl):
+                if datetime.utcnow() - timestamp < timedelta(seconds=self.cache_ttl):
                     return cached_data
             
             # Try to get current market data from Luno service first
