@@ -570,8 +570,8 @@ const CryptoTraderCoach = () => {
               <Button
                 onClick={() => {
                   setNewTargetData({
-                    monthly_target: monthlyTargetState,
-                    weekly_target: weeklyTargetState
+                    monthly_target: monthlyTargetState || 100000,
+                    weekly_target: weeklyTargetState || 25000
                   });
                   setShowTargetAdjustmentModal(true);
                 }}
