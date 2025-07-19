@@ -1074,7 +1074,7 @@ app.add_middleware(
 # CORS with security restrictions
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://0b947ae6-ff7d-4854-998d-9ceae9d7066c.preview.emergentagent.com"],
+    allow_origins=["http://localhost:3000", "https://1332115b-e3f3-4f5e-8359-0e7c1c19e898.preview.emergentagent.com"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],

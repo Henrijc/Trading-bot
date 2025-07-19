@@ -18,7 +18,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 # Get backend URL from environment
-BACKEND_URL = "https://0b947ae6-ff7d-4854-998d-9ceae9d7066c.preview.emergentagent.com/api"
+BACKEND_URL = "https://1332115b-e3f3-4f5e-8359-0e7c1c19e898.preview.emergentagent.com/api"
 
 class CriticalFixesTester:
     def __init__(self, base_url: str):
