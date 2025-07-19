@@ -16,6 +16,7 @@ from models import *
 from services.ai_service import AICoachService
 from services.luno_service import LunoService
 from services.technical_analysis_service import TechnicalAnalysisService
+from services.ai_knowledge_base import AIKnowledgeBase
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
