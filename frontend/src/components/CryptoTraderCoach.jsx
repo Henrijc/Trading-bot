@@ -277,10 +277,22 @@ const CryptoTraderCoach = () => {
     setIsLoading(true);
     
     try {
+      // Include current portfolio and market data as context
+      const context = {
+        portfolio: portfolio,
+        market_data: marketData,
+        target_settings: targetSettings,
+        technical_analysis: technicalAnalysis,
+        market_overview: marketOverview
+      };
+      
+      console.log('Sending context with message:', context);
+      
       const response = await axios.post(`${API}/chat/send`, {
         session_id: sessionId,
         role: 'user',
-        message: inputMessage
+        message: inputMessage,
+        context: context
       });
       
       console.log('AI response received:', response.data);
