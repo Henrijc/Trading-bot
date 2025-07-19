@@ -99,7 +99,6 @@ async def send_chat_message(message_data: ChatMessageCreate):
         )
         
         # Save user message with explicit timestamp
-        from datetime import datetime
         current_time = datetime.utcnow()
         
         user_message = ChatMessage(
