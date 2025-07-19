@@ -265,7 +265,7 @@ class ComprehensiveBackendTester:
                 
                 # Check timestamp consistency
                 ai_timestamp = data.get('timestamp')
-                if not self.is_valid_utc_timestamp(ai_timestamp):
+                if not self.is_valid_utc_timestamp(ai_timestamp, allow_historical=False):
                     self.log_test("AI Goal Update via Chat", False, 
                                 f"Invalid timestamp: {ai_timestamp}")
                     return False
