@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Shield, Smartphone, CheckCircle, AlertTriangle, Target } from 'lucide-react';
 
-const API = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+const API = process.env.REACT_APP_BACKEND_URL || import.meta.env?.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const LoginSystem = ({ onLoginSuccess }) => {
   const [currentStep, setCurrentStep] = useState('login');
