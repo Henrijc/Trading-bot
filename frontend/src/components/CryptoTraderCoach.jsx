@@ -555,7 +555,7 @@ const CryptoTraderCoach = () => {
                 className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold border border-green-500/50 shadow-lg shadow-green-500/25 transition-all duration-300"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                New Session
+                Fork Session
               </Button>
               <Button
                 onClick={handleRefresh}
