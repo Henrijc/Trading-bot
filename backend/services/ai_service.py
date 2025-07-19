@@ -678,7 +678,7 @@ Keep recommendations under R{settings.get('max_trade_amount', 1000):,.2f} per tr
             return {
                 "opportunities": opportunities,
                 "analysis": response,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
