@@ -198,7 +198,7 @@ class LunoService:
             print(f"Error getting market data: {e}")
             return []
     
-    async def _get_cross_conversion_price(self, from_symbol: str, to_symbol: str = 'BTC') -> float:
+    def _get_cross_conversion_price(self, from_symbol: str, to_symbol: str = 'BTC') -> float:
         """Get cross-conversion price (e.g., HBAR/BTC)"""
         try:
             # Use CoinGecko for cross-conversion
