@@ -16,9 +16,7 @@ class AICoachService:
         # Import technical analysis service to avoid circular import
         from services.technical_analysis_service import TechnicalAnalysisService
         self.ta_service = TechnicalAnalysisService()
-        # Import memory service to avoid circular import
-        from services.ai_memory_service import AIMemoryService
-        self.memory_service = AIMemoryService()
+        # Note: Memory service will be imported dynamically to avoid circular import
         
         # Load comprehensive training data from knowledge base
         training_data = self.knowledge_base.get_training_data()
