@@ -977,6 +977,158 @@ const CryptoTraderCoach = () => {
                 )}
               </TabsContent>
 
+              {/* Campaigns Tab */}
+              <TabsContent value="campaigns" className="space-y-6">
+                
+                {/* Create New Campaign */}
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
+                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                      <Target className="text-amber-500" size={24} />
+                      Targeted Trading Campaigns
+                      <Button
+                        onClick={() => setShowCreateCampaignModal(true)}
+                        className="ml-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold border border-green-500/50 shadow-lg"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        New Campaign
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="text-center text-amber-300/80 mb-6">
+                      <p className="text-lg font-semibold mb-2">🎯 High-Precision Trading Campaigns</p>
+                      <p className="text-sm">Allocate specific capital • Set profit targets • Define timeframes • Let AI execute</p>
+                    </div>
+                    
+                    {activeCampaigns.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="text-6xl mb-4">💰</div>
+                        <p className="text-amber-400 text-lg font-semibold mb-2">Ready to Turn R10k into R20k?</p>
+                        <p className="text-amber-300/70 mb-4">Create your first targeted trading campaign</p>
+                        <Button
+                          onClick={() => setShowCreateCampaignModal(true)}
+                          className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
+                        >
+                          <Target className="w-4 h-4 mr-2" />
+                          Start Campaign
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {activeCampaigns.map((campaign, index) => (
+                          <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <h3 className="font-bold text-amber-300">{campaign.name}</h3>
+                                <p className="text-sm text-amber-400/70">Target: {((campaign.profit_target / campaign.allocated_capital) * 100).toFixed(0)}% in {campaign.timeframe_days} days</p>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => executeCampaignTrades(campaign.id)}
+                                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs px-3 py-1"
+                                >
+                                  <Play className="w-3 h-3 mr-1" />
+                                  Execute
+                                </Button>
+                                <Button
+                                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-xs px-3 py-1"
+                                >
+                                  <Pause className="w-3 h-3 mr-1" />
+                                  Pause
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <div className="text-green-400 font-mono">{formatCurrency(campaign.current_value || campaign.allocated_capital)}</div>
+                                <div className="text-amber-400/70">Current Value</div>
+                              </div>
+                              <div>
+                                <div className="text-blue-400 font-mono">{formatCurrency(campaign.profit_target)}</div>
+                                <div className="text-amber-400/70">Target Profit</div>
+                              </div>
+                              <div>
+                                <div className="text-amber-400 font-mono">{campaign.timeframe_days} days</div>
+                                <div className="text-amber-400/70">Timeframe</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Campaign Creation Modal */}
+                {showCreateCampaignModal && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
+                      <h3 className="text-xl font-bold text-amber-300 mb-4">🎯 Create Trading Campaign</h3>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-amber-400 text-sm font-medium mb-2">Allocated Capital (ZAR)</label>
+                          <Input
+                            type="number"
+                            value={newCampaignData.allocated_capital}
+                            onChange={(e) => setNewCampaignData(prev => ({ ...prev, allocated_capital: parseFloat(e.target.value) }))}
+                            className="bg-gray-700 border-amber-600/40 text-amber-100"
+                            placeholder="10000"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-amber-400 text-sm font-medium mb-2">Profit Target (ZAR)</label>
+                          <Input
+                            type="number"
+                            value={newCampaignData.profit_target}
+                            onChange={(e) => setNewCampaignData(prev => ({ ...prev, profit_target: parseFloat(e.target.value) }))}
+                            className="bg-gray-700 border-amber-600/40 text-amber-100"
+                            placeholder="10000"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-amber-400 text-sm font-medium mb-2">Timeframe (Days)</label>
+                          <Input
+                            type="number"
+                            value={newCampaignData.timeframe_days}
+                            onChange={(e) => setNewCampaignData(prev => ({ ...prev, timeframe_days: parseInt(e.target.value) }))}
+                            className="bg-gray-700 border-amber-600/40 text-amber-100"
+                            placeholder="7"
+                          />
+                        </div>
+                        
+                        <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-3">
+                          <p className="text-red-400 text-sm font-semibold">⚠️ HIGH RISK WARNING</p>
+                          <p className="text-red-300/80 text-xs mt-1">
+                            Target: {((newCampaignData.profit_target / newCampaignData.allocated_capital) * 100).toFixed(0)}% return in {newCampaignData.timeframe_days} days requires aggressive trading. Only proceed if you can afford to lose the entire amount.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 mt-6">
+                        <Button
+                          onClick={() => setShowCreateCampaignModal(false)}
+                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-amber-300"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={createTradingCampaign}
+                          disabled={isLoading}
+                          className="flex-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
+                        >
+                          {isLoading ? 'Creating...' : 'Create Campaign'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </TabsContent>
+
               {/* Technical Analysis Tab */}
               <TabsContent value="technical" className="space-y-6">
                 {/* Market Overview */}
