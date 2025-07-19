@@ -220,7 +220,7 @@ Number of Holdings: {len(holdings)} assets
                 except:
                     pass
             
-            user_message = UserMessage(text=enhanced_context if enhanced_context else message)
+            user_message = UserMessage(text=enhanced_context + f"\n\nUSER MESSAGE: {message}")
             
             # Send message and get response
             response = await chat.send_message(user_message)
