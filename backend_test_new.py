@@ -114,6 +114,7 @@ class AIBehaviorTester:
             # Test detailed request - should include portfolio data
             detailed_request = {
                 'session_id': self.test_session_id,
+                'role': 'user',
                 'message': "Give me a detailed portfolio analysis with full breakdown"
             }
             
