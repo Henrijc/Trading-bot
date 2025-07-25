@@ -130,9 +130,9 @@ const BacktestingDashboard = () => {
       </div>
 
       {/* Configuration Panel */}
-      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-amber-600/40">
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-600/40">
         <CardHeader>
-          <CardTitle className="text-amber-300 flex items-center gap-2">
+          <CardTitle className="text-cyan-300 flex items-center gap-2">
             <Target size={20} />
             Backtest Configuration
           </CardTitle>
