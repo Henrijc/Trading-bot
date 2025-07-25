@@ -75,6 +75,8 @@ const BacktestingDashboard = () => {
       setIsRunning(false);
     }
   };
+
+  const runSingleBacktest = async () => {
     setIsRunning(true);
     try {
       const response = await axios.post(`${API}/backtest/run`, backtestConfig);
