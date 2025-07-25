@@ -1100,6 +1100,9 @@ app.include_router(api_router)
 # Include the backtesting router
 app.include_router(backtest_router)
 
+# Include the live trading router
+app.include_router(live_trading_router)
+
 # Security middleware
 app.add_middleware(
     TrustedHostMiddleware,
