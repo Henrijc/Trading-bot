@@ -27,6 +27,7 @@ from services.ai_memory_service import AIMemoryService
 from services.semi_auto_trade_service import SemiAutoTradeService
 from services.security_service import SecurityService
 from services.authentication_service import AuthenticationService
+from services.backtest_api_service import backtest_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
