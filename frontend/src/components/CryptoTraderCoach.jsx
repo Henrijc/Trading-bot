@@ -1491,6 +1491,11 @@ const CryptoTraderCoach = () => {
                 </Card>
               </TabsContent>
 
+              {/* Backtesting Tab */}
+              <TabsContent value="backtesting" className="space-y-6">
+                <BacktestingDashboard />
+              </TabsContent>
+
             </Tabs>
           </div>
         </div>
