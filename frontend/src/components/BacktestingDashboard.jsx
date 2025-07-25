@@ -13,6 +13,8 @@ const BacktestingDashboard = () => {
   const [backtestResults, setBacktestResults] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [selectedSymbol, setSelectedSymbol] = useState('BTC/ZAR');
+  const [simulationMode, setSimulationMode] = useState(false);
+  const [autoBacktest, setAutoBacktest] = useState(false);
   const [backtestConfig, setBacktestConfig] = useState({
     symbol: 'BTC/ZAR',
     timeframe: '1h',
@@ -21,6 +23,13 @@ const BacktestingDashboard = () => {
     risk_per_trade: 0.04,
     monthly_target: 8000,
     xrp_hold_amount: 1000
+  });
+  const [simulationConfig, setSimulationConfig] = useState({
+    start_date: '2024-01-01',
+    end_date: '2024-12-31',
+    timeframe: '1h',
+    enable_auto_backtest: false,
+    backtest_frequency: 'daily'
   });
   const [multiPairResults, setMultiPairResults] = useState(null);
   const [historicalData, setHistoricalData] = useState(null);
