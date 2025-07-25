@@ -183,9 +183,9 @@ const BacktestingDashboard = () => {
 
       {/* Historical Data Overview */}
       {historicalData && (
-        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-amber-600/40">
+        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-600/40">
           <CardHeader>
-            <CardTitle className="text-amber-300">Historical Data - {selectedSymbol}</CardTitle>
+            <CardTitle className="text-cyan-300">Historical Data - {selectedSymbol}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -194,7 +194,7 @@ const BacktestingDashboard = () => {
                 <div className="text-sm text-gray-400">Data Points</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-amber-300">{formatCurrency(historicalData.latest_price)}</div>
+                <div className="text-2xl font-bold text-cyan-300">{formatCurrency(historicalData.latest_price)}</div>
                 <div className="text-sm text-gray-400">Latest Price</div>
               </div>
               <div className="text-center">
