@@ -196,7 +196,7 @@ const BacktestingDashboard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Trading Pair</label>
               <select 
@@ -221,6 +221,7 @@ const BacktestingDashboard = () => {
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
                 min="7"
                 max="365"
+                disabled={simulationMode}
               />
             </div>
             <div>
@@ -235,7 +236,59 @@ const BacktestingDashboard = () => {
                 step="0.5"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Mode</label>
+              <button
+                onClick={() => setSimulationMode(!simulationMode)}
+                className={`w-full p-2 rounded text-white font-medium ${
+                  simulationMode 
+                    ? 'bg-cyan-600 hover:bg-cyan-700' 
+                    : 'bg-gray-600 hover:bg-gray-700'
+                }`}
+              >
+                {simulationMode ? 'Simulation' : 'Standard'}
+              </button>
+            </div>
           </div>
+
+          {/* Simulation Mode Controls */}
+          {simulationMode && (
+            <div className="border-t border-gray-600 pt-4">
+              <h4 className="text-lg font-semibold text-cyan-300 mb-3">Simulation Parameters</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
+                  <input 
+                    type="date"
+                    value={simulationConfig.start_date}
+                    onChange={(e) => setSimulationConfig({...simulationConfig, start_date: e.target.value})}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                  <input 
+                    type="date"
+                    value={simulationConfig.end_date}
+                    onChange={(e) => setSimulationConfig({...simulationConfig, end_date: e.target.value})}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
+                  <select 
+                    value={simulationConfig.timeframe}
+                    onChange={(e) => setSimulationConfig({...simulationConfig, timeframe: e.target.value})}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  >
+                    <option value="1h">1 Hour</option>
+                    <option value="4h">4 Hours</option>
+                    <option value="1d">1 Day</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
