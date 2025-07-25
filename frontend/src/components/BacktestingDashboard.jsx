@@ -105,14 +105,14 @@ const BacktestingDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-amber-300">Strategy Backtesting</h2>
+          <h2 className="text-2xl font-bold text-cyan-300">Strategy Backtesting</h2>
           <p className="text-gray-400">Test your trading strategies with historical data</p>
         </div>
         <div className="flex gap-3">
           <Button 
             onClick={runSingleBacktest}
             disabled={isRunning}
-            className="bg-amber-600 hover:bg-amber-700"
+            className="bg-cyan-600 hover:bg-cyan-700"
           >
             {isRunning ? <RefreshCw className="animate-spin mr-2" size={16} /> : <Play className="mr-2" size={16} />}
             Run Single Test
@@ -121,7 +121,7 @@ const BacktestingDashboard = () => {
             onClick={runMultiPairBacktest}
             disabled={isRunning}
             variant="outline"
-            className="border-amber-600 text-amber-300 hover:bg-amber-600/10"
+            className="border-cyan-600 text-cyan-300 hover:bg-cyan-600/10"
           >
             {isRunning ? <RefreshCw className="animate-spin mr-2" size={16} /> : <BarChart3 className="mr-2" size={16} />}
             Multi-Pair Test
