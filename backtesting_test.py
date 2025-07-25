@@ -79,7 +79,9 @@ class BacktestingSystemTester:
     def test_backtesting_health_check(self):
         """Test backtesting service health check"""
         try:
+            print(f"    Testing URL: {self.base_url}/backtest/health")
             response = self.session.get(f"{self.base_url}/backtest/health")
+            print(f"    Response status: {response.status_code}")
             
             if response.status_code == 200:
                 data = response.json()
