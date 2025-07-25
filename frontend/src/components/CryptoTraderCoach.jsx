@@ -734,7 +734,7 @@ const CryptoTraderCoach = () => {
                 <TabsTrigger value="technical" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Technical
                 </TabsTrigger>
-                <TabsTrigger value="backtesting" className="text-amber-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-amber-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
+                <TabsTrigger value="backtesting" className="text-cyan-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-cyan-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   <TestTube className="mr-1" size={16} />
                   Backtest
                 </TabsTrigger>
