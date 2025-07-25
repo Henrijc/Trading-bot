@@ -335,9 +335,10 @@ async def get_ai_trading_prompt():
 
 **CURRENT MARKET PRICES:**"""
 
-        if market_data.get('assets'):
+        if market_data and isinstance(market_data, dict) and market_data.get('assets'):
             for asset in market_data['assets'][:3]:  # Top 3 assets
-                prompt += f"\n- {asset['symbol']}: R{asset['price_zar']:,.2f}"
+                if isinstance(asset, dict):
+                    prompt += f"\n- {asset.get('symbol', 'N/A')}: R{asset.get('price_zar', 0):,.2f}"
         
         prompt += f"""
 
