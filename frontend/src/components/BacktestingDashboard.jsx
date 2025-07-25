@@ -159,12 +159,12 @@ const BacktestingDashboard = () => {
         </div>
         <div className="flex gap-3">
           <Button 
-            onClick={runSingleBacktest}
+            onClick={simulationMode ? runSimulationBacktest : runSingleBacktest}
             disabled={isRunning}
             className="bg-cyan-600 hover:bg-cyan-700"
           >
             {isRunning ? <RefreshCw className="animate-spin mr-2" size={16} /> : <Play className="mr-2" size={16} />}
-            Run Single Test
+            {simulationMode ? 'Run Simulation' : 'Run Single Test'}
           </Button>
           <Button 
             onClick={runMultiPairBacktest}
@@ -174,6 +174,15 @@ const BacktestingDashboard = () => {
           >
             {isRunning ? <RefreshCw className="animate-spin mr-2" size={16} /> : <BarChart3 className="mr-2" size={16} />}
             Multi-Pair Test
+          </Button>
+          <Button 
+            onClick={runAutoBacktest}
+            disabled={autoBacktest}
+            variant="outline"
+            className="border-green-600 text-green-300 hover:bg-green-600/10"
+          >
+            {autoBacktest ? <RefreshCw className="animate-spin mr-2" size={16} /> : <RefreshCw className="mr-2" size={16} />}
+            Auto Backtest
           </Button>
         </div>
       </div>
