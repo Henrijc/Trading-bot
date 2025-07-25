@@ -319,6 +319,67 @@ Number of Holdings: {len(holdings)} assets
             
             user_message = UserMessage(text=final_message)
             
+            # Check for trading commands
+            trading_keywords = ['analyze', 'buy', 'sell', 'status', 'backtest', 'trade', 'trading', 'execute']
+            if any(keyword in message.lower() for keyword in trading_keywords):
+                # Try to process as trading command
+                try:
+                    # Import here to avoid circular imports
+                    import requests
+                    
+                    # Check if it's a structured command
+                    upper_message = message.upper().strip()
+                    
+                    if any(upper_message.startswith(cmd) for cmd in ['ANALYZE', 'BUY', 'SELL', 'STATUS', 'BACKTEST']):
+                        # Process as structured command
+                        response = requests.post(
+                            'http://localhost:8001/api/live-trading/process-ai-command',
+                            json={"command": upper_message}
+                        )
+                        
+                        if response.status_code == 200:
+                            result = response.json()
+                            
+                            if result.get('status') == 'success':
+                                return f"""✅ **Trading Command Executed**
+
+**Command:** {result['command']}
+**Result:** {json.dumps(result.get('result', {}), indent=2)}
+
+---
+Ready for next command! Available: ANALYZE, BUY, SELL, STATUS, BACKTEST"""
+                            else:
+                                return f"""❌ **Trading Command Error**
+
+**Command:** {result['command']}
+**Error:** {result.get('error', 'Unknown error')}
+
+**Available Commands:**
+- ANALYZE [SYMBOL] (e.g., "ANALYZE BTC/ZAR")
+- BUY [SYMBOL] [AMOUNT] (e.g., "BUY BTC/ZAR 5000")
+- SELL [SYMBOL] [AMOUNT] (e.g., "SELL ETH/ZAR 3000") 
+- STATUS (get portfolio status)
+- BACKTEST [SYMBOL] [DAYS] (e.g., "BACKTEST XRP/ZAR 30")"""
+                    
+                    # If it's a natural language trading query, get AI prompt
+                    elif any(keyword in message.lower() for keyword in ['trade', 'trading', 'buy', 'sell', 'analyze']):
+                        response = requests.get('http://localhost:8001/api/live-trading/ai-prompt')
+                        
+                        if response.status_code == 200:
+                            prompt_data = response.json()
+                            return f"""🤖 **AI Trading Assistant Ready**
+
+{prompt_data.get('prompt', 'Trading assistant unavailable')}
+
+**Your Portfolio Value:** R{prompt_data.get('portfolio_value', 0):,.2f}
+
+You can now use the commands above, or ask me questions about trading strategies!"""
+                        
+                except Exception as e:
+                    # If trading command processing fails, continue with normal AI response
+                    print(f"Trading command processing error: {e}")
+                    pass
+
             # Send message and get response
             response = await chat.send_message(user_message)
             
