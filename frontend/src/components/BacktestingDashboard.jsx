@@ -36,7 +36,45 @@ const BacktestingDashboard = () => {
 
   const symbols = ['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR'];
 
-  const runSingleBacktest = async () => {
+  const runAutoBacktest = async () => {
+    setAutoBacktest(true);
+    try {
+      const response = await axios.post(`${API}/backtest/schedule`);
+      console.log('Auto backtest scheduled:', response.data);
+      
+      // Run multi-pair backtest automatically
+      setTimeout(() => {
+        runMultiPairBacktest();
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Auto backtest error:', error);
+    } finally {
+      setAutoBacktest(false);
+    }
+  };
+
+  const runSimulationBacktest = async () => {
+    setIsRunning(true);
+    try {
+      // Convert dates to days_back format
+      const startDate = new Date(simulationConfig.start_date);
+      const endDate = new Date(simulationConfig.end_date);
+      const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      
+      const response = await axios.post(`${API}/backtest/run`, {
+        ...backtestConfig,
+        timeframe: simulationConfig.timeframe,
+        days_back: daysDiff
+      });
+      
+      setBacktestResults(response.data);
+    } catch (error) {
+      console.error('Simulation backtest error:', error);
+    } finally {
+      setIsRunning(false);
+    }
+  };
     setIsRunning(true);
     try {
       const response = await axios.post(`${API}/backtest/run`, backtestConfig);
