@@ -240,7 +240,7 @@ const BacktestingDashboard = () => {
                   {formatCurrency(backtestResults.monthly_profit)}
                 </div>
                 <div className="text-sm text-gray-400">Monthly Profit</div>
-                <div className="text-xs text-amber-400">Target: R8,000</div>
+                <div className="text-xs text-cyan-400">Target: R8,000</div>
               </div>
               <div className="text-center p-4 bg-gray-700/50 rounded">
                 <div className={`text-2xl font-bold ${getRiskColor(backtestResults.risk_level)}`}>
@@ -268,7 +268,7 @@ const BacktestingDashboard = () => {
             {/* Recent Trades */}
             {backtestResults.trades_summary && backtestResults.trades_summary.length > 0 && (
               <div>
-                <h4 className="text-lg font-semibold text-amber-300 mb-3">Recent Trades</h4>
+                <h4 className="text-lg font-semibold text-cyan-300 mb-3">Recent Trades</h4>
                 <div className="space-y-2">
                   {backtestResults.trades_summary.slice(-5).map((trade, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-gray-700/30 rounded">
