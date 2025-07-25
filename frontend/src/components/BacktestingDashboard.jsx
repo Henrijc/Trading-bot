@@ -298,16 +298,16 @@ const BacktestingDashboard = () => {
 
       {/* Multi-Pair Comparison */}
       {multiPairResults && multiPairResults.success && (
-        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-amber-600/40">
+        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-600/40">
           <CardHeader>
-            <CardTitle className="text-amber-300 flex items-center gap-2">
+            <CardTitle className="text-cyan-300 flex items-center gap-2">
               <BarChart3 size={20} />
               Multi-Pair Comparison
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-6 text-center">
-              <div className="text-3xl font-bold text-amber-300 mb-2">
+              <div className="text-3xl font-bold text-cyan-300 mb-2">
                 {multiPairResults.best_performer}
               </div>
               <div className="text-sm text-gray-400">Best Performing Pair</div>
