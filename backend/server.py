@@ -1096,6 +1096,9 @@ async def get_enhanced_context():
 # Include the router in the main app  
 app.include_router(api_router)
 
+# Include the backtesting router
+app.include_router(backtest_router)
+
 # Security middleware
 app.add_middleware(
     TrustedHostMiddleware,
