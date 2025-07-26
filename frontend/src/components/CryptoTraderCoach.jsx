@@ -998,7 +998,7 @@ const CryptoTraderCoach = () => {
                         </div>
 
                         <div>
-                          <h4 className="text-amber-300 font-semibold mb-4 text-lg">Recommended Actions</h4>
+                          <h4 className="text-cyan-300 font-semibold mb-4 text-lg">Recommended Actions</h4>
                           <div className="space-y-4">
                             {dailyStrategy.actions.map((action, index) => (
                               <div key={index} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
