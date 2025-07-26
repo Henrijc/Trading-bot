@@ -571,7 +571,7 @@ async def get_freqai_status():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/v1/freqai/predict/{pair}")
+@app.get("/api/v1/freqai/predict")
 async def get_freqai_prediction(pair: str):
     """Get FreqAI prediction for a specific pair"""
     try:
