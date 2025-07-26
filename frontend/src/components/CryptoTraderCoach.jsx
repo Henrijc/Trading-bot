@@ -966,7 +966,7 @@ const CryptoTraderCoach = () => {
                   <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
                     <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                       <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
-                        <Zap className="text-amber-500" size={24} />
+                        <Zap className="text-cyan-500" size={24} />
                         Daily Trading Strategy
                       </CardTitle>
                       <Badge className="w-fit bg-gradient-to-r from-orange-600 to-orange-700 text-white border border-orange-500/50 font-semibold shadow-lg">
