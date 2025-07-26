@@ -1132,7 +1132,7 @@ const CryptoTraderCoach = () => {
                           <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
                             <div className="flex justify-between items-start mb-3">
                               <div>
-                                <h3 className="font-bold text-amber-300">{campaign.name}</h3>
+                                <h3 className="font-bold text-cyan-300">{campaign.name}</h3>
                                 <p className="text-sm text-amber-400/70">Target: {((campaign.profit_target / campaign.allocated_capital) * 100).toFixed(0)}% in {campaign.timeframe_days} days</p>
                               </div>
                               <div className="flex gap-2">
