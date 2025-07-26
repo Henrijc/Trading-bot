@@ -1507,7 +1507,7 @@ const CryptoTraderCoach = () => {
             <h3 className="text-xl font-bold text-amber-300 mb-4">🎯 Adjust Monthly Targets</h3>
             
             <div className="space-y-4">
-              <div className="bg-amber-900/20 border border-amber-600/30 rounded-lg p-3 mb-4">
+              <div className="bg-amber-900/20 border border-cyan-600/30 rounded-lg p-3 mb-4">
                 <p className="text-amber-400 text-sm font-semibold">💡 AI Target Adjustment</p>
                 <p className="text-amber-300/80 text-xs mt-1">
                   You can also ask the AI: "Change my monthly target to R150k" or "Adjust my targets based on my performance"
