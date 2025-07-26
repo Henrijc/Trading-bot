@@ -1331,7 +1331,7 @@ const CryptoTraderCoach = () => {
                           }}
                           className={`${selectedTechnicalSymbol === symbol 
                             ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black' 
-                            : 'bg-gray-700 text-amber-300 hover:bg-gray-600'} font-semibold`}
+                            : 'bg-gray-700 text-cyan-300 hover:bg-gray-600'} font-semibold`}
                         >
                           {symbol}
                         </Button>
