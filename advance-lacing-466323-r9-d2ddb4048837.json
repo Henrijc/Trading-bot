@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "advance-lacing-466323-r9",
+  "private_key_id": "d2ddb4048837ba6bf58ec78c860655fa7d6cb12b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDzPUv7YshiE4F4\nTnrUuBi2PlHvxnDo8W1rgq9aoz0dd4i0B+Knb1PKxhqhQ+6loHloxsXv+R/Iu09Z\nf6coWssL8VwyJlnslsyZsRpJVTrUOZyFcnHAPtnsRboN2xEPEUXa5Q78xTal97He\nFsl45FpiUahRqu+fic4aGNh8aj2UtHHkpwPZMgkHY3DsJST6qh3kHoPMhWwFwzfM\n0TjcnMGdyIeCRGY/gUIfPOrJeFE+JGAs0i8/ccw7eqF1q0A9+ksfH3FkxaKdLWfw\neqaK4nftU201Srz+HgLUwQQWNTDLZxsD02Gx7gIy7baN/9Kx9KaPIJY5ueUghOd+\nsfRLSF33AgMBAAECggEAD2gHgwGrvYKMxcj6wLR0ZD6oQ+6mwipgitm5L519RnuG\nvhhtw7sqbIKFt0ctO3JhnkBQ0zVNTRKIIRwTw1uU1snP1CFXusOGbAmqp5BtbHnF\nrzIjgFC6zttPwIbqmrC2Yvn1LA91uadpra51zmFwVB/l8F5KVSmOU1rVg3PbOKrh\nmk+xxQ0zyIFOpdzPZLPlMGdqcCxL8b1RZDSzl8EIIlCag3NuhBub/amyn+XmG8IH\niWfl/Wd+qs+lzTR2cLyNi8EEJCuo1KDvVug4R/+iD+h7bZyXy4rZv9/+JLoOquJG\nSlJMa+O+0SaM0J8DHWvETVEbpij9ztXIRET/fRnnuQKBgQD9usI4qLOIUp2UdSmL\nMkxvzRYIvTinHtD2UloWEVgBAzgNgzIlzaJ3JcgVGvaMtUsUCCj4Q9nKnoGHOcwh\n5XLz5NQskRWu1oRnlKqkwW6AhWSufHXiqPk6YaONnOGExXpsLIl60aGuGjV5jBi3\nHOe7m4BI5aTh9OeS1Jn/zISEWwKBgQD1aoHtvclCX7jG/hPiNywqCDHPg5FXTxgN\ndOi/eWQ2QJnsRWFwwyVmrd2ov280Plc2l8aL0xtst+d8+sqaimvw5SbzWMmbkURL\nDZP9Fh3Om4S11eCrNPkKJavM5L80EzAElv2BmW1HhZwOb0H3ejsA9p9w1b0R+3le\npu6WkBIPlQKBgQDnpmzQQeW3noXUFqvZNBDpOfrV+7wPiGkLmuA4qZkJQ6EXZSKR\ntQ6RbWMhMb7LdHGZVmHhWEEtZk2n4jLm949d8RttnQCI4b18vBSX2ypCGId1bphK\nWi9BCAfEsOiMyacdwAO8qEvOoosT775Y4AEKHcyfwVoqGeia+5OmIVkTZQKBgQCH\ng1RTTqS/PdPuLYYVN5nva671gxTSPR5u78tFT2aCfpF/4Z+4gEk6tW7cKzjghDvs\nLUq5Eszl73ankGQniZ+o2R/052YLvN8VAl5hNcEnwMA7F+qDHzEU5VBER1s9CgtN\nvYIl+e5Zu/E8Fzs5yAiks4m+6IcKUu3l0g+Um+EdMQKBgQDe3YiIepSOLyMyH5wa\nOYSrXtzSvQ0wwWlTX9FDChpEDLLXwUCXm1yJbATWdQkcrfXzQ5gwP+vBoLA7GuUA\nfS+zEkIqxHbf+WDnrTiWVphF2Ch7kG0SPR/ozwnJ8rCdIZOqv+SVdOKox6mR8h+n\nCOoDUhA1I3G4cVJ0Fn466oeGSQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "ai-api@advance-lacing-466323-r9.iam.gserviceaccount.com",
+  "client_id": "110189888287776022327",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ai-api%40advance-lacing-466323-r9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
