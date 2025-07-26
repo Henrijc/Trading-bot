@@ -183,22 +183,14 @@ class LunoTradingBot:
                 logger.warning(f"No historical data for {pair}")
                 return
             
-            # Get FreqAI prediction
-            ai_prediction = await self.freqai_service.get_prediction(pair, df)
-            
-            # Apply strategy indicators (fallback if AI fails)
+            # Apply strategy indicators for technical analysis
             df = self.strategy.populate_indicators(df, {"pair": pair})
             df = self.strategy.populate_entry_trend(df, {"pair": pair})
             df = self.strategy.populate_exit_trend(df, {"pair": pair})
             
-            # Enhanced decision making with AI predictions
-            if 'error' not in ai_prediction:
-                # Use AI predictions as primary signal
-                await self._process_ai_signals(pair, df, ai_prediction)
-            else:
-                logger.warning(f"AI prediction failed for {pair}, using technical analysis fallback")
-                # Fallback to traditional technical analysis
-                await self._process_traditional_signals(pair, df)
+            # Use traditional technical analysis (FreqAI custom service removed)
+            logger.info(f"Processing {pair} with technical analysis (FreqAI custom service removed)")
+            await self._process_traditional_signals(pair, df)
             
         except Exception as e:
             logger.error(f"Error processing pair {pair}: {e}")
