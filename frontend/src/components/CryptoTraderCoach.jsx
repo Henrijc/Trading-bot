@@ -771,11 +771,11 @@ const CryptoTraderCoach = () => {
                           </div>
                           <div className="text-sm text-blue-300/80">Monthly Target</div>
                         </div>
-                        <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-amber-600/30">
-                          <div className="text-2xl font-bold font-mono text-amber-400">
+                        <div className="text-center p-4 bg-gradient-to-r from-cyan-900/40 to-cyan-800/40 rounded-xl border border-cyan-600/30">
+                          <div className="text-2xl font-bold font-mono text-cyan-400">
                             {formatCurrency((monthlyTargetState || 100000) - currentMonthProgress)}
                           </div>
-                          <div className="text-sm text-amber-300/80">Remaining</div>
+                          <div className="text-sm text-cyan-300/80">Remaining</div>
                         </div>
                       </div>
                       <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
