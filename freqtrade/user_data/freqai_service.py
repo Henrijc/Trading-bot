@@ -143,9 +143,9 @@ class FreqAIService:
         try:
             logger.info(f"Preparing training data for {pair}")
             
-            # Get historical data
+            # Get historical data using the correct method
             symbol = pair.replace("/", "")  # BTC/ZAR -> BTCZAR
-            df = await self.historical_service.get_historical_data(symbol, days=days)
+            df = await self.historical_service.fetch_historical_data(symbol, timeframe='1h', days_back=days)
             
             if df.empty:
                 logger.error(f"No historical data available for {pair}")
