@@ -89,7 +89,7 @@ Ready to execute today's trading strategy!`,
       <Card className="max-w-md w-full bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
         <CardHeader className="text-center">
           <CardTitle className="text-cyan-300 flex items-center justify-center gap-2">
-            <Shield className="text-amber-500" size={24} />
+            <Shield className="text-cyan-500" size={24} />
             Henrijc's Secure Login
           </CardTitle>
         </CardHeader>
@@ -197,7 +197,7 @@ Ready to execute today's trading strategy!`,
           <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
             <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
               <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl">
-                <Target className="text-amber-500" size={24} />
+                <Target className="text-cyan-500" size={24} />
                 Welcome Back, Henrijc! Portfolio Analysis Complete
               </CardTitle>
             </CardHeader>
@@ -237,7 +237,7 @@ Ready to execute today's trading strategy!`,
               {/* AI Recommendations */}
               <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-6 rounded-xl border border-amber-600/20">
                 <h3 className="text-cyan-300 font-bold text-lg mb-4 flex items-center gap-2">
-                  <Smartphone className="text-amber-500" size={20} />
+                  <Smartphone className="text-cyan-500" size={20} />
                   AI Portfolio Analysis & Recommendations
                 </h3>
                 <div className="text-amber-100 whitespace-pre-line leading-relaxed text-sm">
