@@ -33,7 +33,10 @@ class TradeSignal(Enum):
 class LiveTradeRequest(BaseModel):
     symbol: str
     mode: TradingMode = TradingMode.AI_ASSISTED
+    action: str = "buy"  # buy, sell, hold
+    amount: Optional[float] = None  # Amount in crypto units
     amount_zar: Optional[float] = None
+    confidence: Optional[float] = None  # Confidence level 0-1
     reason: str = "AI Strategy Signal"
     confirm_with_ai: bool = True
 
