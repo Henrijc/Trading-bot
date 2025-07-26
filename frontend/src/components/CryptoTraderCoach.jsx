@@ -1071,7 +1071,7 @@ const CryptoTraderCoach = () => {
                         </div>
 
                         <div>
-                          <h4 className="text-amber-300 font-semibold mb-4 text-lg flex items-center gap-2">
+                          <h4 className="text-cyan-300 font-semibold mb-4 text-lg flex items-center gap-2">
                             <AlertTriangle className="text-amber-500" size={20} />
                             Risk Management Recommendations
                           </h4>
