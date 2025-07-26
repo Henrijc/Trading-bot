@@ -28,7 +28,7 @@
     "%-ETHvolatility-period-20"
   ],
   "accuracy": 0.6730255627623045,
-  "trained_at": "2025-07-26T17:15:48.315641",
+  "trained_at": "2025-07-26T17:29:49.102190",
   "training_samples": 6115,
   "test_samples": 2621
 }
