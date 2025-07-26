@@ -118,7 +118,7 @@ class DecisionEngine:
         """Gather all necessary context for decision making"""
         
         # Fetch current portfolio status
-        portfolio_data = await self.luno_service.get_portfolio_summary()
+        portfolio_data = await self.luno_service.get_portfolio_data()
         portfolio_status = self._parse_portfolio_data(portfolio_data)
         
         # Fetch user targets
