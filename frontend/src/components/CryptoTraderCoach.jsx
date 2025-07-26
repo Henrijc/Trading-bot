@@ -1010,7 +1010,7 @@ const CryptoTraderCoach = () => {
                                       } font-bold shadow-lg`}>
                                         {action.type}
                                       </Badge>
-                                      <div className="text-amber-300 font-mono text-lg font-bold">{action.asset}</div>
+                                      <div className="text-cyan-300 font-mono text-lg font-bold">{action.asset}</div>
                                     </div>
                                     <div className="text-sm text-amber-400/80 leading-relaxed font-medium bg-gray-800/50 p-3 rounded-lg">
                                       {action.reasoning}
