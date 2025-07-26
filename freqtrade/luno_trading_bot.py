@@ -86,7 +86,7 @@ class LunoTradingBot:
             # Try to import the FreqAI strategy first
             try:
                 from LunoFreqAIStrategy import LunoFreqAIStrategy
-                strategy = LunoFreqAIStrategy()
+                strategy = LunoFreqAIStrategy(self.config)  # Pass config to strategy
                 logger.info(f"FreqAI Strategy '{strategy.__class__.__name__}' loaded successfully")
                 return strategy
             except ImportError:
