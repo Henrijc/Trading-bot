@@ -215,8 +215,13 @@ async def analyze_trading_signal(symbol: str, current_price: float):
 
 @live_trading_router.post("/execute-trade", response_model=LiveTradeResponse)
 async def execute_live_trade(trade_request: LiveTradeRequest):
-    """Execute a live trade with AI confirmation"""
+    """Execute a live trade with Decision Engine evaluation"""
     try:
+        # Import Decision Engine for integration
+        from services.decision_engine import DecisionEngine, TradeSignal
+        
+        decision_engine = DecisionEngine()
+        
         # Get current market price
         market_data = await luno_service.get_market_data()
         current_price = None
@@ -239,75 +244,126 @@ async def execute_live_trade(trade_request: LiveTradeRequest):
                 error="Could not fetch current price"
             )
         
-        # Get AI confirmation if requested
-        ai_analysis = ""
-        if trade_request.confirm_with_ai:
-            # Get signal analysis
-            signal_analysis = await analyze_trading_signal(trade_request.symbol, current_price)
-            ai_analysis = signal_analysis.get('ai_analysis', '')
+        # Step 1: Create trade signal for Decision Engine evaluation
+        trade_signal = TradeSignal(
+            pair=trade_request.symbol,
+            action=trade_request.action.lower(),
+            confidence=trade_request.confidence if hasattr(trade_request, 'confidence') else 0.7,
+            signal_strength="medium",  # Default for manual trades
+            direction="bullish" if trade_request.action.lower() == "buy" else "bearish",
+            amount=trade_request.amount,
+            timestamp=datetime.now().isoformat()
+        )
+        
+        # Step 2: Evaluate trade through Decision Engine (Phase 6 integration)
+        decision_result = await decision_engine.evaluate_trade_signal(trade_signal)
+        
+        # Step 3: Apply Decision Engine result
+        if decision_result.decision.value == "reject":
+            return LiveTradeResponse(
+                success=False,
+                symbol=trade_request.symbol,
+                action="none",
+                amount=0,
+                price=current_price,
+                total_value=0,
+                recommendation="REJECTED",
+                risk_assessment=decision_result.risk_assessment,
+                error=f"Decision Engine rejected trade: {decision_result.reasoning}",
+                conditions=decision_result.conditions
+            )
+        
+        elif decision_result.decision.value == "hold":
+            return LiveTradeResponse(
+                success=False,
+                symbol=trade_request.symbol,
+                action="hold",
+                amount=0,
+                price=current_price,
+                total_value=0,
+                recommendation="HOLD",
+                risk_assessment=decision_result.risk_assessment,
+                error=f"Decision Engine recommends hold: {decision_result.reasoning}",
+                conditions=decision_result.conditions
+            )
+        
+        # Step 4: Proceed with trade if approved by Decision Engine
+        if decision_result.decision.value == "approve":
+            # Use Decision Engine recommended amount if available
+            final_amount = decision_result.recommended_amount or trade_request.amount
             
-            # Check if AI recommends against the trade
-            if signal_analysis.get('signal') == 'hold' and signal_analysis.get('risk_level') == 'HIGH':
+            # Calculate trade value
+            total_value = final_amount * current_price
+            
+            # Get AI confirmation if requested (legacy support)
+            ai_analysis = f"Decision Engine: {decision_result.reasoning}"
+            if trade_request.confirm_with_ai:
+                # Get additional signal analysis for context
+                signal_analysis = await analyze_trading_signal(trade_request.symbol, current_price)
+                ai_analysis += f" | Signal Analysis: {signal_analysis.get('ai_analysis', '')}"
+                
+                # Check if AI recommends against the trade (legacy check)
+                if signal_analysis.get('signal') == 'hold' and signal_analysis.get('risk_level') == 'HIGH':
+                    return LiveTradeResponse(
+                        success=False,
+                        symbol=trade_request.symbol,
+                        action="none",
+                        amount=0,
+                        price=current_price,
+                        total_value=0,
+                        ai_analysis=ai_analysis,
+                        recommendation="AI REJECTED - High risk detected",
+                        risk_assessment="HIGH",
+                        error="AI analysis recommends against this trade"
+                    )
+            
+            # Paper trading mode - simulate the trade
+            if trade_request.mode == TradingMode.PAPER:
+                amount = trade_request.amount_zar or 1000  # Default R1000 for paper trading
+                
+                return LiveTradeResponse(
+                    success=True,
+                    trade_id=f"PAPER_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
+                    symbol=trade_request.symbol,
+                    action="paper_trade",
+                    amount=amount / current_price,
+                    price=current_price,
+                    total_value=amount,
+                    ai_analysis=ai_analysis,
+                    recommendation="PAPER TRADE EXECUTED",
+                    risk_assessment="LOW - Simulated only"
+                )
+            
+            # AI Assisted mode - requires explicit confirmation
+            elif trade_request.mode == TradingMode.AI_ASSISTED:
+                # For now, return the analysis without executing
+                # In production, this would wait for user confirmation
                 return LiveTradeResponse(
                     success=False,
                     symbol=trade_request.symbol,
-                    action="none",
+                    action="analysis_only",
                     amount=0,
                     price=current_price,
                     total_value=0,
                     ai_analysis=ai_analysis,
-                    recommendation="AI REJECTED - High risk detected",
-                    risk_assessment="HIGH",
-                    error="AI analysis recommends against this trade"
+                    recommendation="AI ANALYSIS COMPLETE - Awaiting user confirmation",
+                    risk_assessment="PENDING"
                 )
-        
-        # Paper trading mode - simulate the trade
-        if trade_request.mode == TradingMode.PAPER:
-            amount = trade_request.amount_zar or 1000  # Default R1000 for paper trading
             
-            return LiveTradeResponse(
-                success=True,
-                trade_id=f"PAPER_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
-                symbol=trade_request.symbol,
-                action="paper_trade",
-                amount=amount / current_price,
-                price=current_price,
-                total_value=amount,
-                ai_analysis=ai_analysis,
-                recommendation="PAPER TRADE EXECUTED",
-                risk_assessment="LOW - Simulated only"
-            )
-        
-        # AI Assisted mode - requires explicit confirmation
-        elif trade_request.mode == TradingMode.AI_ASSISTED:
-            # For now, return the analysis without executing
-            # In production, this would wait for user confirmation
-            return LiveTradeResponse(
-                success=False,
-                symbol=trade_request.symbol,
-                action="analysis_only",
-                amount=0,
-                price=current_price,
-                total_value=0,
-                ai_analysis=ai_analysis,
-                recommendation="AI ANALYSIS COMPLETE - Awaiting user confirmation",
-                risk_assessment="PENDING"
-            )
-        
-        # Live trading mode - would execute real trades
-        elif trade_request.mode == TradingMode.LIVE:
-            # For safety, this is disabled in current implementation
-            return LiveTradeResponse(
-                success=False,
-                symbol=trade_request.symbol,
-                action="disabled",
-                amount=0,
-                price=current_price,
-                total_value=0,
-                ai_analysis="Live trading is currently disabled for safety",
-                recommendation="LIVE TRADING DISABLED",
-                risk_assessment="SAFETY MEASURE"
-            )
+            # Live trading mode - would execute real trades
+            elif trade_request.mode == TradingMode.LIVE:
+                # For safety, this is disabled in current implementation
+                return LiveTradeResponse(
+                    success=False,
+                    symbol=trade_request.symbol,
+                    action="disabled",
+                    amount=0,
+                    price=current_price,
+                    total_value=0,
+                    ai_analysis="Live trading is currently disabled for safety",
+                    recommendation="LIVE TRADING DISABLED",
+                    risk_assessment="SAFETY MEASURE"
+                )
         
     except Exception as e:
         return LiveTradeResponse(
