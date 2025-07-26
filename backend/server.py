@@ -1284,6 +1284,37 @@ async def auto_adjust_targets():
         logger.error(f"Error auto-adjusting targets: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# FreqAI endpoints - NEW
+@api_router.post("/freqai/train")
+async def train_freqai_models():
+    """Train FreqAI models via trading bot"""
+    try:
+        result = await freqtrade_service._make_request("/api/v1/freqai/train", method="POST")
+        return result
+    except Exception as e:
+        logger.error(f"Error training FreqAI models: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/freqai/status")
+async def get_freqai_status():
+    """Get FreqAI model status via trading bot"""
+    try:
+        result = await freqtrade_service._make_request("/api/v1/freqai/status")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting FreqAI status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/freqai/predict")
+async def get_freqai_prediction(pair: str):
+    """Get FreqAI prediction via trading bot"""
+    try:
+        result = await freqtrade_service._make_request(f"/api/v1/freqai/predict?pair={pair}")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting FreqAI prediction: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app  
 app.include_router(api_router)
 
