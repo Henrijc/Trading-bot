@@ -585,11 +585,11 @@ const CryptoTraderCoach = () => {
                 <Activity className="w-4 h-4 mr-2" />
                 Auto Trade: {autoTradeSettings?.enabled ? 'ON' : 'OFF'}
               </Button>
-              <div className="text-center lg:text-right bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-xl border border-amber-600/30 shadow-lg">
+              <div className="text-center lg:text-right bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-xl border border-cyan-600/30 shadow-lg">
                 <div className="text-2xl lg:text-3xl font-bold font-mono bg-gradient-to-r from-green-400 to-green-500 bg-clip-text text-transparent">
                   {formatCurrency(currentMonthProgress)}
                 </div>
-                <div className="text-xs lg:text-sm text-amber-400/80 font-medium">
+                <div className="text-xs lg:text-sm text-cyan-400/80 font-medium">
                   Real-Time Portfolio Value
                 </div>
                 <div className="text-xs text-green-400 mt-1">
