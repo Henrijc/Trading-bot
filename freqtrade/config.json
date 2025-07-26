@@ -41,7 +41,8 @@
             "ETH/USDT",
             "XRP/USDT"
         ],
-        "pair_blacklist": []
+        "pair_blacklist": [],
+        "skip_pair_validation": true
     },
     "pairlists": [
         {
