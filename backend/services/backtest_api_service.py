@@ -19,7 +19,7 @@ from services.backtesting_service import CryptoBacktester, BacktestResult, Trade
 from services.luno_service import LunoService
 
 # Create router for backtesting endpoints
-backtest_router = APIRouter(prefix="/api/backtest", tags=["backtesting"])
+backtest_router = APIRouter(prefix="/backtest", tags=["backtesting"])
 
 # Pydantic models for API requests/responses
 class BacktestRequest(BaseModel):
