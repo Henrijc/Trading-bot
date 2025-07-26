@@ -52,7 +52,14 @@ class LunoTradingBot:
         self.luno_service = LunoService()
         self.ta_service = TechnicalAnalysisService()
         self.historical_service = HistoricalDataService()
-        self.freqai_service = FreqAIService()
+        
+        # Remove the custom FreqAI service - we'll use the real FreqTrade one
+        # Remove previous custom implementation files
+        import os
+        try:
+            os.remove('/app/freqtrade/user_data/freqai_service.py')
+        except:
+            pass
         
         # Load strategy
         self.strategy = self._load_strategy()
