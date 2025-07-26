@@ -1016,7 +1016,7 @@ const CryptoTraderCoach = () => {
                                       {action.reasoning}
                                     </div>
                                   </div>
-                                  <div className="text-right bg-gradient-to-r from-amber-900/40 to-amber-800/40 p-4 rounded-xl border border-cyan-600/30">
+                                  <div className="text-right bg-gradient-to-r from-cyan-900/40 to-cyan-800/40 p-4 rounded-xl border border-cyan-600/30">
                                     <div className="text-amber-200 font-mono text-base font-semibold">{action.amount}</div>
                                     <div className="text-sm text-cyan-400/80 font-medium mt-1">@ {action.price}</div>
                                   </div>
@@ -1354,7 +1354,7 @@ const CryptoTraderCoach = () => {
                             </div>
                             <div className="text-sm text-green-300/80">Trend Direction</div>
                           </div>
-                          <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-cyan-600/30">
+                          <div className="text-center p-4 bg-gradient-to-r from-cyan-900/40 to-cyan-800/40 rounded-xl border border-cyan-600/30">
                             <div className="text-2xl font-bold text-cyan-400">
                               {technicalAnalysis.recommendation?.action}
                             </div>
