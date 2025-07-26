@@ -18,10 +18,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Add the backend directory to Python path so we can import our services
 sys.path.append('/app/backend')
+sys.path.append('/app/freqtrade/user_data')
 
 from services.luno_service import LunoService
 from services.technical_analysis_service import TechnicalAnalysisService
 from services.historical_data_service import HistoricalDataService
+from freqai_service import FreqAIService
 
 # Configure logging
 logging.basicConfig(
