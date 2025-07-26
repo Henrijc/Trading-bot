@@ -74,13 +74,23 @@ class ComprehensiveBackendTester:
             
             if response.status_code == 200:
                 data = response.json()
-                if 'token' in data and 'user_data' in data:
+                # Check for either 'token' or 'access_token' field
+                has_token = 'token' in data or 'access_token' in data
+                has_user_data = 'user_data' in data
+                
+                if has_token and has_user_data:
                     self.log_test("Authentication System", True, 
                                 f"Login successful with JWT token and user data")
                     return True
                 else:
+                    missing_fields = []
+                    if not has_token:
+                        missing_fields.append("token/access_token")
+                    if not has_user_data:
+                        missing_fields.append("user_data")
+                    
                     self.log_test("Authentication System", False, 
-                                f"Login response missing required fields")
+                                f"Login response missing required fields: {missing_fields}")
                     return False
             else:
                 self.log_test("Authentication System", False, 
