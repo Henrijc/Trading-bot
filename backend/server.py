@@ -1366,5 +1366,6 @@ async def startup_event():
 async def shutdown_event():
     """Cleanup on shutdown"""
     await luno_service.close_session()
+    await freqtrade_service.close_session()
     client.close()
     logger.info("Crypto Trading Coach API stopped")
