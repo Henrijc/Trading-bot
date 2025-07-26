@@ -1387,6 +1387,237 @@ async def get_freqai_prediction(pair: str):
         logger.error(f"Error getting FreqAI prediction: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============================================================================
+# DECISION ENGINE ENDPOINTS - Phase 6: Final Intelligence Layer
+# ============================================================================
+
+@api_router.get("/decision/status")
+async def get_decision_engine_status():
+    """Get decision engine status and configuration"""
+    try:
+        status = await decision_engine.get_decision_engine_status()
+        return status
+    except Exception as e:
+        logger.error(f"Error getting decision engine status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/decision/evaluate")
+async def evaluate_trade_signal(signal_data: dict):
+    """
+    Evaluate a trade signal through the decision engine
+    
+    Expected format:
+    {
+        "pair": "BTC/ZAR",
+        "action": "buy",
+        "confidence": 0.75,
+        "signal_strength": "strong",
+        "direction": "bullish", 
+        "amount": 0.01
+    }
+    """
+    try:
+        from services.decision_engine import TradeSignal
+        
+        # Create TradeSignal object
+        signal = TradeSignal(
+            pair=signal_data.get('pair'),
+            action=signal_data.get('action'),
+            confidence=signal_data.get('confidence', 0.5),
+            signal_strength=signal_data.get('signal_strength', 'medium'),
+            direction=signal_data.get('direction', 'neutral'),
+            amount=signal_data.get('amount', 0.01),
+            predicted_return=signal_data.get('predicted_return'),
+            timestamp=datetime.utcnow().isoformat()
+        )
+        
+        # Evaluate through decision engine
+        result = await decision_engine.evaluate_trade_signal(signal)
+        
+        return {
+            "decision": result.decision.value,
+            "confidence": result.confidence,
+            "reasoning": result.reasoning,
+            "recommended_amount": result.recommended_amount,
+            "risk_assessment": result.risk_assessment,
+            "conditions": result.conditions,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error evaluating trade signal: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/decision/simulate")
+async def simulate_trade_decision(simulation_data: dict):
+    """
+    Simulate a trade decision without executing
+    Useful for testing and analysis
+    
+    Expected format:
+    {
+        "pair": "ETH/ZAR",
+        "action": "sell",
+        "amount": 0.5,
+        "confidence": 0.8
+    }
+    """
+    try:
+        pair = simulation_data.get('pair')
+        action = simulation_data.get('action')
+        amount = simulation_data.get('amount', 0.01)
+        confidence = simulation_data.get('confidence', 0.5)
+        
+        if not pair or not action:
+            raise HTTPException(status_code=400, detail="pair and action are required")
+        
+        result = await decision_engine.simulate_decision(pair, action, amount, confidence)
+        
+        return {
+            "simulation": True,
+            "input": {
+                "pair": pair,
+                "action": action,
+                "amount": amount,
+                "confidence": confidence
+            },
+            "result": {
+                "decision": result.decision.value,
+                "confidence": result.confidence,
+                "reasoning": result.reasoning,
+                "recommended_amount": result.recommended_amount,
+                "risk_assessment": result.risk_assessment,
+                "conditions": result.conditions
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error simulating trade decision: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/decision/ai-integrated")
+async def ai_integrated_trade_decision(trade_request: dict):
+    """
+    Complete AI-integrated trade decision pipeline:
+    1. Get FreqAI signal
+    2. Run through decision engine
+    3. Return combined intelligence result
+    
+    Expected format:
+    {
+        "pair": "BTC/ZAR",
+        "action": "buy" // optional - will get from FreqAI if not provided
+    }
+    """
+    try:
+        pair = trade_request.get('pair')
+        requested_action = trade_request.get('action')
+        
+        if not pair:
+            raise HTTPException(status_code=400, detail="trading pair is required")
+        
+        # Step 1: Get FreqAI prediction
+        try:
+            freqai_response = await freqtrade_service.get_freqai_prediction(pair)
+            
+            if not freqai_response.get('success', False):
+                return {
+                    "success": False,
+                    "error": "FreqAI prediction unavailable",
+                    "decision": "hold",
+                    "reason": "Cannot evaluate without AI signal"
+                }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"FreqAI service error: {str(e)}",
+                "decision": "hold",
+                "reason": "AI service unavailable"
+            }
+        
+        # Step 2: Parse FreqAI response into trade signal
+        prediction_data = freqai_response.get('prediction', {})
+        
+        # Determine action from FreqAI or use requested action
+        if requested_action:
+            action = requested_action
+        else:
+            # Derive action from FreqAI direction and confidence
+            direction = prediction_data.get('direction', 'neutral')
+            confidence = prediction_data.get('confidence', 0.5)
+            
+            if direction == 'bullish' and confidence > 0.6:
+                action = 'buy'
+            elif direction == 'bearish' and confidence > 0.6:
+                action = 'sell'
+            else:
+                action = 'hold'
+        
+        # Skip decision engine for hold signals
+        if action == 'hold':
+            return {
+                "success": True,
+                "freqai_signal": prediction_data,
+                "decision": "hold",
+                "reasoning": "FreqAI suggests neutral position",
+                "confidence": prediction_data.get('confidence', 0.5),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        # Step 3: Create trade signal for decision engine
+        from services.decision_engine import TradeSignal
+        
+        signal = TradeSignal(
+            pair=pair,
+            action=action,
+            confidence=prediction_data.get('confidence', 0.5),
+            signal_strength=prediction_data.get('signal_strength', 'medium'),
+            direction=prediction_data.get('direction', 'neutral'),
+            amount=0.01,  # Default amount - will be adjusted by decision engine
+            predicted_return=prediction_data.get('prediction_roc_5'),
+            timestamp=datetime.utcnow().isoformat()
+        )
+        
+        # Step 4: Evaluate through decision engine
+        decision_result = await decision_engine.evaluate_trade_signal(signal)
+        
+        # Step 5: Return complete AI-integrated result
+        return {
+            "success": True,
+            "freqai_signal": {
+                "pair": pair,
+                "confidence": prediction_data.get('confidence'),
+                "signal_strength": prediction_data.get('signal_strength'),
+                "direction": prediction_data.get('direction'),
+                "predicted_return": prediction_data.get('prediction_roc_5')
+            },
+            "decision_engine": {
+                "decision": decision_result.decision.value,
+                "confidence": decision_result.confidence,
+                "reasoning": decision_result.reasoning,
+                "recommended_amount": decision_result.recommended_amount,
+                "risk_assessment": decision_result.risk_assessment,
+                "conditions": decision_result.conditions
+            },
+            "final_recommendation": {
+                "action": decision_result.decision.value,
+                "confidence": decision_result.confidence,
+                "amount": decision_result.recommended_amount,
+                "summary": decision_result.reasoning
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in AI-integrated trade decision: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include sub-routers in the api_router (they will inherit the /api prefix)
 api_router.include_router(backtest_router)
 api_router.include_router(live_trading_router)
