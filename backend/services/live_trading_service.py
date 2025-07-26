@@ -18,7 +18,7 @@ from services.backtest_api_service import CryptoBacktester
 from services.historical_data_service import HistoricalDataService
 
 # Create router for live trading
-live_trading_router = APIRouter(prefix="/api/live-trading", tags=["live_trading"])
+live_trading_router = APIRouter(prefix="/live-trading", tags=["live_trading"])
 
 class TradingMode(Enum):
     PAPER = "paper"
