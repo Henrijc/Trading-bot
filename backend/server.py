@@ -1178,6 +1178,112 @@ async def get_login_analysis(user_data = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Bot Control endpoints - NEW
+@api_router.post("/bot/start")
+async def start_trading_bot():
+    """Start the Freqtrade trading bot"""
+    try:
+        result = await freqtrade_service.start_bot()
+        return result
+    except Exception as e:
+        logger.error(f"Error starting trading bot: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/bot/stop")
+async def stop_trading_bot():
+    """Stop the Freqtrade trading bot"""
+    try:
+        result = await freqtrade_service.stop_bot()
+        return result
+    except Exception as e:
+        logger.error(f"Error stopping trading bot: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bot/status")
+async def get_bot_status():
+    """Get current status of the trading bot"""
+    try:
+        result = await freqtrade_service.get_status()
+        return result
+    except Exception as e:
+        logger.error(f"Error getting bot status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bot/trades")
+async def get_bot_trades():
+    """Get all trades from the trading bot"""
+    try:
+        result = await freqtrade_service.get_trades()
+        return result
+    except Exception as e:
+        logger.error(f"Error getting bot trades: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bot/profit")
+async def get_bot_profit():
+    """Get profit summary from the trading bot"""
+    try:
+        result = await freqtrade_service.get_profit()
+        return result
+    except Exception as e:
+        logger.error(f"Error getting bot profit: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/bot/health")
+async def check_bot_health():
+    """Check if the trading bot is healthy"""
+    try:
+        is_healthy = await freqtrade_service.health_check()
+        return {
+            "healthy": is_healthy,
+            "status": "connected" if is_healthy else "disconnected",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error checking bot health: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Enhanced Target Management endpoints - NEW
+@api_router.get("/targets/user")
+async def get_user_targets():
+    """Get user targets and performance goals"""
+    try:
+        targets = await target_service.get_user_targets()
+        return targets
+    except Exception as e:
+        logger.error(f"Error getting user targets: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/targets/user")
+async def update_user_targets(targets: dict):
+    """Update user targets"""
+    try:
+        result = await target_service.update_user_targets("default_user", targets)
+        return {"success": True, "targets": result}
+    except Exception as e:
+        logger.error(f"Error updating user targets: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/targets/progress")
+async def get_target_progress():
+    """Get progress towards targets"""
+    try:
+        progress = await target_service.calculate_progress()
+        return progress
+    except Exception as e:
+        logger.error(f"Error getting target progress: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/targets/auto-adjust")
+async def auto_adjust_targets():
+    """Auto-adjust targets based on performance"""
+    try:
+        result = await target_service.adjust_targets_based_on_performance()
+        return result
+    except Exception as e:
+        logger.error(f"Error auto-adjusting targets: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app  
 app.include_router(api_router)
 
