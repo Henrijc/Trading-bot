@@ -80,8 +80,10 @@ class CriticalBackendTester:
             
             if response.status_code == 200:
                 data = response.json()
-                if data.get('success') and 'token' in data:
-                    self.auth_token = data['token']
+                # Check for either 'token' or 'access_token' field
+                token = data.get('token') or data.get('access_token')
+                if data.get('success') and token:
+                    self.auth_token = token
                     self.session.headers.update({'Authorization': f'Bearer {self.auth_token}'})
                     self.log_test("Authentication", True, f"Successfully authenticated user {self.user_id}")
                     return True
