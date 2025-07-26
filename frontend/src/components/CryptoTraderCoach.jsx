@@ -1607,6 +1607,290 @@ const CryptoTraderCoach = () => {
                 </Card>
               </TabsContent>
 
+              {/* Bot Control Tab - NEW */}
+              <TabsContent value="bot-control" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  
+                  {/* Bot Status Card */}
+                  <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                    <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                      <CardTitle className="text-cyan-300 flex items-center gap-3">
+                        <Activity className="text-cyan-500" size={20} />
+                        Trading Bot Status
+                        <div className={`ml-auto w-3 h-3 rounded-full ${
+                          botStatus?.status === 'running' ? 'bg-green-500 animate-pulse' : 
+                          botStatus?.status === 'stopped' ? 'bg-red-500' : 'bg-gray-500'
+                        }`}></div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Status:</span>
+                          <Badge className={`${
+                            botStatus?.status === 'running' ? 'bg-green-600 hover:bg-green-700' :
+                            botStatus?.status === 'stopped' ? 'bg-red-600 hover:bg-red-700' :
+                            'bg-gray-600 hover:bg-gray-700'
+                          } text-white`}>
+                            {botStatus?.status || 'Unknown'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Strategy:</span>
+                          <span className="text-cyan-300 font-medium">
+                            {botStatus?.strategy || 'LunoTestStrategy'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Trading Pairs:</span>
+                          <span className="text-cyan-300 font-mono text-sm">
+                            {botStatus?.pairs?.join(', ') || 'BTC/ZAR, ETH/ZAR, XRP/ZAR'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Mode:</span>
+                          <Badge className={`${
+                            botStatus?.dry_run ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'
+                          } text-white`}>
+                            {botStatus?.dry_run ? 'Dry Run' : 'Live Trading'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Open Trades:</span>
+                          <span className="text-cyan-300 font-bold">
+                            {botStatus?.open_trades_count || 0}
+                          </span>
+                        </div>
+                        
+                        <div className="flex gap-3 mt-6">
+                          <Button
+                            onClick={startTradingBot}
+                            disabled={isBotLoading || botStatus?.status === 'running'}
+                            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg"
+                          >
+                            <Play className="w-4 h-4 mr-2" />
+                            {isBotLoading ? 'Starting...' : 'Start Bot'}
+                          </Button>
+                          
+                          <Button
+                            onClick={stopTradingBot}
+                            disabled={isBotLoading || botStatus?.status === 'stopped'}
+                            className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg"
+                          >
+                            <Pause className="w-4 h-4 mr-2" />
+                            {isBotLoading ? 'Stopping...' : 'Stop Bot'}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Performance Summary Card */}
+                  <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                    <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                      <CardTitle className="text-cyan-300 flex items-center gap-3">
+                        <TrendingUp className="text-cyan-500" size={20} />
+                        Bot Performance
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Total Profit:</span>
+                          <span className={`font-bold text-lg ${
+                            (botProfit?.total_profit || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {formatCurrency(botProfit?.total_profit || 0)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Total Trades:</span>
+                          <span className="text-cyan-300 font-bold">
+                            {botProfit?.total_trades || 0}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Winning Trades:</span>
+                          <span className="text-green-400 font-bold">
+                            {botProfit?.winning_trades || 0}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Win Rate:</span>
+                          <span className="text-cyan-300 font-bold">
+                            {((botProfit?.win_rate || 0) * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Avg Profit/Trade:</span>
+                          <span className={`font-bold ${
+                            (botProfit?.avg_profit || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {formatCurrency(botProfit?.avg_profit || 0)}
+                          </span>
+                        </div>
+                        
+                        <div className="mt-6">
+                          <Progress 
+                            value={((botProfit?.win_rate || 0) * 100)} 
+                            className="h-3 bg-gray-700"
+                          />
+                          <p className="text-xs text-gray-400 mt-2 text-center">
+                            Win Rate Progress
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Trading Targets Progress */}
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                  <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                    <CardTitle className="text-cyan-300 flex items-center gap-3">
+                      <Target className="text-cyan-500" size={20} />
+                      Target Progress
+                      <Button
+                        onClick={refreshBotData}
+                        size="sm"
+                        className="ml-auto bg-cyan-600 hover:bg-cyan-700 text-black text-xs"
+                      >
+                        <RefreshCw className="w-3 h-3 mr-1" />
+                        Refresh
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      
+                      {/* Daily Progress */}
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-cyan-300 mb-2">
+                          {formatCurrency(targetProgress?.current_performance?.daily_profit || 0)}
+                        </div>
+                        <div className="text-sm text-gray-400 mb-3">
+                          Daily Progress
+                        </div>
+                        <Progress 
+                          value={Math.min(100, targetProgress?.progress?.daily_progress || 0)} 
+                          className="h-2 bg-gray-700"
+                        />
+                        <div className="text-xs text-gray-400 mt-2">
+                          {(targetProgress?.progress?.daily_progress || 0).toFixed(1)}% of {formatCurrency(userTargets?.daily_target || 267)}
+                        </div>
+                      </div>
+
+                      {/* Weekly Progress */}
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-cyan-300 mb-2">
+                          {formatCurrency(targetProgress?.current_performance?.weekly_profit || 0)}
+                        </div>
+                        <div className="text-sm text-gray-400 mb-3">
+                          Weekly Progress
+                        </div>
+                        <Progress 
+                          value={Math.min(100, targetProgress?.progress?.weekly_progress || 0)} 
+                          className="h-2 bg-gray-700"
+                        />
+                        <div className="text-xs text-gray-400 mt-2">
+                          {(targetProgress?.progress?.weekly_progress || 0).toFixed(1)}% of {formatCurrency(userTargets?.weekly_target || 2000)}
+                        </div>
+                      </div>
+
+                      {/* Monthly Progress */}
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-cyan-300 mb-2">
+                          {formatCurrency(targetProgress?.current_performance?.monthly_profit || 0)}
+                        </div>
+                        <div className="text-sm text-gray-400 mb-3">
+                          Monthly Progress
+                        </div>
+                        <Progress 
+                          value={Math.min(100, targetProgress?.progress?.monthly_progress || 0)} 
+                          className="h-2 bg-gray-700"
+                        />
+                        <div className="text-xs text-gray-400 mt-2">
+                          {(targetProgress?.progress?.monthly_progress || 0).toFixed(1)}% of {formatCurrency(userTargets?.monthly_target || 8000)}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Recent Bot Trades */}
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                  <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                    <CardTitle className="text-cyan-300 flex items-center gap-3">
+                      <BarChart3 className="text-cyan-500" size={20} />
+                      Recent Bot Trades
+                      <Badge className="ml-auto bg-cyan-600 text-black">
+                        {botTrades.length} Total
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <ScrollArea className="h-64">
+                      {botTrades.length > 0 ? (
+                        <div className="space-y-3">
+                          {botTrades.slice(0, 10).map((trade, index) => (
+                            <div 
+                              key={trade.trade_id || index}
+                              className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50"
+                            >
+                              <div className="flex items-center gap-3">
+                                <Badge className={`${
+                                  trade.status === 'open' ? 'bg-blue-600' :
+                                  trade.status === 'closed' && trade.profit > 0 ? 'bg-green-600' :
+                                  trade.status === 'closed' && trade.profit < 0 ? 'bg-red-600' :
+                                  'bg-gray-600'
+                                } text-white text-xs`}>
+                                  {trade.status}
+                                </Badge>
+                                <span className="text-cyan-300 font-mono text-sm font-bold">
+                                  {trade.pair}
+                                </span>
+                                <span className="text-gray-400 text-xs">
+                                  {trade.side}
+                                </span>
+                              </div>
+                              
+                              <div className="text-right">
+                                <div className={`text-sm font-bold ${
+                                  trade.profit > 0 ? 'text-green-400' :
+                                  trade.profit < 0 ? 'text-red-400' :
+                                  'text-gray-400'
+                                }`}>
+                                  {trade.profit ? `${formatPercentage(trade.profit * 100)}` : 'N/A'}
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                  {formatCurrency(trade.entry_rate || 0)}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <Activity className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                          <p className="text-gray-400">No trades yet</p>
+                          <p className="text-sm text-gray-500 mt-2">
+                            Bot trades will appear here once trading begins
+                          </p>
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               {/* Backtesting Tab */}
               <TabsContent value="backtesting" className="space-y-6">
                 <BacktestingDashboard />
