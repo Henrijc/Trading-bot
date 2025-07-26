@@ -605,10 +605,10 @@ const CryptoTraderCoach = () => {
           
           {/* Chat Interface */}
           <div className="lg:col-span-1 order-2 lg:order-1">
-            <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10 h-[500px] lg:h-[650px] flex flex-col">
-              <CardHeader className="pb-3 border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
-                <CardTitle className="text-amber-300 flex items-center gap-3 text-lg font-semibold">
-                  <MessageCircle className="text-amber-500" size={22} />
+            <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10 h-[500px] lg:h-[650px] flex flex-col">
+              <CardHeader className="pb-3 border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                <CardTitle className="text-cyan-300 flex items-center gap-3 text-lg font-semibold">
+                  <MessageCircle className="text-cyan-500" size={22} />
                   AI Trading Assistant
                   <div className="ml-auto w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 </CardTitle>
