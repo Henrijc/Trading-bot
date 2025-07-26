@@ -1504,7 +1504,7 @@ const CryptoTraderCoach = () => {
       {showTargetAdjustmentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-amber-300 mb-4">🎯 Adjust Monthly Targets</h3>
+            <h3 className="text-xl font-bold text-cyan-300 mb-4">🎯 Adjust Monthly Targets</h3>
             
             <div className="space-y-4">
               <div className="bg-amber-900/20 border border-cyan-600/30 rounded-lg p-3 mb-4">
