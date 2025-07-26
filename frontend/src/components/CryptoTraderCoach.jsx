@@ -1108,7 +1108,7 @@ const CryptoTraderCoach = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <div className="text-center text-amber-300/80 mb-6">
+                    <div className="text-center text-cyan-300/80 mb-6">
                       <p className="text-lg font-semibold mb-2">🎯 High-Precision Trading Campaigns</p>
                       <p className="text-sm">Allocate specific capital • Set profit targets • Define timeframes • Let AI execute</p>
                     </div>
