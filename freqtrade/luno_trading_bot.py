@@ -577,7 +577,7 @@ async def get_freqai_prediction(pair: str):
     try:
         # Get recent data for prediction
         symbol = pair.replace("/", "")
-        df = await bot.historical_service.get_historical_data(symbol, days=50)
+        df = await bot.historical_service.fetch_historical_data(symbol, timeframe='1h', days_back=50)
         
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data available for {pair}")
