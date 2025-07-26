@@ -505,6 +505,112 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  // Bot Control Functions - NEW
+  const loadBotStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/bot/status`);
+      setBotStatus(response.data);
+    } catch (error) {
+      console.error('Error loading bot status:', error);
+      setBotStatus({
+        status: 'disconnected',
+        error: 'Unable to connect to trading bot'
+      });
+    }
+  };
+
+  const loadBotTrades = async () => {
+    try {
+      const response = await axios.get(`${API}/bot/trades`);
+      setBotTrades(response.data.trades || []);
+    } catch (error) {
+      console.error('Error loading bot trades:', error);
+      setBotTrades([]);
+    }
+  };
+
+  const loadBotProfit = async () => {
+    try {
+      const response = await axios.get(`${API}/bot/profit`);
+      setBotProfit(response.data);
+    } catch (error) {
+      console.error('Error loading bot profit:', error);
+      setBotProfit({
+        total_profit: 0,
+        total_trades: 0,
+        winning_trades: 0,
+        win_rate: 0
+      });
+    }
+  };
+
+  const loadUserTargets = async () => {
+    try {
+      const response = await axios.get(`${API}/targets/user`);
+      setUserTargets(response.data);
+    } catch (error) {
+      console.error('Error loading user targets:', error);
+    }
+  };
+
+  const loadTargetProgress = async () => {
+    try {
+      const response = await axios.get(`${API}/targets/progress`);
+      setTargetProgress(response.data);
+    } catch (error) {
+      console.error('Error loading target progress:', error);
+    }
+  };
+
+  const startTradingBot = async () => {
+    try {
+      setIsBotLoading(true);
+      const response = await axios.post(`${API}/bot/start`);
+      await loadBotStatus();
+      alert(response.data.message || 'Trading bot started successfully');
+    } catch (error) {
+      console.error('Error starting bot:', error);
+      alert('Failed to start trading bot: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setIsBotLoading(false);
+    }
+  };
+
+  const stopTradingBot = async () => {
+    try {
+      setIsBotLoading(true);
+      const response = await axios.post(`${API}/bot/stop`);
+      await loadBotStatus();
+      alert(response.data.message || 'Trading bot stopped successfully');
+    } catch (error) {
+      console.error('Error stopping bot:', error);
+      alert('Failed to stop trading bot: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setIsBotLoading(false);
+    }
+  };
+
+  const refreshBotData = async () => {
+    await Promise.all([
+      loadBotStatus(),
+      loadBotTrades(),
+      loadBotProfit(),
+      loadUserTargets(),
+      loadTargetProgress()
+    ]);
+  };
+
+  // Load bot data when bot control tab is active
+  useEffect(() => {
+    if (activeTab === 'bot-control') {
+      refreshBotData();
+      
+      // Set up periodic refresh for bot data
+      const interval = setInterval(refreshBotData, 10000); // Every 10 seconds
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
