@@ -976,7 +976,7 @@ const CryptoTraderCoach = () => {
                     <CardContent className="p-6">
                       <div className="space-y-6">
                         <div className="p-5 bg-gradient-to-r from-blue-900/40 to-blue-800/40 rounded-xl border border-blue-600/30">
-                          <h4 className="text-amber-300 font-semibold mb-3 text-lg">Primary Recommendation</h4>
+                          <h4 className="text-cyan-300 font-semibold mb-3 text-lg">Primary Recommendation</h4>
                           <p className="text-amber-100 leading-relaxed font-medium text-base">
                             {dailyStrategy.main_recommendation}
                           </p>
