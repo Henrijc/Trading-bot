@@ -86,7 +86,7 @@ Ready to execute today's trading strategy!`,
 
   const renderLoginStep = () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
-      <Card className="max-w-md w-full bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
+      <Card className="max-w-md w-full bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40">
         <CardHeader className="text-center">
           <CardTitle className="text-cyan-300 flex items-center justify-center gap-2">
             <Shield className="text-cyan-500" size={24} />
@@ -109,7 +109,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.username}
               onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-cyan-100"
+              className="bg-gray-700 border-cyan-600/40 text-cyan-100"
               placeholder="Enter your username"
             />
           </div>
@@ -120,7 +120,7 @@ Ready to execute today's trading strategy!`,
               type="password"
               value={loginData.password}
               onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-cyan-100"
+              className="bg-gray-700 border-cyan-600/40 text-cyan-100"
               placeholder="Enter your password"
             />
           </div>
@@ -131,7 +131,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.totp_code}
               onChange={(e) => setLoginData(prev => ({ ...prev, totp_code: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-cyan-100"
+              className="bg-gray-700 border-cyan-600/40 text-cyan-100"
               placeholder="6-digit code from app"
               maxLength={6}
             />
@@ -143,7 +143,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.backup_code}
               onChange={(e) => setLoginData(prev => ({ ...prev, backup_code: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-cyan-100"
+              className="bg-gray-700 border-cyan-600/40 text-cyan-100"
               placeholder="Use if 2FA unavailable"
             />
           </div>
@@ -194,8 +194,8 @@ Ready to execute today's trading strategy!`,
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
         <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
-            <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40">
+            <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
               <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl">
                 <Target className="text-cyan-500" size={24} />
                 Welcome Back, Henrijc! Portfolio Analysis Complete
@@ -226,7 +226,7 @@ Ready to execute today's trading strategy!`,
                   <div className="text-purple-300 text-sm">Active Holdings</div>
                 </div>
                 
-                <div className="bg-gradient-to-r from-amber-900/30 to-amber-800/30 p-4 rounded-lg border border-amber-600/30">
+                <div className="bg-gradient-to-r from-amber-900/30 to-amber-800/30 p-4 rounded-lg border border-cyan-600/30">
                   <div className="text-cyan-400 text-2xl font-bold">
                     R{portfolio_summary?.monthly_target?.toLocaleString()}
                   </div>
@@ -235,7 +235,7 @@ Ready to execute today's trading strategy!`,
               </div>
 
               {/* AI Recommendations */}
-              <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-6 rounded-xl border border-amber-600/20">
+              <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-6 rounded-xl border border-cyan-600/20">
                 <h3 className="text-cyan-300 font-bold text-lg mb-4 flex items-center gap-2">
                   <Smartphone className="text-cyan-500" size={20} />
                   AI Portfolio Analysis & Recommendations
