@@ -1223,7 +1223,7 @@ const CryptoTraderCoach = () => {
                       <div className="flex gap-3 mt-6">
                         <Button
                           onClick={() => setShowCreateCampaignModal(false)}
-                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-amber-300"
+                          className="flex-1 bg-gray-700 hover:bg-gray-600 text-cyan-300"
                         >
                           Cancel
                         </Button>
