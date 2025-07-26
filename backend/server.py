@@ -50,6 +50,8 @@ memory_service = AIMemoryService()
 semi_auto_service = SemiAutoTradeService()
 security_service = SecurityService()
 auth_service = AuthenticationService()
+freqtrade_service = FreqtradeService()
+target_service = TargetService(db_client=client)
 
 # Security middleware
 security = HTTPBearer()
