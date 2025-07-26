@@ -919,7 +919,7 @@ const CryptoTraderCoach = () => {
                                   </Badge>
                                 )}
                                 {holding.source === 'Luno' && (
-                                  <Badge className="bg-gradient-to-r from-amber-600 to-amber-700 text-black text-xs">
+                                  <Badge className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-black text-xs">
                                     LUNO
                                   </Badge>
                                 )}
@@ -949,7 +949,7 @@ const CryptoTraderCoach = () => {
                             <div className="text-sm text-cyan-400/60 font-medium">
                               Price: {formatCurrency(holding.current_price)}
                             </div>
-                            <div className="bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
+                            <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-black px-3 py-1 rounded-full text-sm font-bold">
                               {holding.allocation.toFixed(1)}% of portfolio
                             </div>
                           </div>
@@ -1120,7 +1120,7 @@ const CryptoTraderCoach = () => {
                         <p className="text-cyan-300/70 mb-4">Create your first targeted trading campaign</p>
                         <Button
                           onClick={() => setShowCreateCampaignModal(true)}
-                          className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
+                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
                         >
                           <Target className="w-4 h-4 mr-2" />
                           Start Campaign
@@ -1230,7 +1230,7 @@ const CryptoTraderCoach = () => {
                         <Button
                           onClick={createTradingCampaign}
                           disabled={isLoading}
-                          className="flex-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
+                          className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
                         >
                           {isLoading ? 'Creating...' : 'Create Campaign'}
                         </Button>
@@ -1251,7 +1251,7 @@ const CryptoTraderCoach = () => {
                       Market Technical Overview
                       <Button
                         onClick={loadMarketOverview}
-                        className="ml-auto bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold p-2 rounded-full"
+                        className="ml-auto bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold p-2 rounded-full"
                         size="sm"
                       >
                         <RefreshCw size={16} />
@@ -1330,7 +1330,7 @@ const CryptoTraderCoach = () => {
                             loadTechnicalIndicators(symbol);
                           }}
                           className={`${selectedTechnicalSymbol === symbol 
-                            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black' 
+                            ? 'bg-gradient-to-r from-cyan-600 to-cyan-700 text-black' 
                             : 'bg-gray-700 text-cyan-300 hover:bg-gray-600'} font-semibold`}
                         >
                           {symbol}
@@ -1661,7 +1661,7 @@ const CryptoTraderCoach = () => {
                       console.error('Error saving auto trade settings:', error);
                     }
                   }}
-                  className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold flex-1"
+                  className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold flex-1"
                 >
                   Save Settings
                 </Button>
