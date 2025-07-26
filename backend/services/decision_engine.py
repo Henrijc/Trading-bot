@@ -122,7 +122,7 @@ class DecisionEngine:
         portfolio_status = self._parse_portfolio_data(portfolio_data)
         
         # Fetch user targets
-        targets = await self.target_service.get_target_settings()
+        targets = await self.target_service.get_user_targets()
         
         # Assess risk level
         risk_level = self._assess_current_risk_level(portfolio_status, signal)
