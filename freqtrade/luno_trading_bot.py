@@ -167,7 +167,7 @@ class LunoTradingBot:
         logger.info("Trading loop stopped")
     
     async def _process_pair(self, pair: str):
-        """Process trading signals for a specific pair"""
+        """Process trading signals for a specific pair using FreqAI predictions"""
         try:
             # Get historical data
             symbol = pair.replace("/", "")  # BTC/ZAR -> BTCZAR
@@ -177,20 +177,133 @@ class LunoTradingBot:
                 logger.warning(f"No historical data for {pair}")
                 return
             
-            # Apply strategy indicators
+            # Get FreqAI prediction
+            ai_prediction = await self.freqai_service.get_prediction(pair, df)
+            
+            # Apply strategy indicators (fallback if AI fails)
             df = self.strategy.populate_indicators(df, {"pair": pair})
             df = self.strategy.populate_entry_trend(df, {"pair": pair})
             df = self.strategy.populate_exit_trend(df, {"pair": pair})
             
+            # Enhanced decision making with AI predictions
+            if 'error' not in ai_prediction:
+                # Use AI predictions as primary signal
+                await self._process_ai_signals(pair, df, ai_prediction)
+            else:
+                logger.warning(f"AI prediction failed for {pair}, using technical analysis fallback")
+                # Fallback to traditional technical analysis
+                await self._process_traditional_signals(pair, df)
+            
+        except Exception as e:
+            logger.error(f"Error processing pair {pair}: {e}")
+    
+    async def _process_ai_signals(self, pair: str, df: pd.DataFrame, ai_prediction: Dict):
+        """Process AI-enhanced trading signals"""
+        try:
+            prediction_value = ai_prediction.get('prediction_roc_5', 0)
+            confidence = ai_prediction.get('confidence', 0)
+            direction = ai_prediction.get('direction', 'neutral')
+            
+            logger.info(f"AI Signal for {pair}: {direction} (prediction: {prediction_value:.4f}, confidence: {confidence:.2f})")
+            
+            # Check for entry signals (AI-driven)
+            if self._has_ai_entry_signal(prediction_value, confidence, direction, pair):
+                await self._process_entry_signal(pair, df, signal_type='ai', ai_data=ai_prediction)
+            
+            # Check existing trades for AI-enhanced exit signals
+            await self._process_ai_exit_signals(pair, df, ai_prediction)
+            
+        except Exception as e:
+            logger.error(f"Error processing AI signals for {pair}: {e}")
+    
+    async def _process_traditional_signals(self, pair: str, df: pd.DataFrame):
+        """Process traditional technical analysis signals"""
+        try:
             # Check for entry signals
             if self._has_entry_signal(df, pair):
-                await self._process_entry_signal(pair, df)
+                await self._process_entry_signal(pair, df, signal_type='technical')
             
             # Check existing trades for exit signals
             await self._process_exit_signals(pair, df)
             
         except Exception as e:
-            logger.error(f"Error processing pair {pair}: {e}")
+            logger.error(f"Error processing traditional signals for {pair}: {e}")
+    
+    def _has_ai_entry_signal(self, prediction: float, confidence: float, direction: str, pair: str) -> bool:
+        """Check if there's an AI-driven entry signal"""
+        try:
+            # AI signal thresholds
+            min_prediction_threshold = 0.02  # Minimum 2% predicted return
+            min_confidence_threshold = 0.6   # Minimum 60% confidence
+            
+            # Strong bullish AI signal
+            ai_bullish = (
+                prediction > min_prediction_threshold and
+                confidence > min_confidence_threshold and
+                direction == 'bullish'
+            )
+            
+            if ai_bullish:
+                logger.info(f"AI Entry Signal: {pair} - Prediction: {prediction:.4f}, Confidence: {confidence:.2f}")
+                return True
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error checking AI entry signal for {pair}: {e}")
+            return False
+    
+    async def _process_ai_exit_signals(self, pair: str, df: pd.DataFrame, ai_prediction: Dict):
+        """Process AI-enhanced exit signals for existing trades"""
+        try:
+            # Find trades for this pair
+            pair_trades = {tid: trade for tid, trade in self.trades.items() 
+                          if trade['pair'] == pair and trade['status'] == 'open'}
+            
+            if not pair_trades:
+                return
+            
+            current_price = df.iloc[-1]['close']
+            prediction_value = ai_prediction.get('prediction_roc_5', 0)
+            confidence = ai_prediction.get('confidence', 0)
+            direction = ai_prediction.get('direction', 'neutral')
+            
+            for trade_id, trade in pair_trades.items():
+                # Calculate current profit
+                entry_rate = trade['entry_rate']
+                current_profit = (current_price - entry_rate) / entry_rate
+                trade['profit'] = current_profit
+                
+                # AI-enhanced exit logic
+                should_exit = False
+                exit_reason = None
+                
+                # Strong bearish AI signal
+                if (prediction_value < -0.015 and confidence > 0.6 and direction == 'bearish'):
+                    should_exit = True
+                    exit_reason = "ai_bearish_signal"
+                
+                # AI confidence drops significantly
+                elif confidence < 0.3:
+                    should_exit = True
+                    exit_reason = "ai_low_confidence"
+                
+                # Traditional exit conditions enhanced with AI
+                elif current_profit > 0.08 and direction != 'bullish':  # Take profit if AI not bullish
+                    should_exit = True
+                    exit_reason = "ai_enhanced_profit_taking"
+                
+                elif current_profit < -0.03 and direction == 'bearish':  # Stop loss if AI bearish
+                    should_exit = True
+                    exit_reason = "ai_enhanced_stop_loss"
+                
+                # Execute exit if needed
+                if should_exit:
+                    await self._execute_exit(trade_id, current_price, exit_reason)
+                    logger.info(f"AI Exit: {pair} - {exit_reason} (AI: {direction}, Confidence: {confidence:.2f})")
+            
+        except Exception as e:
+            logger.error(f"Error processing AI exit signals for {pair}: {e}")
     
     def _has_entry_signal(self, df: pd.DataFrame, pair: str) -> bool:
         """Check if there's an entry signal"""
