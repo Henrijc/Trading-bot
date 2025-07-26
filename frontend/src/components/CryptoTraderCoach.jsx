@@ -1017,7 +1017,7 @@ const CryptoTraderCoach = () => {
                                     </div>
                                   </div>
                                   <div className="text-right bg-gradient-to-r from-cyan-900/40 to-cyan-800/40 p-4 rounded-xl border border-cyan-600/30">
-                                    <div className="text-amber-200 font-mono text-base font-semibold">{action.amount}</div>
+                                    <div className="text-cyan-200 font-mono text-base font-semibold">{action.amount}</div>
                                     <div className="text-sm text-cyan-400/80 font-medium mt-1">@ {action.price}</div>
                                   </div>
                                 </div>
