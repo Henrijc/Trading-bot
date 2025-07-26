@@ -292,12 +292,13 @@ class FreqAITester:
                 # Look for model persistence indicators
                 model_indicators = []
                 
-                # Check if response contains model file information
-                if isinstance(data, dict):
-                    for key, value in data.items():
+                # Check if response contains model file information in freqai_status
+                if isinstance(data, dict) and 'freqai_status' in data:
+                    freqai_data = data['freqai_status']
+                    for key, value in freqai_data.items():
                         if isinstance(value, dict):
                             if 'model_path' in value or 'trained_at' in value or 'model_size' in value:
-                                model_indicators.append(f"{key}: {value}")
+                                model_indicators.append(f"{key}: model_path={value.get('model_path', 'N/A')}, size={value.get('model_size', 'N/A')}")
                 
                 if model_indicators:
                     details = f"Found {len(model_indicators)} model persistence indicators: {model_indicators}"
