@@ -865,7 +865,7 @@ const CryptoTraderCoach = () => {
                             <div className="text-sm text-green-300/80">Achieved</div>
                           </div>
                         </div>
-                        <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
+                        <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-cyan-600/30 overflow-hidden shadow-inner">
                           <div 
                             className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 transition-all duration-1000 ease-out shadow-lg relative"
                             style={{width: `${Math.min(weeklyTargets.progress, 100)}%`}}
