@@ -738,6 +738,39 @@ async def get_target_settings():
 async def update_target_settings(settings: dict):
     """Update target settings"""
     try:
+        # Input validation for target settings
+        if not settings:
+            raise HTTPException(status_code=400, detail="Settings data is required")
+        
+        # Validate known fields
+        valid_fields = {"monthly_target", "weekly_target", "daily_target", "auto_adjust", "goal_notes"}
+        provided_fields = set(settings.keys())
+        
+        # Check if at least one valid field is provided
+        if not (provided_fields & valid_fields):
+            raise HTTPException(status_code=400, detail="At least one valid target field is required")
+        
+        # Validate numeric fields
+        numeric_fields = {"monthly_target", "weekly_target", "daily_target"}
+        for field in numeric_fields:
+            if field in settings:
+                value = settings[field]
+                if value is None:
+                    raise HTTPException(status_code=400, detail=f"{field} cannot be None")
+                try:
+                    numeric_value = float(value)
+                    if numeric_value < 0:
+                        raise HTTPException(status_code=400, detail=f"{field} must be positive")
+                    settings[field] = numeric_value
+                except (ValueError, TypeError):
+                    raise HTTPException(status_code=400, detail=f"{field} must be a valid number")
+        
+        # Validate boolean fields
+        if "auto_adjust" in settings:
+            if not isinstance(settings["auto_adjust"], bool):
+                raise HTTPException(status_code=400, detail="auto_adjust must be a boolean")
+        
+        # Add system fields
         settings["updated_at"] = datetime.utcnow().isoformat()
         settings["user_id"] = "default_user"
         
@@ -749,6 +782,8 @@ async def update_target_settings(settings: dict):
         
         return {"success": True, "settings": settings}
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error updating target settings: {e}")
         raise HTTPException(status_code=500, detail="Failed to update target settings")
