@@ -38,6 +38,13 @@ This document outlines critical development rules that MUST be followed by any e
 - Frontend changes require user approval before testing
 - Update test_result.md with proper testing results
 
+### 7. NO SHORTCUTS - DO IT THE RIGHT WAY
+- Never use quick fixes or workarounds when proper solutions exist
+- Always implement changes using the correct system architecture
+- Don't bypass existing design systems or frameworks
+- Take time to understand the underlying system before making changes
+- Proper implementation takes precedence over speed
+
 ## Technical Guidelines
 
 ### URL and Environment Management
