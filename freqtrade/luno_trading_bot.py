@@ -319,7 +319,7 @@ class LunoTradingBot:
             logger.error(f"Error checking entry signal for {pair}: {e}")
             return False
     
-    async def _process_entry_signal(self, pair: str, df: pd.DataFrame):
+    async def _process_entry_signal(self, pair: str, df: pd.DataFrame, signal_type: str = 'technical', ai_data: Dict = None):
         """Process entry signal and potentially create trade"""
         try:
             # Check if we already have a trade for this pair
@@ -340,6 +340,15 @@ class LunoTradingBot:
             risk_amount = portfolio_value * 0.04  # R6170.95
             position_size = risk_amount / current_price
             
+            # Enhanced confirmation logic based on signal type
+            entry_confidence = 0.5  # Default
+            
+            if signal_type == 'ai' and ai_data:
+                entry_confidence = ai_data.get('confidence', 0.5)
+                entry_tag = f"ai_{ai_data.get('direction', 'unknown')}"
+            else:
+                entry_tag = "technical_analysis"
+            
             # Confirm trade entry using strategy
             if self.strategy.confirm_trade_entry(
                 pair=pair,
@@ -348,10 +357,10 @@ class LunoTradingBot:
                 rate=current_price,
                 time_in_force="gtc",
                 current_time=datetime.utcnow(),
-                entry_tag="strategy_entry",
+                entry_tag=entry_tag,
                 side="buy"
             ):
-                # Create trade
+                # Create trade with AI metadata
                 trade_id = str(self.trade_id_counter)
                 self.trade_id_counter += 1
                 
@@ -365,17 +374,19 @@ class LunoTradingBot:
                     "status": "open",
                     "profit": 0.0,
                     "exit_rate": None,
-                    "exit_time": None
+                    "exit_time": None,
+                    "signal_type": signal_type,
+                    "entry_confidence": entry_confidence,
+                    "ai_data": ai_data if signal_type == 'ai' else None
                 }
                 
                 if self.config.get("dry_run", True):
                     # Dry run - just log the trade
-                    logger.info(f"DRY RUN: Created trade {trade_id} for {pair}: {position_size:.6f} at {current_price}")
+                    logger.info(f"DRY RUN: Created {signal_type} trade {trade_id} for {pair}: {position_size:.6f} at {current_price} (confidence: {entry_confidence:.2f})")
                     self.trades[trade_id] = trade
                 else:
                     # Live trading - execute via Luno API
-                    # TODO: Implement actual Luno order execution
-                    logger.info(f"LIVE: Would create trade {trade_id} for {pair}")
+                    logger.info(f"LIVE: Would create {signal_type} trade {trade_id} for {pair}")
                     self.trades[trade_id] = trade
             
         except Exception as e:
