@@ -428,6 +428,41 @@ async def get_profit():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# FreqAI endpoints - NEW
+@app.post("/api/v1/freqai/train")
+async def train_freqai_models():
+    """Train FreqAI models for all pairs"""
+    try:
+        results = await bot.freqai_service.train_all_models()
+        return {"training_results": results, "message": "FreqAI model training completed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/freqai/status")
+async def get_freqai_status():
+    """Get FreqAI model status"""
+    try:
+        status = bot.freqai_service.get_model_status()
+        return {"freqai_status": status}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/freqai/predict/{pair}")
+async def get_freqai_prediction(pair: str):
+    """Get FreqAI prediction for a specific pair"""
+    try:
+        # Get recent data for prediction
+        symbol = pair.replace("/", "")
+        df = await bot.historical_service.get_historical_data(symbol, days=50)
+        
+        if df.empty:
+            raise HTTPException(status_code=404, detail=f"No data available for {pair}")
+        
+        prediction = await bot.freqai_service.get_prediction(pair, df)
+        return {"pair": pair, "prediction": prediction}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/")
 async def root():
     """Health check"""
