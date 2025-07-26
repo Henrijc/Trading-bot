@@ -840,7 +840,7 @@ const CryptoTraderCoach = () => {
                 {/* Weekly Targets */}
                 {weeklyTargets && (
                   <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
-                    <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                    <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                       <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
                         <DollarSign className="text-amber-500" size={24} />
                         Weekly Performance
