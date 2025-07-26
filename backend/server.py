@@ -29,6 +29,8 @@ from services.security_service import SecurityService
 from services.authentication_service import AuthenticationService
 from services.backtest_api_service import backtest_router
 from services.live_trading_service import live_trading_router
+from services.freqtrade_service import FreqtradeService
+from services.target_service import TargetService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
