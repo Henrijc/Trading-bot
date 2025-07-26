@@ -907,7 +907,7 @@ const CryptoTraderCoach = () => {
                           <div className="flex justify-between items-start mb-4">
                             <div>
                               <div className="flex items-center gap-2">
-                                <div className="font-bold text-amber-300 text-xl">{holding.symbol}</div>
+                                <div className="font-bold text-cyan-300 text-xl">{holding.symbol}</div>
                                 {holding.is_staked && (
                                   <Badge className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs">
                                     STAKED
