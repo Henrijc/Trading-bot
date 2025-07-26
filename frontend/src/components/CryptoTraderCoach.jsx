@@ -1313,7 +1313,7 @@ const CryptoTraderCoach = () => {
 
                 {/* Symbol Selector */}
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
-                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+                  <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
                     <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
                       <TrendingUpIcon className="text-amber-500" size={24} />
                       Technical Analysis
