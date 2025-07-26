@@ -331,7 +331,7 @@ class FreqAITester:
             if response.status_code == 200:
                 data = response.json()
                 
-                if 'error' not in data and 'prediction_roc_5' in data:
+                if 'error' not in data and ('prediction_roc_5' in data or 'prediction' in data):
                     # If we get a valid prediction, the feature engineering is working
                     # Check model status for more detailed feature information
                     status_response = self.session.get(f"{self.base_url}/freqai/status")
@@ -339,11 +339,12 @@ class FreqAITester:
                     if status_response.status_code == 200:
                         status_data = status_response.json()
                         
-                        # Look for feature count information
+                        # Look for feature count information in freqai_status
                         feature_counts = []
                         
-                        if isinstance(status_data, dict):
-                            for model_info in status_data.values():
+                        if isinstance(status_data, dict) and 'freqai_status' in status_data:
+                            freqai_data = status_data['freqai_status']
+                            for model_info in freqai_data.values():
                                 if isinstance(model_info, dict) and 'features' in model_info:
                                     features = model_info['features']
                                     if isinstance(features, list):
