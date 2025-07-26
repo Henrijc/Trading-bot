@@ -500,11 +500,12 @@ class FreqAITester:
             if response.status_code == 200:
                 data = response.json()
                 
-                # Look for training data information
+                # Look for training data information in freqai_status
                 training_info = []
                 
-                if isinstance(data, dict):
-                    for model_name, model_info in data.items():
+                if isinstance(data, dict) and 'freqai_status' in data:
+                    freqai_data = data['freqai_status']
+                    for model_name, model_info in freqai_data.items():
                         if isinstance(model_info, dict):
                             training_samples = model_info.get('training_samples', 0)
                             test_samples = model_info.get('test_samples', 0)
