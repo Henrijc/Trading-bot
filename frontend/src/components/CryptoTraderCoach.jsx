@@ -828,7 +828,7 @@ const CryptoTraderCoach = () => {
           {/* Dashboard Content */}
           <div className="lg:col-span-2 order-1 lg:order-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 bg-gradient-to-r from-gray-800 to-gray-900 border border-cyan-600/40 p-1 rounded-xl shadow-lg">
+              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-gradient-to-r from-gray-800 to-gray-900 border border-cyan-600/40 p-1 rounded-xl shadow-lg">
                 <TabsTrigger value="overview" className="text-cyan-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-cyan-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Overview
                 </TabsTrigger>
@@ -846,6 +846,9 @@ const CryptoTraderCoach = () => {
                 </TabsTrigger>
                 <TabsTrigger value="technical" className="text-cyan-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-cyan-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   Technical
+                </TabsTrigger>
+                <TabsTrigger value="bot-control" className="text-cyan-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-cyan-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
+                  Bot Control
                 </TabsTrigger>
                 <TabsTrigger value="backtesting" className="text-cyan-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-cyan-700 data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:shadow-lg text-sm font-medium transition-all duration-300">
                   <TestTube className="mr-1" size={16} />
