@@ -787,7 +787,7 @@ const CryptoTraderCoach = () => {
                         </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold font-mono bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+                        <div className="text-3xl font-bold font-mono bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
                           {((currentMonthProgress / (monthlyTargetState || 100000)) * 100).toFixed(1)}%
                         </div>
                         <div className="text-cyan-400/80 text-sm mt-1 font-medium">
