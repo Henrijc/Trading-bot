@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 # Get backend URL from environment
-BACKEND_URL = "https://46b82e01-2be5-441e-8d8d-89a8c669d28e.preview.emergentagent.com/api"
+BACKEND_URL = "https://92b827da-70fe-4086-bc79-d51047cf7fd5.preview.emergentagent.com/api"
 
 class FinalAuthenticationTester:
     def __init__(self, base_url: str):
