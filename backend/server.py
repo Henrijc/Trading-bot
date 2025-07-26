@@ -1315,14 +1315,12 @@ async def get_freqai_prediction(pair: str):
         logger.error(f"Error getting FreqAI prediction: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Include the router in the main app  
+# Include sub-routers in the api_router (they will inherit the /api prefix)
+api_router.include_router(backtest_router)
+api_router.include_router(live_trading_router)
+
+# Include the main api_router in the app  
 app.include_router(api_router)
-
-# Include the backtesting router
-app.include_router(backtest_router)
-
-# Include the live trading router
-app.include_router(live_trading_router)
 
 # Security middleware
 app.add_middleware(
