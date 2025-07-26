@@ -813,7 +813,7 @@ const CryptoTraderCoach = () => {
                         <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                           <div className="flex justify-between items-start mb-3">
                             <div>
-                              <div className="font-bold text-amber-300 text-lg">{crypto.symbol}</div>
+                              <div className="font-bold text-cyan-300 text-lg">{crypto.symbol}</div>
                               <div className="text-sm text-amber-400/70 font-medium">{crypto.name}</div>
                             </div>
                             <div className="text-right">
