@@ -85,5 +85,32 @@
     },
     "user_data_dir": "/app/freqtrade/user_data",
     "strategy": "LunoFreqAIStrategy",
-    "strategy_path": "/app/freqtrade/user_data/strategies"
+    "strategy_path": "/app/freqtrade/user_data/strategies",
+    "freqai": {
+        "enabled": true,
+        "identifier": "luno_ai_model",
+        "feature_parameters": {
+            "include_timeframes": ["5m", "15m", "4h"],
+            "include_corr_pairlist": [
+                "ETH/ZAR",
+                "XRP/ZAR"
+            ],
+            "label_period_candles": 24,
+            "include_shifted_candles": 2,
+            "DI_threshold": 0.9,
+            "weight_factor": 0.9,
+            "principal_component_analysis": false,
+            "use_SVM_to_remove_outliers": true,
+            "indicator_periods_candles": [10, 20, 50]
+        },
+        "data_split_parameters": {
+            "test_size": 0.33,
+            "shuffle": false
+        },
+        "model_training_parameters": {
+            "n_estimators": 800,
+            "learning_rate": 0.02,
+            "n_jobs": 4
+        }
+    }
 }
