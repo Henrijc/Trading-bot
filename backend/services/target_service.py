@@ -80,20 +80,34 @@ class TargetService:
     async def update_user_targets(self, user_id: str, targets: Dict) -> Dict:
         """Update user targets"""
         try:
-            targets["user_id"] = user_id
-            targets["updated_at"] = datetime.utcnow().isoformat()
+            # Get current targets first to preserve required fields
+            current_targets = await self.get_user_targets(user_id)
+            
+            # Merge new targets with current ones
+            updated_targets = current_targets.copy()
+            updated_targets.update(targets)
+            
+            # Ensure user_id and timestamp are set
+            updated_targets["user_id"] = user_id
+            updated_targets["updated_at"] = datetime.utcnow().isoformat()
             
             # Validate target values
-            if "monthly_target" in targets and targets["monthly_target"] <= 0:
+            if "monthly_target" in updated_targets and updated_targets["monthly_target"] <= 0:
                 raise ValueError("Monthly target must be positive")
             
-            if "risk_per_trade" in targets:
-                if not (0 < targets["risk_per_trade"] <= 1):
+            if "risk_per_trade" in updated_targets:
+                if not (0 < updated_targets["risk_per_trade"] <= 1):
                     raise ValueError("Risk per trade must be between 0 and 1")
+            
+            # Auto-calculate derived targets if monthly target is updated
+            if "monthly_target" in targets:
+                monthly = updated_targets["monthly_target"]
+                updated_targets["weekly_target"] = monthly / 4
+                updated_targets["daily_target"] = monthly / 30
             
             await self.db.target_settings.update_one(
                 {"user_id": user_id},
-                {"$set": targets},
+                {"$set": updated_targets},
                 upsert=True
             )
             
