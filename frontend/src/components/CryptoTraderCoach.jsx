@@ -632,7 +632,7 @@ const CryptoTraderCoach = () => {
                               // Handle headers (lines starting with ##, **, or numbered lists)
                               if (line.startsWith('##')) {
                                 return (
-                                  <div key={index} className="font-semibold text-amber-300 mb-2 mt-3 first:mt-0">
+                                  <div key={index} className="font-semibold text-cyan-300 mb-2 mt-3 first:mt-0">
                                     {line.replace(/^##\s*/, '')}
                                   </div>
                                 );
@@ -641,7 +641,7 @@ const CryptoTraderCoach = () => {
                               if (line.startsWith('- ') || line.startsWith('• ')) {
                                 return (
                                   <div key={index} className="ml-4 mb-1 flex items-start">
-                                    <span className="text-amber-400 mr-2 mt-1">•</span>
+                                    <span className="text-cyan-400 mr-2 mt-1">•</span>
                                     <span>{line.replace(/^[-•]\s*/, '')}</span>
                                   </div>
                                 );
@@ -650,7 +650,7 @@ const CryptoTraderCoach = () => {
                               if (/^\d+\./.test(line)) {
                                 return (
                                   <div key={index} className="ml-4 mb-1 flex items-start">
-                                    <span className="text-amber-400 mr-2 font-medium">{line.match(/^\d+\./)[0]}</span>
+                                    <span className="text-cyan-400 mr-2 font-medium">{line.match(/^\d+\./)[0]}</span>
                                     <span>{line.replace(/^\d+\.\s*/, '')}</span>
                                   </div>
                                 );
