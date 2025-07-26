@@ -109,7 +109,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.username}
               onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-amber-100"
+              className="bg-gray-700 border-amber-600/40 text-cyan-100"
               placeholder="Enter your username"
             />
           </div>
@@ -120,7 +120,7 @@ Ready to execute today's trading strategy!`,
               type="password"
               value={loginData.password}
               onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-amber-100"
+              className="bg-gray-700 border-amber-600/40 text-cyan-100"
               placeholder="Enter your password"
             />
           </div>
@@ -131,7 +131,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.totp_code}
               onChange={(e) => setLoginData(prev => ({ ...prev, totp_code: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-amber-100"
+              className="bg-gray-700 border-amber-600/40 text-cyan-100"
               placeholder="6-digit code from app"
               maxLength={6}
             />
@@ -143,7 +143,7 @@ Ready to execute today's trading strategy!`,
               type="text"
               value={loginData.backup_code}
               onChange={(e) => setLoginData(prev => ({ ...prev, backup_code: e.target.value }))}
-              className="bg-gray-700 border-amber-600/40 text-amber-100"
+              className="bg-gray-700 border-amber-600/40 text-cyan-100"
               placeholder="Use if 2FA unavailable"
             />
           </div>
@@ -240,7 +240,7 @@ Ready to execute today's trading strategy!`,
                   <Smartphone className="text-cyan-500" size={20} />
                   AI Portfolio Analysis & Recommendations
                 </h3>
-                <div className="text-amber-100 whitespace-pre-line leading-relaxed text-sm">
+                <div className="text-cyan-100 whitespace-pre-line leading-relaxed text-sm">
                   {ai_recommendations}
                 </div>
               </div>
