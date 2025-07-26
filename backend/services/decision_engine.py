@@ -436,13 +436,31 @@ class DecisionEngine:
     async def get_decision_engine_status(self) -> Dict[str, Any]:
         """Get current decision engine status and configuration"""
         return {
-            "status": "active",
-            "version": "1.0",
-            "max_risk_per_trade": self.MAX_RISK_PER_TRADE,
-            "max_portfolio_risk": self.MAX_PORTFOLIO_RISK,
-            "min_confidence_threshold": self.MIN_CONFIDENCE_THRESHOLD,
-            "protected_xrp_amount": self.PROTECTED_XRP_AMOUNT,
-            "timestamp": datetime.utcnow().isoformat()
+            "status": {
+                "operational": True,
+                "version": "1.0",
+                "timestamp": datetime.utcnow().isoformat()
+            },
+            "configuration": {
+                "risk_management": {
+                    "max_risk_per_trade": self.MAX_RISK_PER_TRADE,
+                    "max_portfolio_risk": self.MAX_PORTFOLIO_RISK,
+                    "min_confidence_threshold": self.MIN_CONFIDENCE_THRESHOLD
+                },
+                "xrp_protection": {
+                    "protected_amount": self.PROTECTED_XRP_AMOUNT,
+                    "enabled": True
+                },
+                "target_integration": {
+                    "portfolio_vs_targets": True,
+                    "dynamic_adjustment": True
+                }
+            },
+            "services": {
+                "luno_service": "available",
+                "target_service": "available", 
+                "freqtrade_service": "available"
+            }
         }
     
     async def simulate_decision(self, pair: str, action: str, amount: float, confidence: float) -> DecisionEngineResult:
