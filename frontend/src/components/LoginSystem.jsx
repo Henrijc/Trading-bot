@@ -88,7 +88,7 @@ Ready to execute today's trading strategy!`,
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       <Card className="max-w-md w-full bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
         <CardHeader className="text-center">
-          <CardTitle className="text-amber-300 flex items-center justify-center gap-2">
+          <CardTitle className="text-cyan-300 flex items-center justify-center gap-2">
             <Shield className="text-amber-500" size={24} />
             Henrijc's Secure Login
           </CardTitle>
@@ -196,7 +196,7 @@ Ready to execute today's trading strategy!`,
         <div className="max-w-4xl mx-auto space-y-6">
           <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40">
             <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
-              <CardTitle className="text-amber-300 flex items-center gap-3 text-xl">
+              <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl">
                 <Target className="text-amber-500" size={24} />
                 Welcome Back, Henrijc! Portfolio Analysis Complete
               </CardTitle>
@@ -230,13 +230,13 @@ Ready to execute today's trading strategy!`,
                   <div className="text-amber-400 text-2xl font-bold">
                     R{portfolio_summary?.monthly_target?.toLocaleString()}
                   </div>
-                  <div className="text-amber-300 text-sm">Monthly Target</div>
+                  <div className="text-cyan-300 text-sm">Monthly Target</div>
                 </div>
               </div>
 
               {/* AI Recommendations */}
               <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-6 rounded-xl border border-amber-600/20">
-                <h3 className="text-amber-300 font-bold text-lg mb-4 flex items-center gap-2">
+                <h3 className="text-cyan-300 font-bold text-lg mb-4 flex items-center gap-2">
                   <Smartphone className="text-amber-500" size={20} />
                   AI Portfolio Analysis & Recommendations
                 </h3>
