@@ -1093,7 +1093,7 @@ const CryptoTraderCoach = () => {
               <TabsContent value="campaigns" className="space-y-6">
                 
                 {/* Create New Campaign */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-cyan-500/10">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
                   <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                     <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
                       <Target className="text-cyan-500" size={24} />
@@ -1175,7 +1175,7 @@ const CryptoTraderCoach = () => {
                 {/* Campaign Creation Modal */}
                 {showCreateCampaignModal && (
                   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 rounded-xl p-6 max-w-md w-full mx-4">
                       <h3 className="text-xl font-bold text-cyan-300 mb-4">🎯 Create Trading Campaign</h3>
                       
                       <div className="space-y-4">
@@ -1185,7 +1185,7 @@ const CryptoTraderCoach = () => {
                             type="number"
                             value={newCampaignData.allocated_capital}
                             onChange={(e) => setNewCampaignData(prev => ({ ...prev, allocated_capital: parseFloat(e.target.value) }))}
-                            className="bg-gray-700 border-amber-600/40 text-cyan-100"
+                            className="bg-gray-700 border-cyan-600/40 text-cyan-100"
                             placeholder="10000"
                           />
                         </div>
@@ -1196,7 +1196,7 @@ const CryptoTraderCoach = () => {
                             type="number"
                             value={newCampaignData.profit_target}
                             onChange={(e) => setNewCampaignData(prev => ({ ...prev, profit_target: parseFloat(e.target.value) }))}
-                            className="bg-gray-700 border-amber-600/40 text-cyan-100"
+                            className="bg-gray-700 border-cyan-600/40 text-cyan-100"
                             placeholder="10000"
                           />
                         </div>
@@ -1207,7 +1207,7 @@ const CryptoTraderCoach = () => {
                             type="number"
                             value={newCampaignData.timeframe_days}
                             onChange={(e) => setNewCampaignData(prev => ({ ...prev, timeframe_days: parseInt(e.target.value) }))}
-                            className="bg-gray-700 border-amber-600/40 text-cyan-100"
+                            className="bg-gray-700 border-cyan-600/40 text-cyan-100"
                             placeholder="7"
                           />
                         </div>
@@ -1244,7 +1244,7 @@ const CryptoTraderCoach = () => {
               {/* Technical Analysis Tab */}
               <TabsContent value="technical" className="space-y-6">
                 {/* Market Overview */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-cyan-500/10">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
                   <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                     <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
                       <Activity className="text-cyan-500" size={24} />
@@ -1312,7 +1312,7 @@ const CryptoTraderCoach = () => {
                 </Card>
 
                 {/* Symbol Selector */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-cyan-500/10">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
                   <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                     <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
                       <TrendingUpIcon className="text-cyan-500" size={24} />
@@ -1503,7 +1503,7 @@ const CryptoTraderCoach = () => {
       {/* Target Adjustment Modal */}
       {showTargetAdjustmentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 rounded-xl p-6 max-w-md w-full mx-4">
             <h3 className="text-xl font-bold text-cyan-300 mb-4">🎯 Adjust Monthly Targets</h3>
             
             <div className="space-y-4">
@@ -1524,7 +1524,7 @@ const CryptoTraderCoach = () => {
                     monthly_target: parseFloat(e.target.value),
                     weekly_target: parseFloat(e.target.value) / 4
                   }))}
-                  className="bg-gray-700 border-amber-600/40 text-cyan-100"
+                  className="bg-gray-700 border-cyan-600/40 text-cyan-100"
                   placeholder="100000"
                 />
                 <p className="text-xs text-cyan-400/70 mt-1">Current: {formatCurrency(monthlyTargetState)}</p>
@@ -1536,7 +1536,7 @@ const CryptoTraderCoach = () => {
                   type="number"
                   value={newTargetData.weekly_target}
                   readOnly
-                  className="bg-gray-600 border-amber-600/40 text-cyan-100 cursor-not-allowed"
+                  className="bg-gray-600 border-cyan-600/40 text-cyan-100 cursor-not-allowed"
                 />
                 <p className="text-xs text-cyan-400/70 mt-1">Automatically set to Monthly ÷ 4</p>
               </div>
@@ -1580,7 +1580,7 @@ const CryptoTraderCoach = () => {
         {/* Auto Trading Modal */}
         {showAutoTradeModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-amber-600/40 shadow-2xl max-w-md w-full">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-cyan-600/40 shadow-2xl max-w-md w-full">
               <h3 className="text-xl font-bold text-amber-300 mb-4">Auto Trading Settings</h3>
               
               <div className="space-y-4">
@@ -1602,7 +1602,7 @@ const CryptoTraderCoach = () => {
                     type="number"
                     value={autoTradeSettings?.max_trade_amount || 1000}
                     onChange={(e) => setAutoTradeSettings({...autoTradeSettings, max_trade_amount: parseFloat(e.target.value)})}
-                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    className="bg-gray-700 border-cyan-600/40 text-white mt-1"
                     placeholder="1000"
                   />
                   <div className="text-xs text-cyan-400/60 mt-1">Maximum ZAR per trade</div>
@@ -1614,7 +1614,7 @@ const CryptoTraderCoach = () => {
                     type="number"
                     value={autoTradeSettings?.daily_limit || 5000}
                     onChange={(e) => setAutoTradeSettings({...autoTradeSettings, daily_limit: parseFloat(e.target.value)})}
-                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    className="bg-gray-700 border-cyan-600/40 text-white mt-1"
                     placeholder="5000"
                   />
                   <div className="text-xs text-cyan-400/60 mt-1">Maximum ZAR per day</div>
@@ -1626,7 +1626,7 @@ const CryptoTraderCoach = () => {
                     type="number"
                     value={autoTradeSettings?.stop_loss_percent || 5}
                     onChange={(e) => setAutoTradeSettings({...autoTradeSettings, stop_loss_percent: parseFloat(e.target.value)})}
-                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    className="bg-gray-700 border-cyan-600/40 text-white mt-1"
                     placeholder="5"
                   />
                   <div className="text-xs text-cyan-400/60 mt-1">Auto sell when down this %</div>
@@ -1638,7 +1638,7 @@ const CryptoTraderCoach = () => {
                     type="number"
                     value={autoTradeSettings?.take_profit_percent || 10}
                     onChange={(e) => setAutoTradeSettings({...autoTradeSettings, take_profit_percent: parseFloat(e.target.value)})}
-                    className="bg-gray-700 border-amber-600/40 text-white mt-1"
+                    className="bg-gray-700 border-cyan-600/40 text-white mt-1"
                     placeholder="10"
                   />
                   <div className="text-xs text-cyan-400/60 mt-1">Auto sell when up this %</div>
