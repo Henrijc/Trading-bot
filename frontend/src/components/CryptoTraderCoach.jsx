@@ -744,12 +744,12 @@ const CryptoTraderCoach = () => {
               <TabsContent value="overview" className="space-y-6">
                 
                 {/* Monthly Progress */}
-                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-amber-500/10">
-                  <CardHeader className="border-b border-amber-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
-                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
-                      <Target className="text-amber-500" size={24} />
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                  <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                    <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
+                      <Target className="text-cyan-500" size={24} />
                       Monthly Target Progress
-                      <div className="ml-auto bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
+                      <div className="ml-auto bg-gradient-to-r from-cyan-600 to-cyan-700 text-black px-3 py-1 rounded-full text-sm font-bold">
                         {formatCurrency(monthlyTargetState || 100000)} Goal
                       </div>
                     </CardTitle>
