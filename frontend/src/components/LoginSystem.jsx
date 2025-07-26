@@ -170,7 +170,7 @@ Ready to execute today's trading strategy!`,
             <Button
               onClick={handleLogin}
               disabled={loading || !loginData.password}
-              className="flex-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
+              className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
             >
               {loading ? 'Authenticating...' : 'Login & Analyze Portfolio'}
             </Button>
