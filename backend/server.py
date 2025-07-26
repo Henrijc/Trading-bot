@@ -31,6 +31,7 @@ from services.backtest_api_service import backtest_router
 from services.live_trading_service import live_trading_router
 from services.freqtrade_service import FreqtradeService
 from services.target_service import TargetService
+from services.decision_engine import DecisionEngine
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
