@@ -1376,7 +1376,7 @@ const CryptoTraderCoach = () => {
                                 <div 
                                   className={`h-2 rounded-full ${
                                     technicalAnalysis.technical_indicators.rsi > 70 ? 'bg-red-500' :
-                                    technicalAnalysis.technical_indicators.rsi < 30 ? 'bg-green-500' : 'bg-amber-500'
+                                    technicalAnalysis.technical_indicators.rsi < 30 ? 'bg-green-500' : 'bg-cyan-500'
                                   }`}
                                   style={{width: `${technicalAnalysis.technical_indicators.rsi}%`}}
                                 ></div>
