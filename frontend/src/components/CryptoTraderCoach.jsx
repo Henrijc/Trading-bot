@@ -810,7 +810,7 @@ const CryptoTraderCoach = () => {
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {marketData.map((crypto) => (
-                        <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                           <div className="flex justify-between items-start mb-3">
                             <div>
                               <div className="font-bold text-cyan-300 text-lg">{crypto.symbol}</div>
@@ -826,7 +826,7 @@ const CryptoTraderCoach = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="mt-3 pt-3 border-t border-amber-600/20">
+                          <div className="mt-3 pt-3 border-t border-cyan-600/20">
                             <div className="text-xs text-cyan-400/60 font-medium">
                               Volume: {formatCurrency(crypto.volume)}
                             </div>
@@ -903,7 +903,7 @@ const CryptoTraderCoach = () => {
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       {portfolio?.holdings?.map((holding) => (
-                        <div key={holding.symbol} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div key={holding.symbol} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20 shadow-lg hover:shadow-xl transition-all duration-300">
                           <div className="flex justify-between items-start mb-4">
                             <div>
                               <div className="flex items-center gap-2">
@@ -945,7 +945,7 @@ const CryptoTraderCoach = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="flex justify-between items-center pt-4 border-t border-amber-600/20">
+                          <div className="flex justify-between items-center pt-4 border-t border-cyan-600/20">
                             <div className="text-sm text-cyan-400/60 font-medium">
                               Price: {formatCurrency(holding.current_price)}
                             </div>
@@ -1001,7 +1001,7 @@ const CryptoTraderCoach = () => {
                           <h4 className="text-cyan-300 font-semibold mb-4 text-lg">Recommended Actions</h4>
                           <div className="space-y-4">
                             {dailyStrategy.actions.map((action, index) => (
-                              <div key={index} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                              <div key={index} className="p-5 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20 shadow-lg">
                                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                                   <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-3">
@@ -1077,7 +1077,7 @@ const CryptoTraderCoach = () => {
                           </h4>
                           <div className="space-y-3">
                             {riskMetrics.recommendations.map((rec, index) => (
-                              <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                              <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20 shadow-lg">
                                 <p className="text-amber-100 leading-relaxed font-medium">{rec}</p>
                               </div>
                             ))}
@@ -1129,7 +1129,7 @@ const CryptoTraderCoach = () => {
                     ) : (
                       <div className="space-y-4">
                         {activeCampaigns.map((campaign, index) => (
-                          <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                          <div key={index} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                             <div className="flex justify-between items-start mb-3">
                               <div>
                                 <h3 className="font-bold text-cyan-300">{campaign.name}</h3>
@@ -1262,7 +1262,7 @@ const CryptoTraderCoach = () => {
                     {marketOverview ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {marketOverview.market_overview?.map((crypto) => (
-                          <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20 shadow-lg">
+                          <div key={crypto.symbol} className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20 shadow-lg">
                             <div className="flex justify-between items-start mb-3">
                               <div>
                                 <div className="font-bold text-cyan-300 text-lg">{crypto.symbol}</div>
@@ -1365,7 +1365,7 @@ const CryptoTraderCoach = () => {
                         {/* Technical Indicators */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {technicalAnalysis.technical_indicators?.rsi && (
-                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                               <div className="flex justify-between items-center mb-2">
                                 <span className="text-cyan-400 font-medium">RSI</span>
                                 <span className="text-amber-100 font-mono font-bold">
@@ -1389,7 +1389,7 @@ const CryptoTraderCoach = () => {
                           )}
 
                           {technicalAnalysis.technical_indicators?.macd && (
-                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                               <div className="text-cyan-400 font-medium mb-2">MACD</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
@@ -1415,7 +1415,7 @@ const CryptoTraderCoach = () => {
                           )}
 
                           {technicalAnalysis.technical_indicators?.bollinger_bands && (
-                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                               <div className="text-cyan-400 font-medium mb-2">Bollinger Bands</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
@@ -1441,7 +1441,7 @@ const CryptoTraderCoach = () => {
                           )}
 
                           {technicalAnalysis.technical_indicators?.support_resistance && (
-                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                            <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                               <div className="text-cyan-400 font-medium mb-2">Support/Resistance</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
@@ -1463,7 +1463,7 @@ const CryptoTraderCoach = () => {
 
                         {/* Trading Signals */}
                         {technicalAnalysis.trading_signals && technicalAnalysis.trading_signals.length > 0 && (
-                          <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
+                          <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-cyan-600/20">
                             <div className="text-cyan-400 font-medium mb-3">Trading Signals</div>
                             <div className="space-y-2">
                               {technicalAnalysis.trading_signals.map((signal, index) => (
