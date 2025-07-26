@@ -624,7 +624,7 @@ const CryptoTraderCoach = () => {
                       <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[90%] p-4 rounded-lg border shadow-lg ${
                           msg.role === 'user' 
-                            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-black border-amber-500/50 shadow-amber-500/25' 
+                            ? 'bg-gradient-to-r from-cyan-600 to-cyan-700 text-black border-cyan-500/50 shadow-cyan-500/25' 
                             : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 border-gray-600/50 shadow-gray-500/25'
                         }`}>
                           <div className="text-sm leading-relaxed font-medium whitespace-pre-wrap">
