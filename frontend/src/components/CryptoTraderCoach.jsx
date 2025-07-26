@@ -703,7 +703,7 @@ const CryptoTraderCoach = () => {
                   <Button 
                     onClick={handleSendMessage}
                     disabled={isLoading}
-                    className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold border border-amber-500/50 shadow-lg px-4"
+                    className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-black font-semibold border border-cyan-500/50 shadow-lg px-4"
                   >
                     Send
                   </Button>
