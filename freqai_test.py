@@ -225,19 +225,20 @@ class FreqAITester:
                             prediction_details.append(f"{pair}: Error - {data['error']}")
                             continue
                         
-                        # Check for expected prediction format
+                        # Check for expected prediction format (may be nested)
+                        prediction_data = data.get('prediction', data)  # Handle nested structure
                         expected_fields = ['prediction_roc_5', 'confidence', 'signal_strength', 'direction']
-                        missing_fields = [field for field in expected_fields if field not in data]
+                        missing_fields = [field for field in expected_fields if field not in prediction_data]
                         
                         if missing_fields:
                             prediction_details.append(f"{pair}: Missing fields - {missing_fields}")
                             continue
                         
                         # Validate prediction values
-                        prediction_roc = data.get('prediction_roc_5')
-                        confidence = data.get('confidence')
-                        signal_strength = data.get('signal_strength')
-                        direction = data.get('direction')
+                        prediction_roc = prediction_data.get('prediction_roc_5')
+                        confidence = prediction_data.get('confidence')
+                        signal_strength = prediction_data.get('signal_strength')
+                        direction = prediction_data.get('direction')
                         
                         # Check value ranges and types
                         valid_prediction = (
