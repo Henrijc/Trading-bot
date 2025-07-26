@@ -195,7 +195,7 @@ Ready to execute today's trading strategy!`,
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
         <div className="max-w-4xl mx-auto space-y-6">
           <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40">
-            <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-amber-900/20 to-amber-800/20">
+            <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
               <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl">
                 <Target className="text-cyan-500" size={24} />
                 Welcome Back, Henrijc! Portfolio Analysis Complete
