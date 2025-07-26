@@ -1354,7 +1354,7 @@ const CryptoTraderCoach = () => {
                             </div>
                             <div className="text-sm text-green-300/80">Trend Direction</div>
                           </div>
-                          <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-amber-600/30">
+                          <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-cyan-600/30">
                             <div className="text-2xl font-bold text-amber-400">
                               {technicalAnalysis.recommendation?.action}
                             </div>
