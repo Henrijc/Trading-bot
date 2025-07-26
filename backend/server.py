@@ -1235,20 +1235,6 @@ async def security_headers(request: Request, call_next):
     
     return response
 
-# Authentication dependency
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Validate JWT token for protected endpoints"""
-    if not credentials:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    
-    token = credentials.credentials
-    payload = security_service.verify_token(token)
-    
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    
-    return payload
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
