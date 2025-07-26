@@ -1117,7 +1117,7 @@ const CryptoTraderCoach = () => {
                       <div className="text-center py-8">
                         <div className="text-6xl mb-4">💰</div>
                         <p className="text-amber-400 text-lg font-semibold mb-2">Ready to Turn R10k into R20k?</p>
-                        <p className="text-amber-300/70 mb-4">Create your first targeted trading campaign</p>
+                        <p className="text-cyan-300/70 mb-4">Create your first targeted trading campaign</p>
                         <Button
                           onClick={() => setShowCreateCampaignModal(true)}
                           className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold"
