@@ -1561,7 +1561,7 @@ const CryptoTraderCoach = () => {
                     weekly_target: weeklyTargetState
                   });
                 }}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 text-amber-300"
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-cyan-300"
               >
                 Cancel
               </Button>
@@ -1581,7 +1581,7 @@ const CryptoTraderCoach = () => {
         {showAutoTradeModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-cyan-600/40 shadow-2xl max-w-md w-full">
-              <h3 className="text-xl font-bold text-amber-300 mb-4">Auto Trading Settings</h3>
+              <h3 className="text-xl font-bold text-cyan-300 mb-4">Auto Trading Settings</h3>
               
               <div className="space-y-4">
                 <div>
