@@ -1094,6 +1094,20 @@ async def get_enhanced_context():
         print(f"Error getting enhanced context: {e}")
         raise HTTPException(status_code=500, detail="Failed to get enhanced context")
 
+# Authentication dependency - MUST be defined before authentication endpoints
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Validate JWT token for protected endpoints"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    token = credentials.credentials
+    payload = security_service.verify_token(token)
+    
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    return payload
+
 # Authentication endpoints - MUST be defined before router inclusion
 @api_router.post("/auth/login")
 async def login(credentials: dict):
