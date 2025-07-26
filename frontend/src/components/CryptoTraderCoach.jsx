@@ -560,7 +560,7 @@ const CryptoTraderCoach = () => {
               </Button>
               <Button
                 onClick={handleRefresh}
-                className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-black font-semibold border border-amber-500/50 shadow-lg shadow-amber-500/25 transition-all duration-300"
+                className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-black font-semibold border border-cyan-500/50 shadow-lg shadow-cyan-500/25 transition-all duration-300"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh Data
