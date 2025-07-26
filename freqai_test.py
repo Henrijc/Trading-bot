@@ -536,7 +536,7 @@ class FreqAITester:
                         return False
                 else:
                     # If no specific training info, check if models are working (implies sufficient data)
-                    pred_response = self.session.get(f"{self.base_url}/freqai/predict?pair=BTC%2FZAR")
+                    pred_response = self.session.get(f"{self.base_url}/freqai/predict?pair=ETH%2FZAR")
                     if pred_response.status_code == 200:
                         pred_data = pred_response.json()
                         if 'error' not in pred_data and ('prediction_roc_5' in pred_data or 'prediction' in pred_data):
