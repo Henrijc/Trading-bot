@@ -226,7 +226,7 @@ Ready to execute today's trading strategy!`,
                   <div className="text-purple-300 text-sm">Active Holdings</div>
                 </div>
                 
-                <div className="bg-gradient-to-r from-amber-900/30 to-amber-800/30 p-4 rounded-lg border border-cyan-600/30">
+                <div className="bg-gradient-to-r from-cyan-900/30 to-cyan-800/30 p-4 rounded-lg border border-cyan-600/30">
                   <div className="text-cyan-400 text-2xl font-bold">
                     R{portfolio_summary?.monthly_target?.toLocaleString()}
                   </div>
