@@ -33,23 +33,39 @@ class TargetService:
         try:
             targets = await self.db.target_settings.find_one({"user_id": user_id})
             
+            # Define required fields with defaults based on user requirements
+            required_defaults = {
+                "user_id": user_id,
+                "monthly_target": 8000,  # User's goal: R8000/month
+                "weekly_target": 2000,   # R8000/4 weeks
+                "daily_target": 267,     # R8000/30 days
+                "current_capital": 154273.71,  # User's current capital
+                "risk_per_trade": 0.04,  # 4% risk management
+                "xrp_reserve": 1000,     # Keep 1000 XRP long-term
+                "auto_adjust": True,
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            
             if not targets:
-                # Create default targets based on user's requirements
-                default_targets = {
-                    "user_id": user_id,
-                    "monthly_target": 8000,  # User's goal: R8000/month
-                    "weekly_target": 2000,   # R8000/4 weeks
-                    "daily_target": 267,     # R8000/30 days
-                    "current_capital": 154273.71,  # User's current capital
-                    "risk_per_trade": 0.04,  # 4% risk management
-                    "xrp_reserve": 1000,     # Keep 1000 XRP long-term
-                    "auto_adjust": True,
-                    "created_at": datetime.utcnow().isoformat(),
-                    "updated_at": datetime.utcnow().isoformat()
-                }
+                # Create default targets
+                await self.db.target_settings.insert_one(required_defaults)
+                targets = required_defaults
+            else:
+                # Ensure existing targets have all required fields
+                needs_update = False
+                for key, default_value in required_defaults.items():
+                    if key not in targets:
+                        targets[key] = default_value
+                        needs_update = True
                 
-                await self.db.target_settings.insert_one(default_targets)
-                targets = default_targets
+                # Update database if we added missing fields
+                if needs_update:
+                    targets["updated_at"] = datetime.utcnow().isoformat()
+                    await self.db.target_settings.update_one(
+                        {"user_id": user_id},
+                        {"$set": targets}
+                    )
             
             # Remove MongoDB ObjectId
             if '_id' in targets:
