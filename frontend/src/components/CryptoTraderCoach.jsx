@@ -778,9 +778,9 @@ const CryptoTraderCoach = () => {
                           <div className="text-sm text-cyan-300/80">Remaining</div>
                         </div>
                       </div>
-                      <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-amber-600/30 overflow-hidden shadow-inner">
+                      <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-full h-6 border border-cyan-600/30 overflow-hidden shadow-inner">
                         <div 
-                          className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 transition-all duration-1000 ease-out shadow-lg relative"
+                          className="h-full bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-600 transition-all duration-1000 ease-out shadow-lg relative"
                           style={{width: `${Math.min((currentMonthProgress / (monthlyTargetState || 100000)) * 100, 100)}%`}}
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
