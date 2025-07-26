@@ -536,16 +536,16 @@ const CryptoTraderCoach = () => {
       <div className="relative z-10 container mx-auto p-4 lg:p-6">
         {/* Header */}
         <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-gradient-to-r from-transparent via-amber-700/50 to-transparent pb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-gradient-to-r from-transparent via-cyan-700/50 to-transparent pb-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl shadow-lg">
+              <div className="p-3 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-xl shadow-lg">
                 <Activity className="w-8 h-8 text-black" />
               </div>
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-cyan-300 to-cyan-500 bg-clip-text text-transparent">
                   AI Trading Coach
                 </h1>
-                <p className="text-amber-600/80 text-sm lg:text-base font-medium">
+                <p className="text-cyan-600/80 text-sm lg:text-base font-medium">
                   Professional Cryptocurrency Trading Analysis
                 </p>
               </div>
