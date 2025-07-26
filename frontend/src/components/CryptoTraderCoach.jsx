@@ -790,7 +790,7 @@ const CryptoTraderCoach = () => {
                         <div className="text-3xl font-bold font-mono bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
                           {((currentMonthProgress / (monthlyTargetState || 100000)) * 100).toFixed(1)}%
                         </div>
-                        <div className="text-amber-400/80 text-sm mt-1 font-medium">
+                        <div className="text-cyan-400/80 text-sm mt-1 font-medium">
                           Progress Towards Freedom
                         </div>
                       </div>
@@ -814,7 +814,7 @@ const CryptoTraderCoach = () => {
                           <div className="flex justify-between items-start mb-3">
                             <div>
                               <div className="font-bold text-cyan-300 text-lg">{crypto.symbol}</div>
-                              <div className="text-sm text-amber-400/70 font-medium">{crypto.name}</div>
+                              <div className="text-sm text-cyan-400/70 font-medium">{crypto.name}</div>
                             </div>
                             <div className="text-right">
                               <div className="text-amber-100 font-mono text-base font-semibold">{formatCurrency(crypto.price)}</div>
@@ -827,7 +827,7 @@ const CryptoTraderCoach = () => {
                             </div>
                           </div>
                           <div className="mt-3 pt-3 border-t border-amber-600/20">
-                            <div className="text-xs text-amber-400/60 font-medium">
+                            <div className="text-xs text-cyan-400/60 font-medium">
                               Volume: {formatCurrency(crypto.volume)}
                             </div>
                           </div>
@@ -877,7 +877,7 @@ const CryptoTraderCoach = () => {
                           <div className="text-2xl font-bold font-mono bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             {formatCurrency(weeklyTargets.remaining)}
                           </div>
-                          <div className="text-amber-400/80 text-sm mt-1 font-medium">
+                          <div className="text-cyan-400/80 text-sm mt-1 font-medium">
                             Remaining This Week
                           </div>
                         </div>
@@ -924,8 +924,8 @@ const CryptoTraderCoach = () => {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="text-sm text-amber-400/70 font-medium">{holding.name}</div>
-                              <div className="text-sm text-amber-400/50 mt-2 font-mono bg-gray-800/50 px-3 py-1 rounded-lg">
+                              <div className="text-sm text-cyan-400/70 font-medium">{holding.name}</div>
+                              <div className="text-sm text-cyan-400/50 mt-2 font-mono bg-gray-800/50 px-3 py-1 rounded-lg">
                                 {formatNumber(holding.amount)} units
                                 {holding.accounts > 1 && (
                                   <span className="ml-2 text-blue-400">({holding.accounts} accounts)</span>
@@ -946,7 +946,7 @@ const CryptoTraderCoach = () => {
                             </div>
                           </div>
                           <div className="flex justify-between items-center pt-4 border-t border-amber-600/20">
-                            <div className="text-sm text-amber-400/60 font-medium">
+                            <div className="text-sm text-cyan-400/60 font-medium">
                               Price: {formatCurrency(holding.current_price)}
                             </div>
                             <div className="bg-gradient-to-r from-amber-600 to-amber-700 text-black px-3 py-1 rounded-full text-sm font-bold">
@@ -1012,13 +1012,13 @@ const CryptoTraderCoach = () => {
                                       </Badge>
                                       <div className="text-cyan-300 font-mono text-lg font-bold">{action.asset}</div>
                                     </div>
-                                    <div className="text-sm text-amber-400/80 leading-relaxed font-medium bg-gray-800/50 p-3 rounded-lg">
+                                    <div className="text-sm text-cyan-400/80 leading-relaxed font-medium bg-gray-800/50 p-3 rounded-lg">
                                       {action.reasoning}
                                     </div>
                                   </div>
                                   <div className="text-right bg-gradient-to-r from-amber-900/40 to-amber-800/40 p-4 rounded-xl border border-cyan-600/30">
                                     <div className="text-amber-200 font-mono text-base font-semibold">{action.amount}</div>
-                                    <div className="text-sm text-amber-400/80 font-medium mt-1">@ {action.price}</div>
+                                    <div className="text-sm text-cyan-400/80 font-medium mt-1">@ {action.price}</div>
                                   </div>
                                 </div>
                               </div>
@@ -1116,7 +1116,7 @@ const CryptoTraderCoach = () => {
                     {activeCampaigns.length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-6xl mb-4">💰</div>
-                        <p className="text-amber-400 text-lg font-semibold mb-2">Ready to Turn R10k into R20k?</p>
+                        <p className="text-cyan-400 text-lg font-semibold mb-2">Ready to Turn R10k into R20k?</p>
                         <p className="text-cyan-300/70 mb-4">Create your first targeted trading campaign</p>
                         <Button
                           onClick={() => setShowCreateCampaignModal(true)}
@@ -1133,7 +1133,7 @@ const CryptoTraderCoach = () => {
                             <div className="flex justify-between items-start mb-3">
                               <div>
                                 <h3 className="font-bold text-cyan-300">{campaign.name}</h3>
-                                <p className="text-sm text-amber-400/70">Target: {((campaign.profit_target / campaign.allocated_capital) * 100).toFixed(0)}% in {campaign.timeframe_days} days</p>
+                                <p className="text-sm text-cyan-400/70">Target: {((campaign.profit_target / campaign.allocated_capital) * 100).toFixed(0)}% in {campaign.timeframe_days} days</p>
                               </div>
                               <div className="flex gap-2">
                                 <Button
@@ -1154,15 +1154,15 @@ const CryptoTraderCoach = () => {
                             <div className="grid grid-cols-3 gap-4 text-sm">
                               <div>
                                 <div className="text-green-400 font-mono">{formatCurrency(campaign.current_value || campaign.allocated_capital)}</div>
-                                <div className="text-amber-400/70">Current Value</div>
+                                <div className="text-cyan-400/70">Current Value</div>
                               </div>
                               <div>
                                 <div className="text-blue-400 font-mono">{formatCurrency(campaign.profit_target)}</div>
-                                <div className="text-amber-400/70">Target Profit</div>
+                                <div className="text-cyan-400/70">Target Profit</div>
                               </div>
                               <div>
-                                <div className="text-amber-400 font-mono">{campaign.timeframe_days} days</div>
-                                <div className="text-amber-400/70">Timeframe</div>
+                                <div className="text-cyan-400 font-mono">{campaign.timeframe_days} days</div>
+                                <div className="text-cyan-400/70">Timeframe</div>
                               </div>
                             </div>
                           </div>
@@ -1180,7 +1180,7 @@ const CryptoTraderCoach = () => {
                       
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-amber-400 text-sm font-medium mb-2">Allocated Capital (ZAR)</label>
+                          <label className="block text-cyan-400 text-sm font-medium mb-2">Allocated Capital (ZAR)</label>
                           <Input
                             type="number"
                             value={newCampaignData.allocated_capital}
@@ -1191,7 +1191,7 @@ const CryptoTraderCoach = () => {
                         </div>
                         
                         <div>
-                          <label className="block text-amber-400 text-sm font-medium mb-2">Profit Target (ZAR)</label>
+                          <label className="block text-cyan-400 text-sm font-medium mb-2">Profit Target (ZAR)</label>
                           <Input
                             type="number"
                             value={newCampaignData.profit_target}
@@ -1202,7 +1202,7 @@ const CryptoTraderCoach = () => {
                         </div>
                         
                         <div>
-                          <label className="block text-amber-400 text-sm font-medium mb-2">Timeframe (Days)</label>
+                          <label className="block text-cyan-400 text-sm font-medium mb-2">Timeframe (Days)</label>
                           <Input
                             type="number"
                             value={newCampaignData.timeframe_days}
@@ -1266,36 +1266,36 @@ const CryptoTraderCoach = () => {
                             <div className="flex justify-between items-start mb-3">
                               <div>
                                 <div className="font-bold text-cyan-300 text-lg">{crypto.symbol}</div>
-                                <div className="text-sm text-amber-400/70">{formatCurrency(crypto.price)}</div>
+                                <div className="text-sm text-cyan-400/70">{formatCurrency(crypto.price)}</div>
                               </div>
                               <div className="text-right">
                                 <div className={`text-sm font-bold ${
                                   crypto.trend === 'bullish' ? 'text-green-400' : 
-                                  crypto.trend === 'bearish' ? 'text-red-400' : 'text-amber-400'
+                                  crypto.trend === 'bearish' ? 'text-red-400' : 'text-cyan-400'
                                 }`}>
                                   {crypto.trend?.toUpperCase()}
                                 </div>
-                                <div className="text-xs text-amber-400/60">
+                                <div className="text-xs text-cyan-400/60">
                                   Strength: {(crypto.trend_strength * 100).toFixed(0)}%
                                 </div>
                               </div>
                             </div>
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
-                                <span className="text-amber-400/70">RSI:</span>
+                                <span className="text-cyan-400/70">RSI:</span>
                                 <span className="text-amber-100">{crypto.rsi?.toFixed(1) || 'N/A'}</span>
                               </div>
                               <div className="flex justify-between text-sm">
-                                <span className="text-amber-400/70">Recommendation:</span>
+                                <span className="text-cyan-400/70">Recommendation:</span>
                                 <span className={`font-bold ${
                                   crypto.recommendation?.action === 'BUY' ? 'text-green-400' : 
-                                  crypto.recommendation?.action === 'SELL' ? 'text-red-400' : 'text-amber-400'
+                                  crypto.recommendation?.action === 'SELL' ? 'text-red-400' : 'text-cyan-400'
                                 }`}>
                                   {crypto.recommendation?.action || 'HOLD'}
                                 </span>
                               </div>
                               <div className="flex justify-between text-sm">
-                                <span className="text-amber-400/70">Signals:</span>
+                                <span className="text-cyan-400/70">Signals:</span>
                                 <span className="text-amber-100">{crypto.signals_count || 0}</span>
                               </div>
                             </div>
@@ -1303,7 +1303,7 @@ const CryptoTraderCoach = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-amber-400/60">
+                      <div className="text-center py-8 text-cyan-400/60">
                         <Activity className="mx-auto mb-3" size={48} />
                         <p>Loading market technical analysis...</p>
                       </div>
@@ -1355,7 +1355,7 @@ const CryptoTraderCoach = () => {
                             <div className="text-sm text-green-300/80">Trend Direction</div>
                           </div>
                           <div className="text-center p-4 bg-gradient-to-r from-amber-900/40 to-amber-800/40 rounded-xl border border-cyan-600/30">
-                            <div className="text-2xl font-bold text-amber-400">
+                            <div className="text-2xl font-bold text-cyan-400">
                               {technicalAnalysis.recommendation?.action}
                             </div>
                             <div className="text-sm text-cyan-300/80">Recommendation</div>
@@ -1367,7 +1367,7 @@ const CryptoTraderCoach = () => {
                           {technicalAnalysis.technical_indicators?.rsi && (
                             <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="text-amber-400 font-medium">RSI</span>
+                                <span className="text-cyan-400 font-medium">RSI</span>
                                 <span className="text-amber-100 font-mono font-bold">
                                   {technicalAnalysis.technical_indicators.rsi.toFixed(1)}
                                 </span>
@@ -1381,7 +1381,7 @@ const CryptoTraderCoach = () => {
                                   style={{width: `${technicalAnalysis.technical_indicators.rsi}%`}}
                                 ></div>
                               </div>
-                              <div className="text-xs text-amber-400/60 mt-1">
+                              <div className="text-xs text-cyan-400/60 mt-1">
                                 {technicalAnalysis.technical_indicators.rsi > 70 ? 'Overbought' :
                                  technicalAnalysis.technical_indicators.rsi < 30 ? 'Oversold' : 'Neutral'}
                               </div>
@@ -1390,22 +1390,22 @@ const CryptoTraderCoach = () => {
 
                           {technicalAnalysis.technical_indicators?.macd && (
                             <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
-                              <div className="text-amber-400 font-medium mb-2">MACD</div>
+                              <div className="text-cyan-400 font-medium mb-2">MACD</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">MACD:</span>
+                                  <span className="text-cyan-400/70">MACD:</span>
                                   <span className="text-amber-100 font-mono">
                                     {technicalAnalysis.technical_indicators.macd.macd?.toFixed(4) || 'N/A'}
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Signal:</span>
+                                  <span className="text-cyan-400/70">Signal:</span>
                                   <span className="text-amber-100 font-mono">
                                     {technicalAnalysis.technical_indicators.macd.signal?.toFixed(4) || 'N/A'}
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Histogram:</span>
+                                  <span className="text-cyan-400/70">Histogram:</span>
                                   <span className="text-amber-100 font-mono">
                                     {technicalAnalysis.technical_indicators.macd.histogram?.toFixed(4) || 'N/A'}
                                   </span>
@@ -1416,22 +1416,22 @@ const CryptoTraderCoach = () => {
 
                           {technicalAnalysis.technical_indicators?.bollinger_bands && (
                             <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
-                              <div className="text-amber-400 font-medium mb-2">Bollinger Bands</div>
+                              <div className="text-cyan-400 font-medium mb-2">Bollinger Bands</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Upper:</span>
+                                  <span className="text-cyan-400/70">Upper:</span>
                                   <span className="text-amber-100 font-mono">
                                     {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.upper || 0)}
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Middle:</span>
+                                  <span className="text-cyan-400/70">Middle:</span>
                                   <span className="text-amber-100 font-mono">
                                     {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.middle || 0)}
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Lower:</span>
+                                  <span className="text-cyan-400/70">Lower:</span>
                                   <span className="text-amber-100 font-mono">
                                     {formatCurrency(technicalAnalysis.technical_indicators.bollinger_bands.lower || 0)}
                                   </span>
@@ -1442,16 +1442,16 @@ const CryptoTraderCoach = () => {
 
                           {technicalAnalysis.technical_indicators?.support_resistance && (
                             <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
-                              <div className="text-amber-400 font-medium mb-2">Support/Resistance</div>
+                              <div className="text-cyan-400 font-medium mb-2">Support/Resistance</div>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Support:</span>
+                                  <span className="text-cyan-400/70">Support:</span>
                                   <span className="text-green-400 font-mono">
                                     {formatCurrency(technicalAnalysis.technical_indicators.support_resistance.support || 0)}
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-amber-400/70">Resistance:</span>
+                                  <span className="text-cyan-400/70">Resistance:</span>
                                   <span className="text-red-400 font-mono">
                                     {formatCurrency(technicalAnalysis.technical_indicators.support_resistance.resistance || 0)}
                                   </span>
@@ -1464,7 +1464,7 @@ const CryptoTraderCoach = () => {
                         {/* Trading Signals */}
                         {technicalAnalysis.trading_signals && technicalAnalysis.trading_signals.length > 0 && (
                           <div className="p-4 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl border border-amber-600/20">
-                            <div className="text-amber-400 font-medium mb-3">Trading Signals</div>
+                            <div className="text-cyan-400 font-medium mb-3">Trading Signals</div>
                             <div className="space-y-2">
                               {technicalAnalysis.trading_signals.map((signal, index) => (
                                 <div key={index} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
@@ -1477,7 +1477,7 @@ const CryptoTraderCoach = () => {
                                     </Badge>
                                     <span className="text-amber-100 text-sm">{signal.reason}</span>
                                   </div>
-                                  <div className="text-xs text-amber-400/60">
+                                  <div className="text-xs text-cyan-400/60">
                                     {signal.indicator} • {signal.strength}
                                   </div>
                                 </div>
@@ -1508,14 +1508,14 @@ const CryptoTraderCoach = () => {
             
             <div className="space-y-4">
               <div className="bg-amber-900/20 border border-cyan-600/30 rounded-lg p-3 mb-4">
-                <p className="text-amber-400 text-sm font-semibold">💡 AI Target Adjustment</p>
+                <p className="text-cyan-400 text-sm font-semibold">💡 AI Target Adjustment</p>
                 <p className="text-cyan-300/80 text-xs mt-1">
                   You can also ask the AI: "Change my monthly target to R150k" or "Adjust my targets based on my performance"
                 </p>
               </div>
               
               <div>
-                <label className="block text-amber-400 text-sm font-medium mb-2">Monthly Target (ZAR)</label>
+                <label className="block text-cyan-400 text-sm font-medium mb-2">Monthly Target (ZAR)</label>
                 <Input
                   type="number"
                   value={newTargetData.monthly_target}
@@ -1527,18 +1527,18 @@ const CryptoTraderCoach = () => {
                   className="bg-gray-700 border-amber-600/40 text-amber-100"
                   placeholder="100000"
                 />
-                <p className="text-xs text-amber-400/70 mt-1">Current: {formatCurrency(monthlyTargetState)}</p>
+                <p className="text-xs text-cyan-400/70 mt-1">Current: {formatCurrency(monthlyTargetState)}</p>
               </div>
               
               <div>
-                <label className="block text-amber-400 text-sm font-medium mb-2">Weekly Target (Auto-calculated)</label>
+                <label className="block text-cyan-400 text-sm font-medium mb-2">Weekly Target (Auto-calculated)</label>
                 <Input
                   type="number"
                   value={newTargetData.weekly_target}
                   readOnly
                   className="bg-gray-600 border-amber-600/40 text-amber-100 cursor-not-allowed"
                 />
-                <p className="text-xs text-amber-400/70 mt-1">Automatically set to Monthly ÷ 4</p>
+                <p className="text-xs text-cyan-400/70 mt-1">Automatically set to Monthly ÷ 4</p>
               </div>
               
               <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-3">
@@ -1585,7 +1585,7 @@ const CryptoTraderCoach = () => {
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-amber-400 text-sm font-medium">Auto Trading</label>
+                  <label className="text-cyan-400 text-sm font-medium">Auto Trading</label>
                   <div className="flex items-center gap-2 mt-1">
                     <Button
                       onClick={() => setAutoTradeSettings({...autoTradeSettings, enabled: !autoTradeSettings?.enabled})}
@@ -1597,7 +1597,7 @@ const CryptoTraderCoach = () => {
                 </div>
 
                 <div>
-                  <label className="text-amber-400 text-sm font-medium">Max Trade Amount</label>
+                  <label className="text-cyan-400 text-sm font-medium">Max Trade Amount</label>
                   <Input
                     type="number"
                     value={autoTradeSettings?.max_trade_amount || 1000}
@@ -1605,11 +1605,11 @@ const CryptoTraderCoach = () => {
                     className="bg-gray-700 border-amber-600/40 text-white mt-1"
                     placeholder="1000"
                   />
-                  <div className="text-xs text-amber-400/60 mt-1">Maximum ZAR per trade</div>
+                  <div className="text-xs text-cyan-400/60 mt-1">Maximum ZAR per trade</div>
                 </div>
 
                 <div>
-                  <label className="text-amber-400 text-sm font-medium">Daily Limit</label>
+                  <label className="text-cyan-400 text-sm font-medium">Daily Limit</label>
                   <Input
                     type="number"
                     value={autoTradeSettings?.daily_limit || 5000}
@@ -1617,11 +1617,11 @@ const CryptoTraderCoach = () => {
                     className="bg-gray-700 border-amber-600/40 text-white mt-1"
                     placeholder="5000"
                   />
-                  <div className="text-xs text-amber-400/60 mt-1">Maximum ZAR per day</div>
+                  <div className="text-xs text-cyan-400/60 mt-1">Maximum ZAR per day</div>
                 </div>
 
                 <div>
-                  <label className="text-amber-400 text-sm font-medium">Stop Loss %</label>
+                  <label className="text-cyan-400 text-sm font-medium">Stop Loss %</label>
                   <Input
                     type="number"
                     value={autoTradeSettings?.stop_loss_percent || 5}
@@ -1629,11 +1629,11 @@ const CryptoTraderCoach = () => {
                     className="bg-gray-700 border-amber-600/40 text-white mt-1"
                     placeholder="5"
                   />
-                  <div className="text-xs text-amber-400/60 mt-1">Auto sell when down this %</div>
+                  <div className="text-xs text-cyan-400/60 mt-1">Auto sell when down this %</div>
                 </div>
 
                 <div>
-                  <label className="text-amber-400 text-sm font-medium">Take Profit %</label>
+                  <label className="text-cyan-400 text-sm font-medium">Take Profit %</label>
                   <Input
                     type="number"
                     value={autoTradeSettings?.take_profit_percent || 10}
@@ -1641,7 +1641,7 @@ const CryptoTraderCoach = () => {
                     className="bg-gray-700 border-amber-600/40 text-white mt-1"
                     placeholder="10"
                   />
-                  <div className="text-xs text-amber-400/60 mt-1">Auto sell when up this %</div>
+                  <div className="text-xs text-cyan-400/60 mt-1">Auto sell when up this %</div>
                 </div>
               </div>
 
