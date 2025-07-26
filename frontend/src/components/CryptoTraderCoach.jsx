@@ -1176,7 +1176,7 @@ const CryptoTraderCoach = () => {
                 {showCreateCampaignModal && (
                   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 rounded-xl p-6 max-w-md w-full mx-4">
-                      <h3 className="text-xl font-bold text-amber-300 mb-4">🎯 Create Trading Campaign</h3>
+                      <h3 className="text-xl font-bold text-cyan-300 mb-4">🎯 Create Trading Campaign</h3>
                       
                       <div className="space-y-4">
                         <div>
