@@ -327,7 +327,7 @@ class FreqAITester:
         """Test that feature engineering includes expected 31+ features"""
         try:
             # Get a prediction to see if we can infer feature completeness
-            response = self.session.get(f"{self.base_url}/freqai/predict?pair=BTC%2FZAR")
+            response = self.session.get(f"{self.base_url}/freqai/predict?pair=ETH%2FZAR")
             
             if response.status_code == 200:
                 data = response.json()
