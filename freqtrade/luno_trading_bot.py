@@ -23,6 +23,7 @@ sys.path.append('/app/freqtrade/user_data')
 from services.luno_service import LunoService
 from services.technical_analysis_service import TechnicalAnalysisService
 from services.historical_data_service import HistoricalDataService
+from real_freqai_service import RealFreqAIService
 
 # Configure logging
 logging.basicConfig(
