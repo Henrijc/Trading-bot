@@ -1016,7 +1016,7 @@ const CryptoTraderCoach = () => {
                                       {action.reasoning}
                                     </div>
                                   </div>
-                                  <div className="text-right bg-gradient-to-r from-amber-900/40 to-amber-800/40 p-4 rounded-xl border border-amber-600/30">
+                                  <div className="text-right bg-gradient-to-r from-amber-900/40 to-amber-800/40 p-4 rounded-xl border border-cyan-600/30">
                                     <div className="text-amber-200 font-mono text-base font-semibold">{action.amount}</div>
                                     <div className="text-sm text-amber-400/80 font-medium mt-1">@ {action.price}</div>
                                   </div>
