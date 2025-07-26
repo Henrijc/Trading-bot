@@ -43,11 +43,11 @@ class RealFreqAIService:
             features = df.copy()
             
             # Technical Analysis Features (FreqAI style)
-            # RSI variations
+            # RSI variations (fixed parameter)
             for period in [10, 14, 20]:
                 delta = features['close'].diff()
                 gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-                loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+                loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()  
                 rs = gain / loss
                 features[f"%-{coin}rsi-period-{period}"] = 100 - (100 / (1 + rs))
             
