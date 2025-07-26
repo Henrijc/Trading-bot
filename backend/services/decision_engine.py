@@ -371,7 +371,12 @@ class DecisionEngine:
         # Convert to asset amount (simplified - assumes price data available)
         # In real implementation, would fetch current price
         estimated_price = 50000  # Placeholder for BTC price
-        recommended_amount = recommended_value / estimated_price
+        
+        # Ensure signal.amount is not None before comparison
+        if signal.amount is not None and signal.amount > 0:
+            recommended_amount = min(recommended_value / estimated_price, signal.amount)
+        else:
+            recommended_amount = recommended_value / estimated_price
         
         return recommended_amount
     
