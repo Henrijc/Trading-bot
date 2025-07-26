@@ -892,7 +892,7 @@ const CryptoTraderCoach = () => {
               <TabsContent value="portfolio" className="space-y-6">
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
                   <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
-                    <CardTitle className="text-amber-300 flex items-center gap-3 text-xl font-semibold">
+                    <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
                       <PieChart className="text-amber-500" size={24} />
                       Portfolio Holdings
                       <div className="ml-auto bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-1 rounded-full text-sm font-bold">
