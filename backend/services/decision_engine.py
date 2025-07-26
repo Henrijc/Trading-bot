@@ -69,8 +69,14 @@ class DecisionEngineResult:
     confidence: float
     reasoning: str
     recommended_amount: Optional[float] = None
-    risk_assessment: str = ""
+    risk_assessment: Dict[str, Any] = None
     conditions: List[str] = None
+    
+    def __post_init__(self):
+        if self.risk_assessment is None:
+            self.risk_assessment = {}
+        if self.conditions is None:
+            self.conditions = []
 
 class DecisionEngine:
     """
