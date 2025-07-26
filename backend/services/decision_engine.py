@@ -375,16 +375,31 @@ class DecisionEngine:
         
         return recommended_amount
     
-    def _generate_risk_assessment(self, context: DecisionContext, score: float) -> str:
-        """Generate risk assessment string"""
+    def _generate_risk_assessment(self, context: DecisionContext, score: float) -> Dict[str, Any]:
+        """Generate risk assessment dictionary"""
         if score >= 0.7:
-            return "LOW - High confidence with good portfolio alignment"
+            risk_level = "LOW"
+            description = "High confidence with good portfolio alignment"
         elif score >= 0.5:
-            return "MEDIUM - Moderate confidence with acceptable risk"
+            risk_level = "MEDIUM"
+            description = "Moderate confidence with acceptable risk"
         elif score >= 0.3:
-            return "MEDIUM-HIGH - Lower confidence, increased monitoring needed"
+            risk_level = "MEDIUM-HIGH"
+            description = "Lower confidence, increased monitoring needed"
         else:
-            return "HIGH - Low confidence or high risk factors"
+            risk_level = "HIGH"
+            description = "Low confidence or high risk factors"
+        
+        return {
+            "risk_level": risk_level,
+            "description": description,
+            "score": score,
+            "factors": {
+                "portfolio_risk": context.portfolio.risk_exposure,
+                "signal_confidence": context.signal.confidence,
+                "target_alignment": "above_target" if context.portfolio.monthly_performance > 0 else "below_target"
+            }
+        }
     
     def _generate_conditions(self, context: DecisionContext, decision: DecisionResult) -> List[str]:
         """Generate conditions for trade execution"""
