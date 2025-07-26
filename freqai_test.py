@@ -440,11 +440,12 @@ class FreqAITester:
             if response.status_code == 200:
                 data = response.json()
                 
-                # Look for model performance metrics
+                # Look for model performance metrics in freqai_status
                 performance_metrics = []
                 
-                if isinstance(data, dict):
-                    for model_name, model_info in data.items():
+                if isinstance(data, dict) and 'freqai_status' in data:
+                    freqai_data = data['freqai_status']
+                    for model_name, model_info in freqai_data.items():
                         if isinstance(model_info, dict):
                             mse = model_info.get('mse')
                             mae = model_info.get('mae')
