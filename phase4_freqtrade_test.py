@@ -524,7 +524,13 @@ class Phase4FreqtradeIntegrationTester:
                 self.log_test("Target Persistence", False, "Failed to update targets")
                 return False
             
-            updated_targets = response2.json()
+            update_response = response2.json()
+            
+            # Handle different response structures
+            if 'targets' in update_response:
+                updated_targets = update_response['targets']
+            else:
+                updated_targets = update_response
             
             # Verify the update was applied
             if updated_targets['monthly_target'] != test_monthly_target:
