@@ -73,11 +73,19 @@ class LunoTradingBot:
             strategy_path = Path(self.config['strategy_path'])
             sys.path.append(str(strategy_path))
             
-            from luno_test_strategy import get_strategy
-            strategy = get_strategy()
-            
-            logger.info(f"Strategy '{strategy.name}' loaded successfully")
-            return strategy
+            # Try to import the FreqAI strategy first
+            try:
+                from LunoFreqAIStrategy import LunoFreqAIStrategy
+                strategy = LunoFreqAIStrategy()
+                logger.info(f"FreqAI Strategy '{strategy.__class__.__name__}' loaded successfully")
+                return strategy
+            except ImportError:
+                # Fallback to test strategy
+                from luno_test_strategy import get_strategy
+                strategy = get_strategy()
+                logger.info(f"Fallback Strategy '{strategy.name}' loaded successfully")
+                return strategy
+                
         except Exception as e:
             logger.error(f"Failed to load strategy: {e}")
             raise
