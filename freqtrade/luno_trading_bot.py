@@ -174,7 +174,7 @@ class LunoTradingBot:
         logger.info("Trading loop stopped")
     
     async def _process_pair(self, pair: str):
-        """Process trading signals for a specific pair using FreqAI predictions"""
+        """Process trading signals for a specific pair using Real FreqAI"""
         try:
             # Get historical data
             symbol = pair.replace("/", "")  # BTC/ZAR -> BTCZAR
@@ -184,17 +184,121 @@ class LunoTradingBot:
                 logger.warning(f"No historical data for {pair}")
                 return
             
-            # Apply strategy indicators for technical analysis
+            # Get Real FreqAI prediction
+            freqai_prediction = self.freqai_service.get_freqai_prediction(df, pair)
+            
+            # Apply strategy indicators (fallback if FreqAI fails)
             df = self.strategy.populate_indicators(df, {"pair": pair})
             df = self.strategy.populate_entry_trend(df, {"pair": pair})
             df = self.strategy.populate_exit_trend(df, {"pair": pair})
             
-            # Use traditional technical analysis (FreqAI custom service removed)
-            logger.info(f"Processing {pair} with technical analysis (FreqAI custom service removed)")
-            await self._process_traditional_signals(pair, df)
+            # Enhanced decision making with Real FreqAI predictions
+            if 'error' not in freqai_prediction:
+                # Use FreqAI predictions as primary signal
+                logger.info(f"Using Real FreqAI prediction for {pair}: {freqai_prediction.get('prediction_signal', 'unknown')}")
+                await self._process_freqai_signals(pair, df, freqai_prediction)
+            else:
+                logger.warning(f"Real FreqAI prediction failed for {pair}, using technical analysis fallback")
+                # Fallback to traditional technical analysis
+                await self._process_traditional_signals(pair, df)
             
         except Exception as e:
             logger.error(f"Error processing pair {pair}: {e}")
+    
+    async def _process_freqai_signals(self, pair: str, df: pd.DataFrame, freqai_prediction: Dict):
+        """Process Real FreqAI trading signals"""
+        try:
+            prediction_value = freqai_prediction.get('do_predict_up_or_down', 0.5)
+            confidence = freqai_prediction.get('prediction_confidence', 0)
+            signal = freqai_prediction.get('prediction_signal', 'neutral')
+            
+            logger.info(f"Real FreqAI Signal for {pair}: {signal} (prediction: {prediction_value:.4f}, confidence: {confidence:.2f})")
+            
+            # Check for entry signals (FreqAI-driven)
+            if self._has_freqai_entry_signal(prediction_value, confidence, signal, pair):
+                await self._process_entry_signal(pair, df, signal_type='freqai', ai_data=freqai_prediction)
+            
+            # Check existing trades for FreqAI-enhanced exit signals
+            await self._process_freqai_exit_signals(pair, df, freqai_prediction)
+            
+        except Exception as e:
+            logger.error(f"Error processing Real FreqAI signals for {pair}: {e}")
+    
+    def _has_freqai_entry_signal(self, prediction: float, confidence: float, signal: str, pair: str) -> bool:
+        """Check if there's a Real FreqAI-driven entry signal"""
+        try:
+            # FreqAI signal thresholds (more conservative than custom approach)
+            min_prediction_threshold = 0.6  # 60% probability of up movement
+            min_confidence_threshold = 0.5  # 50% confidence minimum
+            
+            # Strong bullish FreqAI signal
+            freqai_bullish = (
+                prediction > min_prediction_threshold and
+                confidence > min_confidence_threshold and
+                signal == 'buy'
+            )
+            
+            if freqai_bullish:
+                logger.info(f"Real FreqAI Entry Signal: {pair} - Prediction: {prediction:.4f}, Confidence: {confidence:.2f}")
+                return True
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error checking Real FreqAI entry signal for {pair}: {e}")
+            return False
+    
+    async def _process_freqai_exit_signals(self, pair: str, df: pd.DataFrame, freqai_prediction: Dict):
+        """Process Real FreqAI-enhanced exit signals for existing trades"""
+        try:
+            # Find trades for this pair
+            pair_trades = {tid: trade for tid, trade in self.trades.items() 
+                          if trade['pair'] == pair and trade['status'] == 'open'}
+            
+            if not pair_trades:
+                return
+            
+            current_price = df.iloc[-1]['close']
+            prediction_value = freqai_prediction.get('do_predict_up_or_down', 0.5)
+            confidence = freqai_prediction.get('prediction_confidence', 0)
+            signal = freqai_prediction.get('prediction_signal', 'neutral')
+            
+            for trade_id, trade in pair_trades.items():
+                # Calculate current profit
+                entry_rate = trade['entry_rate']
+                current_profit = (current_price - entry_rate) / entry_rate
+                trade['profit'] = current_profit
+                
+                # Real FreqAI-enhanced exit logic
+                should_exit = False
+                exit_reason = None
+                
+                # Strong bearish FreqAI signal
+                if (prediction_value < 0.4 and confidence > 0.5 and signal == 'sell'):
+                    should_exit = True
+                    exit_reason = "freqai_bearish_signal"
+                
+                # FreqAI confidence drops significantly
+                elif confidence < 0.2:
+                    should_exit = True
+                    exit_reason = "freqai_low_confidence"
+                
+                # Traditional exit conditions enhanced with FreqAI
+                elif current_profit > 0.08 and signal != 'buy':  # Take profit if FreqAI not bullish
+                    should_exit = True
+                    exit_reason = "freqai_enhanced_profit_taking"
+                
+                elif current_profit < -0.03 and signal == 'sell':  # Stop loss if FreqAI bearish
+                    should_exit = True
+                    exit_reason = "freqai_enhanced_stop_loss"
+                
+                # Execute exit if needed
+                if should_exit:
+                    await self._execute_exit(trade_id, current_price, exit_reason)
+                    logger.info(f"Real FreqAI Exit: {pair} - {exit_reason} (Signal: {signal}, Confidence: {confidence:.2f})")
+            
+        except Exception as e:
+            logger.error(f"Error processing Real FreqAI exit signals for {pair}: {e}")
     
     async def _process_ai_signals(self, pair: str, df: pd.DataFrame, ai_prediction: Dict):
         """Process AI-enhanced trading signals"""
