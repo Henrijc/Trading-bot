@@ -104,7 +104,7 @@ Ready to execute today's trading strategy!`,
           </div>
 
           <div>
-            <label className="block text-amber-400 text-sm font-medium mb-2">Username</label>
+            <label className="block text-cyan-400 text-sm font-medium mb-2">Username</label>
             <Input
               type="text"
               value={loginData.username}
@@ -115,7 +115,7 @@ Ready to execute today's trading strategy!`,
           </div>
           
           <div>
-            <label className="block text-amber-400 text-sm font-medium mb-2">Password</label>
+            <label className="block text-cyan-400 text-sm font-medium mb-2">Password</label>
             <Input
               type="password"
               value={loginData.password}
@@ -126,7 +126,7 @@ Ready to execute today's trading strategy!`,
           </div>
           
           <div>
-            <label className="block text-amber-400 text-sm font-medium mb-2">2FA Code (Google Authenticator)</label>
+            <label className="block text-cyan-400 text-sm font-medium mb-2">2FA Code (Google Authenticator)</label>
             <Input
               type="text"
               value={loginData.totp_code}
@@ -138,7 +138,7 @@ Ready to execute today's trading strategy!`,
           </div>
 
           <div>
-            <label className="block text-amber-400 text-sm font-medium mb-2">Backup Code (if needed)</label>
+            <label className="block text-cyan-400 text-sm font-medium mb-2">Backup Code (if needed)</label>
             <Input
               type="text"
               value={loginData.backup_code}
@@ -177,7 +177,7 @@ Ready to execute today's trading strategy!`,
           </div>
 
           <div className="text-center mt-4">
-            <p className="text-amber-400/70 text-xs">
+            <p className="text-cyan-400/70 text-xs">
               💡 Add to Google Authenticator: OPRYF3QGNFGQGFUPVRPWU2C33C4HWHFP
             </p>
           </div>
@@ -227,7 +227,7 @@ Ready to execute today's trading strategy!`,
                 </div>
                 
                 <div className="bg-gradient-to-r from-amber-900/30 to-amber-800/30 p-4 rounded-lg border border-amber-600/30">
-                  <div className="text-amber-400 text-2xl font-bold">
+                  <div className="text-cyan-400 text-2xl font-bold">
                     R{portfolio_summary?.monthly_target?.toLocaleString()}
                   </div>
                   <div className="text-cyan-300 text-sm">Monthly Target</div>
