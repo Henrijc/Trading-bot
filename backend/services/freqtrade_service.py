@@ -17,7 +17,7 @@ class FreqtradeService:
     Service to communicate with the Freqtrade trading bot via its REST API
     """
     
-    def __init__(self, bot_url: str = "http://localhost:8080"):
+    def __init__(self, bot_url: str = "http://localhost:8082"):
         self.bot_url = bot_url
         self.session = None
         logger.info(f"FreqtradeService initialized with bot URL: {bot_url}")
