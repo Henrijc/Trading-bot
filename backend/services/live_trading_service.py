@@ -52,6 +52,7 @@ class LiveTradeResponse(BaseModel):
     recommendation: str
     risk_assessment: str
     error: Optional[str] = None
+    conditions: Optional[Dict] = None  # Decision Engine conditions
 
 class TradingStatusResponse(BaseModel):
     mode: TradingMode
