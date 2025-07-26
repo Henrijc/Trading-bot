@@ -28,7 +28,7 @@
     "%-XRPvolatility-period-20"
   ],
   "accuracy": 0.7865296803652968,
-  "trained_at": "2025-07-26T17:30:21.003864",
+  "trained_at": "2025-07-26T17:32:18.880158",
   "training_samples": 6131,
   "test_samples": 2628
 }
