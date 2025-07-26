@@ -171,7 +171,7 @@ class LunoTradingBot:
         try:
             # Get historical data
             symbol = pair.replace("/", "")  # BTC/ZAR -> BTCZAR
-            df = await self.historical_service.get_historical_data(symbol, days=50)
+            df = await self.historical_service.fetch_historical_data(symbol, timeframe='1h', days_back=50)
             
             if df.empty:
                 logger.warning(f"No historical data for {pair}")
