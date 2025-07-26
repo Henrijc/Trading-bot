@@ -1247,7 +1247,7 @@ const CryptoTraderCoach = () => {
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-amber-600/40 shadow-2xl shadow-cyan-500/10">
                   <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
                     <CardTitle className="text-cyan-300 flex items-center gap-3 text-xl font-semibold">
-                      <Activity className="text-amber-500" size={24} />
+                      <Activity className="text-cyan-500" size={24} />
                       Market Technical Overview
                       <Button
                         onClick={loadMarketOverview}
