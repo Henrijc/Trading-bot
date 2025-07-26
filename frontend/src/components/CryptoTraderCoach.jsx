@@ -682,9 +682,9 @@ const CryptoTraderCoach = () => {
                       <div className="flex justify-start">
                         <div className="bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 p-4 rounded-lg border border-gray-600/50 shadow-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
                             <span className="text-sm font-medium">AI Coach is analyzing your request...</span>
                           </div>
                         </div>
