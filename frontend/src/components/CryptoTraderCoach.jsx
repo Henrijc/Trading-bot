@@ -697,7 +697,7 @@ const CryptoTraderCoach = () => {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder="Ask about trading strategies, market analysis..."
-                    className="bg-gradient-to-r from-gray-700 to-gray-800 border-amber-600/40 text-amber-100 placeholder-amber-400/60 focus:border-amber-500 focus:ring-amber-500/50 font-medium"
+                    className="bg-gradient-to-r from-gray-700 to-gray-800 border-cyan-600/40 text-cyan-100 placeholder-cyan-400/60 focus:border-cyan-500 focus:ring-cyan-500/50 font-medium"
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                   <Button 
