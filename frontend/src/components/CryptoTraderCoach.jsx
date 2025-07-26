@@ -58,6 +58,13 @@ const CryptoTraderCoach = () => {
     monthly_target: 100000,
     weekly_target: 25000
   });
+  // Bot Control states - NEW
+  const [botStatus, setBotStatus] = useState(null);
+  const [botTrades, setBotTrades] = useState([]);
+  const [botProfit, setBotProfit] = useState(null);
+  const [isBotLoading, setIsBotLoading] = useState(false);
+  const [userTargets, setUserTargets] = useState(null);
+  const [targetProgress, setTargetProgress] = useState(null);
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
