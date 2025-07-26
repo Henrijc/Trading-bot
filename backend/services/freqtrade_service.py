@@ -113,18 +113,28 @@ class FreqtradeService:
             }
     
     async def get_signals(self, pair: str = None) -> Dict:
-        """Get trading signals from the bot"""
+        """Get trading signals from bot"""
         try:
-            # This would be implemented once the bot supports signal endpoints
-            endpoint = f"/api/v1/signals"
+            endpoint = "/api/v1/signals"
             if pair:
                 endpoint += f"?pair={pair}"
-            
             result = await self._make_request(endpoint)
+            logger.info(f"Retrieved signals from bot")
             return result
         except Exception as e:
             logger.error(f"Error getting signals: {e}")
-            return {"error": str(e), "signals": []}
+            return {"error": str(e)}
+    
+    async def get_freqai_prediction(self, pair: str) -> Dict:
+        """Get FreqAI prediction for trading pair"""
+        try:
+            endpoint = f"/api/v1/freqai/predict?pair={pair}"
+            result = await self._make_request(endpoint)
+            logger.info(f"Retrieved FreqAI prediction for {pair}")
+            return result
+        except Exception as e:
+            logger.error(f"Error getting FreqAI prediction: {e}")
+            return {"error": str(e)}
     
     async def health_check(self) -> bool:
         """Check if the Freqtrade bot is healthy and responding"""
