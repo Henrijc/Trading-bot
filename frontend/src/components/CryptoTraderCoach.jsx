@@ -1471,7 +1471,7 @@ const CryptoTraderCoach = () => {
                                   <div className="flex items-center gap-2">
                                     <Badge className={`${
                                       signal.type === 'BUY' ? 'bg-green-600' : 
-                                      signal.type === 'SELL' ? 'bg-red-600' : 'bg-amber-600'
+                                      signal.type === 'SELL' ? 'bg-red-600' : 'bg-cyan-600'
                                     } text-white font-semibold`}>
                                       {signal.type}
                                     </Badge>
