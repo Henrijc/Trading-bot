@@ -53,6 +53,7 @@ security_service = SecurityService()
 auth_service = AuthenticationService()
 freqtrade_service = FreqtradeService()
 target_service = TargetService(db_client=client)
+decision_engine = DecisionEngine()
 
 # Security middleware
 security = HTTPBearer()
