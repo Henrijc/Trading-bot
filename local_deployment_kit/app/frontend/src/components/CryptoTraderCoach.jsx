@@ -66,6 +66,8 @@ const CryptoTraderCoach = () => {
   const [tradingMode, setTradingMode] = useState('dry'); // 'dry' or 'live'
   const [userTargets, setUserTargets] = useState(null);
   const [targetProgress, setTargetProgress] = useState(null);
+  const [decisionLog, setDecisionLog] = useState([]);
+  const [isDecisionLogLoading, setIsDecisionLogLoading] = useState(false);
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
