@@ -54,15 +54,39 @@ class FreqtradeService:
             logger.error(f"Error communicating with bot API: {e}")
             return {"error": str(e)}
     
-    async def start_bot(self) -> Dict:
-        """Start the Freqtrade trading bot"""
+    async def start_bot(self, mode: str = "dry") -> Dict:
+        """
+        Start the Freqtrade trading bot with specified mode
+        
+        Args:
+            mode: "dry" for simulation or "live" for real trading
+        """
         try:
-            result = await self._make_request("/api/v1/start", method="POST")
-            logger.info(f"Bot start result: {result}")
+            # Prepare request data with mode
+            request_data = {
+                "mode": mode,
+                "dry_run": mode == "dry"
+            }
+            
+            result = await self._make_request("/api/v1/start", method="POST", data=request_data)
+            
+            # Add mode information to result
+            if isinstance(result, dict):
+                result["trading_mode"] = mode
+                result["dry_run"] = mode == "dry"
+                result["safety_notice"] = "Simulation mode - no real money" if mode == "dry" else "LIVE TRADING - REAL MONEY AT RISK"
+            
+            logger.info(f"Bot start result in {mode.upper()} mode: {result}")
             return result
+            
         except Exception as e:
-            logger.error(f"Error starting bot: {e}")
-            return {"error": str(e), "success": False}
+            logger.error(f"Error starting bot in {mode} mode: {e}")
+            return {
+                "error": str(e), 
+                "success": False,
+                "mode": mode,
+                "message": f"Failed to start bot in {mode} mode"
+            }
     
     async def stop_bot(self) -> Dict:
         """Stop the Freqtrade trading bot"""
