@@ -1618,6 +1618,39 @@ async def ai_integrated_trade_decision(trade_request: dict):
         logger.error(f"Error in AI-integrated trade decision: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/decision-log")
+async def get_decision_log(limit: int = 50):
+    """
+    Get recent decision log entries for AI Decision Transparency
+    
+    This endpoint provides real-time transparency into the Decision Engine's
+    reasoning process, showing how the AI evaluates each trade decision.
+    
+    Query Parameters:
+    - limit: Number of recent entries to return (default: 50, max: 100)
+    """
+    try:
+        # Validate limit
+        if limit > 100:
+            limit = 100
+        elif limit < 1:
+            limit = 10
+            
+        # Get decision log from Decision Engine
+        decision_log = decision_engine.get_decision_log(limit)
+        
+        return {
+            "success": True,
+            "count": len(decision_log),
+            "decisions": decision_log,
+            "timestamp": datetime.utcnow().isoformat(),
+            "note": "This log provides transparency into AI decision-making process"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error retrieving decision log: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include sub-routers in the api_router (they will inherit the /api prefix)
 api_router.include_router(backtest_router)
 api_router.include_router(live_trading_router)
