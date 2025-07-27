@@ -574,10 +574,14 @@ const CryptoTraderCoach = () => {
     try {
       setIsBotLoading(true);
       
+      console.log('Starting trading bot with mode:', tradingMode);
+      
       // Send mode parameter to backend
       const response = await axios.post(`${API}/bot/start`, {
         mode: tradingMode
       });
+      
+      console.log('Bot start response:', response.data);
       
       await loadBotStatus();
       
