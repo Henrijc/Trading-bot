@@ -1250,13 +1250,44 @@ async def get_login_analysis(user_data = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Bot Control endpoints - NEW
+# Bot Control endpoints - Enhanced with Mode Selection
 @api_router.post("/bot/start")
-async def start_trading_bot():
-    """Start the Freqtrade trading bot"""
+async def start_trading_bot(request: dict = None):
+    """
+    Start the Freqtrade trading bot with specified mode
+    
+    Request body:
+    {
+        "mode": "dry" | "live"  // Default: "dry" for safety
+    }
+    """
     try:
-        result = await freqtrade_service.start_bot()
-        return result
+        # Get mode from request (default to dry run for safety)
+        mode = "dry"
+        if request and isinstance(request, dict):
+            mode = request.get("mode", "dry")
+        
+        # Validate mode
+        if mode not in ["dry", "live"]:
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalid mode. Must be 'dry' or 'live'"
+            )
+        
+        # Start bot with specified mode
+        result = await freqtrade_service.start_bot(mode=mode)
+        
+        # Log the mode for transparency
+        logger.info(f"Trading bot started in {mode.upper()} mode")
+        
+        return {
+            **result,
+            "mode": mode,
+            "safety_notice": "Dry run mode" if mode == "dry" else "LIVE TRADING MODE - REAL MONEY AT RISK"
+        }
+        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error starting trading bot: {e}")
         raise HTTPException(status_code=500, detail=str(e))
