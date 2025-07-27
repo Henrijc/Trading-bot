@@ -68,6 +68,11 @@ const CryptoTraderCoach = () => {
   const [targetProgress, setTargetProgress] = useState(null);
   const [decisionLog, setDecisionLog] = useState([]);
   const [isDecisionLogLoading, setIsDecisionLogLoading] = useState(false);
+
+  // Debug: Log trading mode changes
+  useEffect(() => {
+    console.log('Trading mode changed to:', tradingMode);
+  }, [tradingMode]);
   const chatScrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
