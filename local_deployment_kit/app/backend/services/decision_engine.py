@@ -10,7 +10,8 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple
 from enum import Enum
 import logging
-from dataclasses import dataclass
+import json
+from dataclasses import dataclass, asdict
 
 # Import existing services
 from services.luno_service import LunoService
@@ -18,6 +19,27 @@ from services.target_service import TargetService
 from services.freqtrade_service import FreqtradeService
 
 logger = logging.getLogger(__name__)
+
+# Decision Log Storage (In production, this would be in database)
+DECISION_LOG = []
+MAX_LOG_ENTRIES = 100
+
+@dataclass
+class DecisionLogEntry:
+    """Structure for decision log entries - provides transparency into AI decision making"""
+    timestamp: str
+    strategic_input: str
+    freqai_signal: Dict[str, Any]
+    context: Dict[str, Any]
+    final_decision: str
+    reason: str
+    confidence: float
+    risk_assessment: Dict[str, Any]
+    trade_id: str = None
+    
+    def to_dict(self):
+        """Convert to dictionary for JSON serialization"""
+        return asdict(self)
 
 class DecisionResult(Enum):
     APPROVE = "approve"
