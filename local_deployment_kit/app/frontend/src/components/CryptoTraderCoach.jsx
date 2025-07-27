@@ -1813,10 +1813,14 @@ const CryptoTraderCoach = () => {
                           <Button
                             onClick={startTradingBot}
                             disabled={isBotLoading || botStatus?.status === 'running'}
-                            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg"
+                            className={`flex-1 ${
+                              tradingMode === 'dry' 
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' 
+                                : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
+                            } disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg`}
                           >
                             <Play className="w-4 h-4 mr-2" />
-                            {isBotLoading ? 'Starting...' : 'Start Bot'}
+                            {isBotLoading ? 'Starting...' : `Start Bot (${tradingMode === 'dry' ? 'Dry Run' : 'Live'})`}
                           </Button>
                           
                           <Button
