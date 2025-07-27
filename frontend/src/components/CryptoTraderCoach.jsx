@@ -1666,14 +1666,127 @@ const CryptoTraderCoach = () => {
                           </span>
                         </div>
                         
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Next Start Mode:</span>
+                          <Badge className={`${
+                            tradingMode === 'dry' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'
+                          } text-white`}>
+                            {tradingMode === 'dry' ? 'Dry Run' : 'Live Trading'}
+                          </Badge>
+                        </div>
+                        
+                        {/* TRADING MODE SELECTION - FIXED VERSION */}
+                        <div className="border-t border-gray-700 pt-4 mt-4">
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="text-gray-300 font-medium text-base">Trading Mode:</span>
+                              <Badge 
+                                className={`${
+                                  tradingMode === 'dry' 
+                                    ? 'bg-blue-600 hover:bg-blue-700 text-white border-none' 
+                                    : 'bg-red-600 hover:bg-red-700 text-white border-none'
+                                } px-3 py-1 text-sm font-semibold`}
+                              >
+                                {tradingMode === 'dry' ? 'DRY RUN MODE' : 'LIVE TRADING MODE'}
+                              </Badge>
+                            </div>
+                            
+                            {/* LARGE TOGGLE BUTTONS */}
+                            <div className="flex items-center justify-center space-x-4 bg-gray-700/50 rounded-lg p-4">
+                              <div 
+                                className={`px-6 py-4 rounded-lg cursor-pointer transition-all duration-200 border-2 ${
+                                  tradingMode === 'dry' 
+                                    ? 'bg-blue-600 text-white font-bold shadow-lg border-blue-400' 
+                                    : 'bg-gray-600 text-gray-300 hover:bg-gray-500 border-gray-500'
+                                }`}
+                                onClick={() => !isBotLoading && botStatus?.status !== 'running' && setTradingMode('dry')}
+                                style={{ opacity: (isBotLoading || botStatus?.status === 'running') ? 0.5 : 1 }}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <span className="text-2xl">🧪</span>
+                                  <div>
+                                    <div className="text-lg font-bold">Dry Run</div>
+                                    <div className="text-sm">Safe Simulation</div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div 
+                                className={`px-6 py-4 rounded-lg cursor-pointer transition-all duration-200 border-2 ${
+                                  tradingMode === 'live' 
+                                    ? 'bg-red-600 text-white font-bold shadow-lg border-red-400' 
+                                    : 'bg-gray-600 text-gray-300 hover:bg-gray-500 border-gray-500'
+                                }`}
+                                onClick={() => !isBotLoading && botStatus?.status !== 'running' && setTradingMode('live')}
+                                style={{ opacity: (isBotLoading || botStatus?.status === 'running') ? 0.5 : 1 }}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <span className="text-2xl">💰</span>
+                                  <div>
+                                    <div className="text-lg font-bold">Live Trading</div>
+                                    <div className="text-sm">Real Money</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* MODE DISABLED MESSAGE */}
+                            {(isBotLoading || botStatus?.status === 'running') && (
+                              <div className="text-center text-gray-400 text-sm mt-2">
+                                Mode cannot be changed while bot is {botStatus?.status === 'running' ? 'running' : 'loading'}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* SAFETY WARNING FOR LIVE MODE */}
+                          {tradingMode === 'live' && (
+                            <div className="bg-red-900/40 border-2 border-red-500/60 rounded-lg p-4 mb-4">
+                              <div className="flex items-start space-x-3">
+                                <span className="text-red-400 text-3xl">⚠️</span>
+                                <div>
+                                  <p className="text-red-300 font-bold text-lg">⚠️ LIVE TRADING MODE ACTIVE</p>
+                                  <p className="text-red-200 text-sm mt-1">
+                                    Real money will be used for trades. Ensure your settings are correct.
+                                  </p>
+                                  <p className="text-red-200 text-sm mt-1">
+                                    Trading limits: R50,000 per trade, R200,000 daily maximum.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* SAFETY NOTICE FOR DRY RUN MODE */}
+                          {tradingMode === 'dry' && (
+                            <div className="bg-blue-900/40 border-2 border-blue-500/60 rounded-lg p-4 mb-4">
+                              <div className="flex items-start space-x-3">
+                                <span className="text-blue-400 text-3xl">✅</span>
+                                <div>
+                                  <p className="text-blue-300 font-bold text-lg">✅ SIMULATION MODE ACTIVE</p>
+                                  <p className="text-blue-200 text-sm mt-1">
+                                    Safe testing with virtual money. No real trades will be executed.
+                                  </p>
+                                  <p className="text-blue-200 text-sm mt-1">
+                                    Perfect for testing strategies and learning the system.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
                         <div className="flex gap-3 mt-6">
                           <Button
                             onClick={startTradingBot}
                             disabled={isBotLoading || botStatus?.status === 'running'}
-                            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg"
+                            className={`flex-1 ${
+                              tradingMode === 'dry' 
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800' 
+                                : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
+                            } disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold shadow-lg`}
                           >
                             <Play className="w-4 h-4 mr-2" />
-                            {isBotLoading ? 'Starting...' : 'Start Bot'}
+                            {isBotLoading ? 'Starting...' : `Start Bot (${tradingMode === 'dry' ? 'Dry Run' : 'Live'})`}
                           </Button>
                           
                           <Button
