@@ -566,9 +566,21 @@ const CryptoTraderCoach = () => {
   const startTradingBot = async () => {
     try {
       setIsBotLoading(true);
-      const response = await axios.post(`${API}/bot/start`);
+      
+      // Send mode parameter to backend
+      const response = await axios.post(`${API}/bot/start`, {
+        mode: tradingMode
+      });
+      
       await loadBotStatus();
-      alert(response.data.message || 'Trading bot started successfully');
+      
+      const modeText = tradingMode === 'dry' ? 'Simulation' : 'LIVE TRADING';
+      const safetyNotice = tradingMode === 'live' ? 
+        '\n⚠️ CAUTION: You are now trading with real money!' : 
+        '\n✅ Safe: Trading in simulation mode only.';
+      
+      alert(`Trading bot started in ${modeText} mode${safetyNotice}`);
+      
     } catch (error) {
       console.error('Error starting bot:', error);
       alert('Failed to start trading bot: ' + (error.response?.data?.detail || error.message));
