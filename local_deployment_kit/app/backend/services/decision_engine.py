@@ -118,6 +118,61 @@ class DecisionEngine:
         
         logger.info("Decision Engine initialized")
     
+    def _log_decision(self, signal: TradeSignal, context: DecisionContext, result: DecisionEngineResult):
+        """
+        Log decision for transparency and audit trail
+        Critical for AI Decision Transparency requirement
+        """
+        global DECISION_LOG
+        
+        try:
+            # Generate strategic input based on current portfolio status
+            if context.portfolio.monthly_performance < 0:
+                strategic_mode = "AI Coach mode: Risk-On, Portfolio Goal: Pursue Target"
+            elif context.portfolio.monthly_performance > context.targets.get('monthly_target', 8000):
+                strategic_mode = "AI Coach mode: Profit-Taking, Portfolio Goal: Preserve Gains"
+            else:
+                strategic_mode = "AI Coach mode: Balanced, Portfolio Goal: Steady Growth"
+            
+            # Prepare context data
+            context_data = {
+                "portfolio_performance": f"{context.portfolio.monthly_performance:.1%} vs target",
+                "total_portfolio_value": f"R{context.portfolio.total_value_zar:,.2f}",
+                "monthly_target": f"R{context.targets.get('monthly_target', 8000):,.2f}",
+                "risk_exposure": f"{context.portfolio.risk_exposure:.1%}",
+                "xrp_protected": f"{self.PROTECTED_XRP_AMOUNT} XRP reserved"
+            }
+            
+            # Create decision log entry
+            log_entry = DecisionLogEntry(
+                timestamp=datetime.utcnow().isoformat(),
+                strategic_input=strategic_mode,
+                freqai_signal={
+                    "pair": signal.pair,
+                    "signal": signal.action,
+                    "confidence": signal.confidence,
+                    "signal_strength": signal.signal_strength,
+                    "direction": signal.direction,
+                    "predicted_return": signal.predicted_return
+                },
+                context=context_data,
+                final_decision=result.decision.value.upper(),
+                reason=result.reasoning,
+                confidence=result.confidence,
+                risk_assessment=result.risk_assessment if isinstance(result.risk_assessment, dict) else {"level": "UNKNOWN"},
+                trade_id=f"decision_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+            )
+            
+            # Add to log (keep only last MAX_LOG_ENTRIES)
+            DECISION_LOG.append(log_entry)
+            if len(DECISION_LOG) > MAX_LOG_ENTRIES:
+                DECISION_LOG.pop(0)
+                
+            logger.info(f"Decision logged: {result.decision.value} for {signal.pair} - {result.reasoning[:100]}...")
+            
+        except Exception as e:
+            logger.error(f"Error logging decision: {e}")
+
     async def evaluate_trade_signal(self, signal: TradeSignal) -> DecisionEngineResult:
         """
         Main decision evaluation method
@@ -130,17 +185,47 @@ class DecisionEngine:
             # Step 2: Apply decision rules
             result = await self._apply_decision_rules(context)
             
+            # Step 3: Log decision for transparency (CRITICAL REQUIREMENT)
+            self._log_decision(signal, context, result)
+            
             logger.info(f"Decision for {signal.pair} {signal.action}: {result.decision.value}")
             return result
             
         except Exception as e:
             logger.error(f"Error in decision evaluation: {e}")
-            return DecisionEngineResult(
+            error_result = DecisionEngineResult(
                 decision=DecisionResult.REJECT,
                 confidence=0.0,
                 reasoning=f"Decision engine error: {str(e)}",
-                risk_assessment="HIGH - System error"
+                risk_assessment={"level": "HIGH", "description": "System error"}
             )
+            
+            # Log error decision too
+            try:
+                context = DecisionContext(
+                    portfolio=PortfolioStatus(0, {}, 0, 0, 1, 0.1),
+                    targets={"monthly_target": 8000},
+                    signal=signal,
+                    risk_level=RiskLevel.HIGH
+                )
+                self._log_decision(signal, context, error_result)
+            except:
+                pass  # Don't fail on logging error
+                
+            return error_result
+    
+    def get_decision_log(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """
+        Get recent decision log entries for transparency dashboard
+        Used by /api/decision-log endpoint
+        """
+        global DECISION_LOG
+        
+        # Return most recent entries (up to limit)
+        recent_entries = DECISION_LOG[-limit:] if len(DECISION_LOG) > limit else DECISION_LOG
+        
+        # Convert to dictionaries for JSON serialization
+        return [entry.to_dict() for entry in reversed(recent_entries)]  # Most recent first
     
     async def _gather_decision_context(self, signal: TradeSignal) -> DecisionContext:
         """Gather all necessary context for decision making"""
