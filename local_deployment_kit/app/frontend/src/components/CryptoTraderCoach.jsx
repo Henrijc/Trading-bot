@@ -591,6 +591,34 @@ const CryptoTraderCoach = () => {
     }
   };
 
+  // Decision Log Functions - NEW
+  const loadDecisionLog = async () => {
+    try {
+      setIsDecisionLogLoading(true);
+      const response = await axios.get(`${API}/decision-log?limit=50`);
+      if (response.data.success) {
+        setDecisionLog(response.data.decisions);
+      }
+    } catch (error) {
+      console.error('Error loading decision log:', error);
+    } finally {
+      setIsDecisionLogLoading(false);
+    }
+  };
+
+  // Auto-refresh decision log every 15 seconds when on decision-log tab
+  useEffect(() => {
+    let interval;
+    if (activeTab === 'decision-log') {
+      loadDecisionLog(); // Load immediately when tab is activated
+      interval = setInterval(loadDecisionLog, 15000); // Then every 15 seconds
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeTab]);
+
   const stopTradingBot = async () => {
     try {
       setIsBotLoading(true);
