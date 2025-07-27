@@ -1679,6 +1679,60 @@ const CryptoTraderCoach = () => {
                           </span>
                         </div>
                         
+                        {/* Trading Mode Toggle - NEW FEATURE */}
+                        <div className="border-t border-gray-700 pt-4 mt-4">
+                          <div className="flex justify-between items-center mb-4">
+                            <span className="text-gray-300 font-medium">Trading Mode:</span>
+                            <div className="flex items-center space-x-3">
+                              <span className={`text-sm ${tradingMode === 'dry' ? 'text-cyan-300 font-semibold' : 'text-gray-500'}`}>
+                                Dry Run
+                              </span>
+                              <button
+                                onClick={() => setTradingMode(tradingMode === 'dry' ? 'live' : 'dry')}
+                                disabled={botStatus?.status === 'running'}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed ${
+                                  tradingMode === 'live' ? 'bg-red-600' : 'bg-blue-600'
+                                }`}
+                              >
+                                <span
+                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                    tradingMode === 'live' ? 'translate-x-6' : 'translate-x-1'
+                                  }`}
+                                />
+                              </button>
+                              <span className={`text-sm ${tradingMode === 'live' ? 'text-red-300 font-semibold' : 'text-gray-500'}`}>
+                                Live Run
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Safety Warning for Live Mode */}
+                          {tradingMode === 'live' && (
+                            <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-3 mb-4">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-red-400 text-xl">⚠️</span>
+                                <div>
+                                  <p className="text-red-300 font-semibold text-sm">LIVE TRADING MODE</p>
+                                  <p className="text-red-200 text-xs">Real money will be used for trades. Ensure your settings are correct.</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Safety Notice for Dry Run Mode */}
+                          {tradingMode === 'dry' && (
+                            <div className="bg-blue-900/30 border border-blue-600/50 rounded-lg p-3 mb-4">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-blue-400 text-xl">✅</span>
+                                <div>
+                                  <p className="text-blue-300 font-semibold text-sm">SIMULATION MODE</p>
+                                  <p className="text-blue-200 text-xs">Safe testing with virtual money. No real trades will be executed.</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
                         <div className="flex gap-3 mt-6">
                           <Button
                             onClick={startTradingBot}
