@@ -1992,6 +1992,150 @@ const CryptoTraderCoach = () => {
                 </Card>
               </TabsContent>
 
+              {/* Decision Log Tab - AI Decision Transparency */}
+              <TabsContent value="decision-log" className="space-y-6">
+                <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-cyan-600/40 shadow-2xl shadow-cyan-500/10">
+                  <CardHeader className="border-b border-cyan-600/30 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20">
+                    <CardTitle className="text-cyan-300 flex items-center gap-3">
+                      <Eye className="text-cyan-500" size={20} />
+                      AI Decision Transparency Log
+                      <Badge variant="secondary" className="bg-cyan-600/20 text-cyan-300 border-cyan-500/40">
+                        Live Updates
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="mb-4 text-sm text-gray-400">
+                      Real-time log of AI trading decisions showing strategic input, analysis, and reasoning.
+                      <span className="text-cyan-400 ml-2">Auto-refreshes every 15 seconds</span>
+                    </div>
+                    
+                    {isDecisionLogLoading ? (
+                      <div className="flex justify-center items-center py-8">
+                        <RefreshCw className="animate-spin text-cyan-500" size={24} />
+                        <span className="ml-2 text-cyan-300">Loading decision log...</span>
+                      </div>
+                    ) : decisionLog.length === 0 ? (
+                      <div className="text-center py-8 text-gray-400">
+                        <Eye className="mx-auto mb-2 text-gray-500" size={48} />
+                        <p>No trading decisions logged yet.</p>
+                        <p className="text-sm mt-1">Start the trading bot to see AI decision-making in action.</p>
+                      </div>
+                    ) : (
+                      <ScrollArea className="h-96">
+                        <div className="space-y-4">
+                          {decisionLog.map((decision, index) => (
+                            <Card key={decision.trade_id || index} className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/40">
+                              <CardContent className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div className="flex items-center gap-2">
+                                    <Badge 
+                                      variant={decision.final_decision === 'APPROVED' ? 'default' : 
+                                              decision.final_decision === 'REJECTED' ? 'destructive' : 'secondary'}
+                                      className={
+                                        decision.final_decision === 'APPROVED' 
+                                          ? 'bg-green-600/20 text-green-300 border-green-500/40'
+                                          : decision.final_decision === 'REJECTED'
+                                          ? 'bg-red-600/20 text-red-300 border-red-500/40'
+                                          : 'bg-yellow-600/20 text-yellow-300 border-yellow-500/40'
+                                      }
+                                    >
+                                      {decision.final_decision}
+                                    </Badge>
+                                    <Badge variant="outline" className="text-cyan-300 border-cyan-500/40">
+                                      {decision.freqai_signal?.pair || 'N/A'}
+                                    </Badge>
+                                  </div>
+                                  <span className="text-xs text-gray-400">
+                                    {new Date(decision.timestamp).toLocaleString()}
+                                  </span>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <h4 className="text-cyan-300 font-semibold mb-1">Strategic Input</h4>
+                                    <p className="text-gray-300 text-xs">{decision.strategic_input}</p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-cyan-300 font-semibold mb-1">FreqAI Signal</h4>
+                                    <div className="text-xs text-gray-300">
+                                      <span className="text-cyan-400">Action:</span> {decision.freqai_signal?.signal} • 
+                                      <span className="text-cyan-400 ml-2">Confidence:</span> {(decision.freqai_signal?.confidence * 100)?.toFixed(1)}% • 
+                                      <span className="text-cyan-400 ml-2">Direction:</span> {decision.freqai_signal?.direction}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-cyan-300 font-semibold mb-1">Context</h4>
+                                    <div className="text-xs text-gray-300">
+                                      {Object.entries(decision.context).map(([key, value]) => (
+                                        <div key={key}>
+                                          <span className="text-cyan-400">{key.replace(/_/g, ' ')}:</span> {value}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-cyan-300 font-semibold mb-1">Risk Assessment</h4>
+                                    <div className="text-xs">
+                                      <Badge 
+                                        variant="outline"
+                                        className={
+                                          decision.risk_assessment?.risk_level === 'LOW'
+                                            ? 'text-green-300 border-green-500/40'
+                                            : decision.risk_assessment?.risk_level === 'HIGH'
+                                            ? 'text-red-300 border-red-500/40'
+                                            : 'text-yellow-300 border-yellow-500/40'
+                                        }
+                                      >
+                                        {decision.risk_assessment?.risk_level || 'UNKNOWN'}
+                                      </Badge>
+                                      <p className="text-gray-300 mt-1">
+                                        {decision.risk_assessment?.description || 'No description available'}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="mt-3 pt-3 border-t border-gray-600/40">
+                                  <h4 className="text-cyan-300 font-semibold mb-1 text-sm">AI Reasoning</h4>
+                                  <p className="text-gray-300 text-xs">{decision.reason}</p>
+                                  
+                                  <div className="flex justify-between items-center mt-2">
+                                    <div className="text-xs text-gray-400">
+                                      Confidence: {(decision.confidence * 100).toFixed(1)}%
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                      ID: {decision.trade_id}
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    )}
+                    
+                    <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
+                      <span>Showing last {decisionLog.length} decisions</span>
+                      <Button
+                        onClick={loadDecisionLog}
+                        disabled={isDecisionLogLoading}
+                        size="sm"
+                        variant="outline"
+                        className="border-cyan-500/40 text-cyan-300 hover:bg-cyan-600/10"
+                      >
+                        <RefreshCw className={`w-4 h-4 mr-1 ${isDecisionLogLoading ? 'animate-spin' : ''}`} />
+                        Refresh
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               {/* Backtesting Tab */}
               <TabsContent value="backtesting" className="space-y-6">
                 <BacktestingDashboard />
