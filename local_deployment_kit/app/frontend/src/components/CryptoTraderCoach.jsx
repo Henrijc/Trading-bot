@@ -1716,6 +1716,15 @@ const CryptoTraderCoach = () => {
                         </div>
                         
                         <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Next Start Mode:</span>
+                          <Badge className={`${
+                            tradingMode === 'dry' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'
+                          } text-white`}>
+                            {tradingMode === 'dry' ? 'Dry Run' : 'Live Trading'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
                           <span className="text-gray-300">Open Trades:</span>
                           <span className="text-cyan-300 font-bold">
                             {botStatus?.open_trades_count || 0}
