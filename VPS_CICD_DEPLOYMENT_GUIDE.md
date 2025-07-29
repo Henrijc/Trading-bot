@@ -1,81 +1,502 @@
 # 🚀 AI Crypto Trading Coach - VPS CI/CD Deployment Guide
 
-**Domain**: zikhethele.properties
-**Private URL**: https://crypto-coach.zikhethele.properties (restricted access)
-**Deployment Type**: Standalone VPS with CI/CD Pipeline
+**Domain**: zikhethele.properties  
+**Private URL**: https://crypto-coach.zikhethele.properties (restricted access)  
+**Deployment Type**: Standalone VPS with CI/CD Pipeline  
+**Installer Version**: v2.0.0 (Ubuntu 22.04 + Virtualizor Compatible)
+
+---
+
+## 🎯 Quick Start - Automated Installation
+
+### **Option A: Use the Automated Installer (RECOMMENDED)**
+
+The improved `crypto_coach_installer_v2.sh` script addresses all critical deployment issues identified in production environments:
+
+```bash
+# 1. Download the deployment package
+wget https://your-server/AI_Crypto_Trading_Coach_VPS_CICD_FIXED.tar.gz
+
+# 2. Extract the package
+tar -xzf AI_Crypto_Trading_Coach_VPS_CICD_FIXED.tar.gz
+cd vps_deployment_package
+
+# 3. Run the installer with sudo (NOT as root directly)
+sudo ./crypto_coach_installer_v2.sh
+```
+
+**The installer will:**
+- ✅ Verify Ubuntu 22.04 + Virtualizor compatibility
+- ✅ Pre-download all dependencies (prevents network failures)
+- ✅ Handle proper sudo/root permissions
+- ✅ Stop conflicting services automatically
+- ✅ Configure complete Nginx routing
+- ✅ Set up SSL certificates
+- ✅ Create management scripts
+- ✅ Provide automatic rollback on failure
+
+**Interactive Setup:** The installer will prompt for:
+- Luno API keys
+- Google Gemini API key
+- Admin credentials
+- Your public IP for access restriction
+- GitHub username for CI/CD
 
 ---
 
 ## 📋 Prerequisites
 
 ### 1. VPS Server Requirements
-- **OS**: Ubuntu 20.04+ LTS
+- **OS**: Ubuntu 22.04 LTS (tested and verified)
 - **RAM**: Minimum 4GB (8GB recommended)
 - **Storage**: 50GB+ SSD
 - **CPU**: 2+ cores
 - **Network**: Public IP address
+- **Environment**: Compatible with Virtualizor/OpenVZ
 
-### 2. Required Accounts
-- **GitHub Account** (for CI/CD)
+### 2. Required Accounts & Keys
+- **GitHub Account** (for CI/CD pipeline)
 - **Domain Access** (zikhethele.properties DNS management)
-- **VPS Provider Access** (root/sudo access)
+- **VPS Provider Access** (sudo user account - NOT direct root)
+- **Luno API Keys** (trading functionality)
+- **Google Gemini API Key** (AI features)
 
-### 3. Required Software on VPS
-- Docker & Docker Compose
-- Nginx (reverse proxy)
-- Certbot (SSL certificates)
-- Git
+### 3. Network Configuration
+- **Domain**: zikhethele.properties
+- **Subdomain**: crypto-coach.zikhethele.properties
+- **VPS IP**: Your server's public IP address
+- **DNS Configuration**: A record pointing subdomain to VPS IP
 
 ---
 
-## 🏗️ Step 1: VPS Server Initial Setup
+## 🛠️ Manual Installation (Advanced Users)
 
-### Connect to Your VPS
+### **Option B: Step-by-Step Manual Setup**
+
+If you prefer manual installation or need to understand each step:
+
+## Step 1: Initial VPS Setup
+
+### 1.1 Create Sudo User (CRITICAL)
 ```bash
+# Connect as root initially
 ssh root@YOUR_VPS_IP_ADDRESS
+
+# Create a sudo user (required for proper installation)
+adduser cryptoadmin
+usermod -aG sudo cryptoadmin
+
+# Switch to sudo user for installation
+su - cryptoadmin
 ```
 
-### Update System
+### 1.2 System Update & Essential Packages
 ```bash
-apt update && apt upgrade -y
+sudo apt update && sudo apt upgrade -y
+
+# Install essential packages
+sudo apt install -y \
+    curl wget gnupg2 software-properties-common \
+    apt-transport-https ca-certificates lsb-release \
+    unzip git openssl jq net-tools lsof build-essential
 ```
 
-### Install Required Software
+### 1.3 Stop Conflicting Services
 ```bash
-# Install Docker
+# Check for services that might conflict with Docker ports
+sudo netstat -tuln | grep -E ':80|:443|:3000|:8001|:8082|:27017'
+
+# Stop conflicting services if found
+sudo systemctl stop nginx 2>/dev/null || true
+sudo systemctl stop apache2 2>/dev/null || true
+sudo systemctl stop postgresql 2>/dev/null || true
+sudo systemctl stop mysql 2>/dev/null || true
+sudo systemctl stop redis 2>/dev/null || true
+sudo systemctl stop mongodb 2>/dev/null || true
+
+# Disable them to prevent restart
+sudo systemctl disable nginx 2>/dev/null || true
+sudo systemctl disable apache2 2>/dev/null || true
+sudo systemctl disable postgresql 2>/dev/null || true
+sudo systemctl disable mysql 2>/dev/null || true
+sudo systemctl disable redis 2>/dev/null || true
+sudo systemctl disable mongodb 2>/dev/null || true
+```
+
+## Step 2: Docker Installation (Ubuntu 22.04 Compatible)
+
+### 2.1 Install Docker Engine
+```bash
+# Remove old Docker versions
+sudo apt remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
+
+# Install Docker using official script
 curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-systemctl enable docker
-systemctl start docker
+sudo sh get-docker.sh
 
-# Install Docker Compose
-curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+# Start and enable Docker
+sudo systemctl enable docker
+sudo systemctl start docker
 
-# Install Nginx
-apt install nginx -y
-systemctl enable nginx
-
-# Install Certbot for SSL
-apt install certbot python3-certbot-nginx -y
-
-# Install Git
-apt install git -y
-
-# Install Node.js (for build processes)
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-apt-get install -y nodejs
+# Add current user to docker group
+sudo usermod -aG docker $USER
 ```
 
-### Create Application Directory
+### 2.2 Install Docker Compose (Ubuntu 22.04 Method)
 ```bash
-mkdir -p /opt/crypto-coach
-cd /opt/crypto-coach
+# Method 1: Use apt (recommended for Ubuntu 22.04)
+sudo apt install -y docker-compose-plugin
 
-# Create application user
-useradd -r -s /bin/false crypto-coach
-usermod -aG docker crypto-coach
-chown -R crypto-coach:crypto-coach /opt/crypto-coach
+# Create symlink for compatibility
+sudo ln -sf /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+
+# Method 2: Manual installation (fallback)
+if ! command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_VERSION="v2.21.0"
+    sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" \
+        -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+# Verify installation
+docker --version
+docker-compose --version
+```
+
+## Step 3: Nginx Installation & Configuration
+
+### 3.1 Install Nginx
+```bash
+sudo apt install -y nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+```
+
+### 3.2 Complete Nginx Configuration (CRITICAL)
+```bash
+# Remove default site
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Create comprehensive configuration
+sudo tee /etc/nginx/sites-available/crypto-coach << 'EOF'
+# Rate limiting zones
+limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+limit_req_zone $binary_remote_addr zone=login:10m rate=3r/m;
+
+# Upstream servers
+upstream frontend {
+    server 127.0.0.1:3000;
+    keepalive 32;
+}
+
+upstream backend {
+    server 127.0.0.1:8001;
+    keepalive 32;
+}
+
+# HTTP to HTTPS redirect
+server {
+    listen 80;
+    server_name crypto-coach.zikhethele.properties;
+    
+    return 301 https://$server_name$request_uri;
+}
+
+# Main HTTPS server
+server {
+    listen 443 ssl http2;
+    server_name crypto-coach.zikhethele.properties;
+    
+    # Security Headers
+    add_header X-Frame-Options DENY always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # IP Access Restriction - REPLACE WITH YOUR IP
+    allow YOUR_PUBLIC_IP_ADDRESS;
+    deny all;
+    
+    # Frontend Application (React SPA)
+    location / {
+        limit_req zone=api burst=20 nodelay;
+        
+        proxy_pass http://frontend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # Backend API Routes - CRITICAL: Separate routing
+    location /api {
+        limit_req zone=api burst=10 nodelay;
+        
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+    }
+    
+    # Authentication endpoints with stricter limits
+    location /api/auth {
+        limit_req zone=login burst=5 nodelay;
+        
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Health check endpoint
+    location /health {
+        access_log off;
+        proxy_pass http://backend/api/;
+        proxy_set_header Host $host;
+    }
+}
+EOF
+
+# Enable site
+sudo ln -s /etc/nginx/sites-available/crypto-coach /etc/nginx/sites-enabled/
+
+# Test configuration
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx
+```
+
+## Step 4: SSL Certificate Setup
+
+### 4.1 Install Certbot
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+```
+
+### 4.2 Configure DNS First
+Before SSL setup, ensure DNS is configured:
+
+```bash
+# Check current DNS resolution
+nslookup crypto-coach.zikhethele.properties
+
+# Should resolve to your VPS IP address
+# If not, configure DNS record:
+# Type: A
+# Name: crypto-coach
+# Value: YOUR_VPS_IP_ADDRESS
+# TTL: 300
+```
+
+### 4.3 Obtain SSL Certificate
+```bash
+# Replace YOUR_VPS_IP with actual IP in nginx config first
+sudo sed -i 's/YOUR_PUBLIC_IP_ADDRESS/YOUR_ACTUAL_IP/g' /etc/nginx/sites-available/crypto-coach
+sudo nginx -t && sudo systemctl reload nginx
+
+# Get SSL certificate
+sudo certbot --nginx -d crypto-coach.zikhethele.properties --non-interactive --agree-tos --email admin@zikhethele.properties
+```
+
+## Step 5: Application Setup
+
+### 5.1 Create Service User & Directories
+```bash
+# Create service user
+sudo useradd -r -s /bin/false -d /opt/crypto-coach crypto-coach
+sudo usermod -aG docker crypto-coach
+
+# Create directory structure
+sudo mkdir -p /opt/crypto-coach/{app,docker,scripts,logs,backups,data}
+sudo mkdir -p /opt/crypto-coach/data/{mongodb,freqtrade,backend-logs}
+
+# Set permissions
+sudo chown -R crypto-coach:crypto-coach /opt/crypto-coach
+sudo chmod 755 /opt/crypto-coach
+sudo chmod 750 /opt/crypto-coach/{logs,backups,data}
+```
+
+### 5.2 Create Environment Configuration
+```bash
+# Generate secure secrets
+JWT_SECRET=$(openssl rand -hex 32)
+ENCRYPTION_KEY=$(openssl rand -hex 16)
+MONGO_PASSWORD=$(openssl rand -base64 24 | tr -d "=+/" | cut -c1-20)
+
+# Create environment file
+sudo tee /opt/crypto-coach/.env << EOF
+# AI Crypto Trading Coach - Production Environment
+# Generated: $(date)
+
+# Database Configuration
+MONGO_ROOT_USER=cryptoadmin
+MONGO_ROOT_PASSWORD=$MONGO_PASSWORD
+MONGO_DB_NAME=crypto_trader_coach
+
+# Trading API Keys
+LUNO_API_KEY=your_luno_api_key_here
+LUNO_SECRET=your_luno_secret_here
+
+# AI Service API Keys
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Security Configuration
+JWT_SECRET_KEY=$JWT_SECRET
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_secure_password_here
+ENCRYPTION_KEY=$ENCRYPTION_KEY
+
+# GitHub Configuration for CI/CD
+GITHUB_REPOSITORY=yourusername/ai-crypto-trading-coach-vps
+
+# Network Configuration
+VPS_IP=YOUR_VPS_IP_ADDRESS
+DOMAIN=zikhethele.properties
+SUBDOMAIN=crypto-coach.zikhethele.properties
+USER_IP=YOUR_PUBLIC_IP_ADDRESS
+
+# Production Settings
+ENVIRONMENT=production
+DEBUG=false
+EOF
+
+# Secure the environment file
+sudo chmod 600 /opt/crypto-coach/.env
+sudo chown crypto-coach:crypto-coach /opt/crypto-coach/.env
+```
+
+### 5.3 Create Docker Compose Configuration
+```bash
+sudo tee /opt/crypto-coach/docker/docker-compose.prod.yml << 'EOF'
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: crypto-coach-mongo-prod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    volumes:
+      - ../data/mongodb:/data/db
+      - ../data/mongodb-logs:/var/log/mongodb
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    container_name: crypto-coach-backend-prod
+    restart: unless-stopped
+    environment:
+      - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB_NAME}?authSource=admin
+      - DB_NAME=${MONGO_DB_NAME}
+      - LUNO_API_KEY=${LUNO_API_KEY}
+      - LUNO_SECRET=${LUNO_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ENVIRONMENT=production
+      - DEBUG=false
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:8001:8001"
+    volumes:
+      - ../data/backend-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    container_name: crypto-coach-frontend-prod
+    restart: unless-stopped
+    environment:
+      - REACT_APP_BACKEND_URL=https://${SUBDOMAIN}/api
+      - REACT_APP_VERSION=1.0.0
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  freqtrade:
+    image: ghcr.io/${GITHUB_REPOSITORY}/freqtrade:latest
+    container_name: crypto-coach-freqtrade-prod
+    restart: unless-stopped
+    environment:
+      - LUNO_API_KEY=${LUNO_API_KEY}
+      - LUNO_SECRET=${LUNO_SECRET}
+      - FREQTRADE_CONFIG=/freqtrade/config.json
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:8082:8082"
+    volumes:
+      - ../data/freqtrade:/freqtrade/user_data
+      - ../data/freqtrade-logs:/freqtrade/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/v1/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  crypto-coach-network:
+    driver: bridge
+    name: crypto-coach-network
+EOF
+
+# Create environment symlink for Docker Compose
+sudo ln -sf /opt/crypto-coach/.env /opt/crypto-coach/docker/.env
 ```
 
 ---
