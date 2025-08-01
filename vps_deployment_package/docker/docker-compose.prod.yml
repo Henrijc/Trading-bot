@@ -24,8 +24,8 @@ services:
 
   backend:
     build:
-      context: ./vps_deployment_package/app
-      dockerfile: ../docker/Dockerfile.backend.prod
+      context: ../..
+      dockerfile: vps_deployment_package/docker/Dockerfile.backend.prod
     image: henrijc/trading-bot-backend:latest
     container_name: crypto-coach-backend-prod
     restart: unless-stopped
