@@ -20,5 +20,4 @@ jobs:
           cd /opt/crypto-coach
           git fetch --all
           git reset --hard origin/for-deployment
-          cd vps_deployment_package/docker
-          sudo docker-compose --env-file /opt/crypto-coach/.env -f docker-compose.prod.yml up -d --build --remove-orphans
+          sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file .env up -d --build --remove-orphans
