@@ -11,7 +11,6 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
     volumes:
       - mongodb_data:/data/db
-      - mongodb_logs:/var/log/mongodb
     networks:
       - crypto-coach-network
     ports:
@@ -21,45 +20,47 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+      start_period: 40s
 
   backend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    build:
+      context: .
+      dockerfile: ./vps_deployment_package/docker/Dockerfile.backend.prod
+    image: henrijc/trading-bot-backend:latest
     container_name: crypto-coach-backend-prod
     restart: unless-stopped
     environment:
       - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB_NAME}?authSource=admin
-      - DB_NAME=${MONGO_DB_NAME}
-      - LUNO_API_KEY=${LUNO_API_KEY}
-      - LUNO_SECRET=${LUNO_SECRET}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - ADMIN_USERNAME=${ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - ENVIRONMENT=production
-      - DEBUG=false
     depends_on:
       mongodb:
         condition: service_healthy
+    volumes:
+      - backend_logs:/app/logs
     networks:
       - crypto-coach-network
     ports:
       - "127.0.0.1:8001:8001"
-    volumes:
-      - backend_logs:/app/logs
+    env_file:
+      - /opt/crypto-coach/.env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
 
   frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    build:
+      context: .
+      dockerfile: ./vps_deployment_package/docker/Dockerfile.frontend.prod
+    image: henrijc/trading-bot-frontend:latest
     container_name: crypto-coach-frontend-prod
     restart: unless-stopped
     environment:
       - REACT_APP_BACKEND_URL=https://crypto-coach.zikhethele.properties/api
-      - REACT_APP_VERSION=1.0.0
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - crypto-coach-network
     ports:
@@ -69,44 +70,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-  freqtrade:
-    image: ghcr.io/${GITHUB_REPOSITORY}/freqtrade:latest
-    container_name: crypto-coach-freqtrade-prod
-    restart: unless-stopped
-    environment:
-      - LUNO_API_KEY=${LUNO_API_KEY}
-      - LUNO_SECRET=${LUNO_SECRET}
-      - FREQTRADE_CONFIG=/freqtrade/config.json
-    depends_on:
-      backend:
-        condition: service_healthy
-    networks:
-      - crypto-coach-network
-    ports:
-      - "127.0.0.1:8082:8082"
-    volumes:
-      - freqtrade_data:/freqtrade/user_data
-      - freqtrade_logs:/freqtrade/logs
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/api/v1/ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      start_period: 30s
 
 networks:
   crypto-coach-network:
-    driver: bridge
     name: crypto-coach-network
 
 volumes:
   mongodb_data:
-    driver: local
-  mongodb_logs:
-    driver: local
   backend_logs:
-    driver: local
-  freqtrade_data:
-    driver: local
-  freqtrade_logs:
-    driver: local
