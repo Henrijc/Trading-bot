@@ -41,7 +41,7 @@ from typing import Dict, Any, List
 import asyncio
 
 # Get backend URL from environment
-BACKEND_URL = "https://de319dda-239b-42dc-8b82-6b6082c21491.preview.emergentagent.com/api"
+BACKEND_URL = "https://e5da86b9-d0bb-4858-9a9e-eb479f5b9fda.preview.emergentagent.com/api"
 
 class BacktestingSystemTester:
     def __init__(self, base_url: str):
