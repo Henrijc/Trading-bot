@@ -36,6 +36,57 @@ from services.decision_engine import DecisionEngine
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Startup validation - Check for critical environment variables
+required_env_vars = {
+    'MONGO_URL': 'MongoDB connection URL',
+    'DB_NAME': 'Database name',
+    'LUNO_API_KEY': 'Luno API key for trading',
+    'LUNO_SECRET': 'Luno API secret for trading'
+}
+
+optional_env_vars = {
+    'GEMINI_API_KEY': 'Google Gemini API key for AI features',
+    'JWT_SECRET_KEY': 'JWT secret key for authentication',
+    'ADMIN_USERNAME': 'Admin username',
+    'ADMIN_PASSWORD': 'Admin password'
+}
+
+print("=== BACKEND STARTUP VALIDATION ===")
+missing_required = []
+missing_optional = []
+
+for var, description in required_env_vars.items():
+    value = os.environ.get(var)
+    if not value:
+        missing_required.append(f"❌ {var}: {description}")
+        print(f"ERROR: Missing required environment variable: {var} ({description})")
+    else:
+        print(f"✅ {var}: Present")
+
+for var, description in optional_env_vars.items():
+    value = os.environ.get(var)
+    if not value:
+        missing_optional.append(f"⚠️  {var}: {description}")
+        print(f"WARNING: Missing optional environment variable: {var} ({description})")
+    else:
+        print(f"✅ {var}: Present")
+
+if missing_required:
+    print("\n❌ CRITICAL ERROR: Missing required environment variables:")
+    for missing in missing_required:
+        print(f"   {missing}")
+    print("\nBackend cannot start without these variables. Please check your .env file.")
+    print("Expected .env file location:", ROOT_DIR / '.env')
+    sys.exit(1)
+
+if missing_optional:
+    print("\n⚠️  WARNING: Missing optional environment variables:")
+    for missing in missing_optional:
+        print(f"   {missing}")
+    print("Some features may not work properly without these variables.")
+
+print("=== STARTUP VALIDATION COMPLETED ===\n")
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
