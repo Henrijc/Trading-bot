@@ -25,7 +25,10 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 
 # Copy requirements first for better caching
 COPY freqtrade/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY freqtrade/ .
