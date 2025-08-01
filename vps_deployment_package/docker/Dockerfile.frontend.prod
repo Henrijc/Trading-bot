@@ -10,7 +10,7 @@ RUN yarn install --production --frozen-lockfile
 COPY frontend/ .
 
 # Build application for production
-RUN npm run build
+RUN yarn build
 
 # Production stage with Nginx
 FROM nginx:alpine
