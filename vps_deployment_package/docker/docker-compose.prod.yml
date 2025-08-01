@@ -51,8 +51,8 @@ services:
 
   frontend:
     build:
-      context: ./vps_deployment_package/app
-      dockerfile: ../docker/Dockerfile.frontend.prod
+      context: ../..
+      dockerfile: vps_deployment_package/docker/Dockerfile.frontend.prod
     image: henrijc/trading-bot-frontend:latest
     container_name: crypto-coach-frontend-prod
     restart: unless-stopped
