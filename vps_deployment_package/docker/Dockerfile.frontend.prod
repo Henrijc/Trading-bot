@@ -3,7 +3,7 @@ FROM node:20-alpine as builder
 WORKDIR /app
 
 # Install yarn globally
-RUN npm install -g yarn
+RUN corepack enable
 
 # Copy package files
 COPY frontend/package.json frontend/yarn.lock ./
