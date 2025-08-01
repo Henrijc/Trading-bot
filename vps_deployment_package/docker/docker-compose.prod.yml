@@ -51,7 +51,7 @@ services:
 
   frontend:
     build:
-      context: .
+      context: ../..
       dockerfile: ./vps_deployment_package/docker/Dockerfile.frontend.prod
     image: henrijc/trading-bot-frontend:latest
     container_name: crypto-coach-frontend-prod
