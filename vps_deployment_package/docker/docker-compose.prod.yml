@@ -24,7 +24,7 @@ services:
 
   backend:
     build:
-      context: .
+      context: ../..
       dockerfile: ./vps_deployment_package/docker/Dockerfile.backend.prod
     image: henrijc/trading-bot-backend:latest
     container_name: crypto-coach-backend-prod
