@@ -33,7 +33,7 @@ import re
 from pathlib import Path
 
 # Get backend URL from environment
-BACKEND_URL = "https://7d0c65a9-d269-4a92-9bb3-b7b6d0e2c8ed.preview.emergentagent.com/api"
+BACKEND_URL = "https://de319dda-239b-42dc-8b82-6b6082c21491.preview.emergentagent.com/api"
 
 class FreqAITester:
     def __init__(self, base_url: str):
