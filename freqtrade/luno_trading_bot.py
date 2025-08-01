@@ -36,6 +36,58 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+def validate_environment():
+    """Validate required environment variables on startup"""
+    print("=== FREQTRADE STARTUP VALIDATION ===")
+    
+    required_env_vars = {
+        'LUNO_API_KEY': 'Luno API key for trading operations',
+        'LUNO_SECRET': 'Luno API secret for trading operations'
+    }
+    
+    optional_env_vars = {
+        'MONGO_URL': 'MongoDB connection for data storage',
+        'DB_NAME': 'Database name for data storage'
+    }
+    
+    missing_required = []
+    missing_optional = []
+    
+    for var, description in required_env_vars.items():
+        value = os.environ.get(var)
+        if not value:
+            missing_required.append(f"❌ {var}: {description}")
+            print(f"ERROR: Missing required environment variable: {var} ({description})")
+        else:
+            print(f"✅ {var}: Present")
+    
+    for var, description in optional_env_vars.items():
+        value = os.environ.get(var)
+        if not value:
+            missing_optional.append(f"⚠️  {var}: {description}")
+            print(f"WARNING: Missing optional environment variable: {var} ({description})")
+        else:
+            print(f"✅ {var}: Present")
+    
+    if missing_required:
+        print("\n❌ CRITICAL ERROR: Missing required environment variables:")
+        for missing in missing_required:
+            print(f"   {missing}")
+        print("\nFreqtrade bot cannot start without these variables. Please check your .env file.")
+        logger.error("Freqtrade startup failed due to missing required environment variables")
+        sys.exit(1)
+    
+    if missing_optional:
+        print("\n⚠️  WARNING: Missing optional environment variables:")
+        for missing in missing_optional:
+            print(f"   {missing}")
+        print("Some features may not work properly without these variables.")
+    
+    print("=== FREQTRADE STARTUP VALIDATION COMPLETED ===\n")
+
+# Validate environment on module load
+validate_environment()
+
 class LunoTradingBot:
     """
     Main trading bot class - inspired by Freqtrade architecture
