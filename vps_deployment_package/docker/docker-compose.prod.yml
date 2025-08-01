@@ -41,7 +41,7 @@ services:
     ports:
       - "127.0.0.1:8001:8001"
     env_file:
-      - /opt/crypto-coach/.env
+      - .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
       interval: 30s
