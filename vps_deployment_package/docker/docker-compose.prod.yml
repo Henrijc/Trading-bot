@@ -72,6 +72,32 @@ services:
       retries: 3
       start_period: 30s
 
+  freqtrade:
+    build:
+      context: ../..
+      dockerfile: vps_deployment_package/docker/Dockerfile.freqtrade.prod
+    image: henrijc/trading-bot-freqtrade:latest
+    container_name: crypto-coach-freqtrade-prod
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - freqtrade_logs:/freqtrade/user_data/logs
+      - freqtrade_models:/freqtrade/user_data/models
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:8082:8082"
+    env_file:
+      - /opt/crypto-coach/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
 networks:
   crypto-coach-network:
     name: crypto-coach-network
