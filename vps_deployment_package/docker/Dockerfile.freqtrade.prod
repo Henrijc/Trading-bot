@@ -2,12 +2,8 @@ FROM continuumio/miniconda3:latest
 
 WORKDIR /freqtrade
 
-# Install Python 3.12 and TA-Lib via conda (quiet installation)
-RUN conda install -c conda-forge python=3.12 ta-lib -y -q \
-    && conda clean -afy \
-    && rm -rf /opt/conda/pkgs/cache/* \
-    && find /opt/conda -name "*.log" -delete \
-    && find /opt/conda -name "*.tar.bz2" -delete
+# Install Python 3.12, TA-Lib, and compilers via conda
+RUN conda install -c conda-forge python=3.12 ta-lib c-compiler cxx-compiler -y && conda clean -afy
 
 # Copy requirements first for better caching
 COPY freqtrade/requirements.txt .
