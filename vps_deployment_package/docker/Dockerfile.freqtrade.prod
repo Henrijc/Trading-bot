@@ -2,12 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /freqtrade
 
-# Proactively install TA-Lib and all its dependencies
+# Install all build dependencies, compile TA-Lib, and then clean up in a single layer
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
+        gcc \
+        g++ \
+        make \
         wget \
-        python3-dev && \
+        python3-dev \
+        libffi-dev \
+        libssl-dev && \
+    # Build and install TA-Lib from source
     wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz -q -O ta-lib-0.4.0-src.tar.gz && \
     tar -xzvf ta-lib-0.4.0-src.tar.gz && \
     cd ta-lib && \
@@ -15,9 +21,8 @@ RUN apt-get update && \
     make && \
     make install && \
     cd .. && \
+    # Clean up build artifacts and package lists to keep the image small
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
-    apt-get purge -y build-essential wget && \
-    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
