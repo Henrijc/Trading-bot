@@ -4,7 +4,10 @@ WORKDIR /freqtrade
 
 # Install Python 3.12 and TA-Lib via conda (quiet installation)
 RUN conda install -c conda-forge python=3.12 ta-lib -y -q \
-    && conda clean -afy
+    && conda clean -afy \
+    && rm -rf /opt/conda/pkgs/cache/* \
+    && find /opt/conda -name "*.log" -delete \
+    && find /opt/conda -name "*.tar.bz2" -delete
 
 # Copy requirements first for better caching
 COPY freqtrade/requirements.txt .
