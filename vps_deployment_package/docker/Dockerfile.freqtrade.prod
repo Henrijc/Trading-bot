@@ -1,38 +1,16 @@
-FROM python:3.11-slim
+FROM continuumio/miniconda3:latest
 
 WORKDIR /freqtrade
 
-# Install all build dependencies, compile TA-Lib, UPDATE LIBRARY CACHE, and then clean up
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        gcc \
-        g++ \
-        make \
-        wget \
-        python3-dev \
-        libffi-dev \
-        libssl-dev && \
-    wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz -q -O ta-lib-0.4.0-src.tar.gz && \
-    tar -xzvf ta-lib-0.4.0-src.tar.gz && \
-    cd ta-lib && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
-    # This is the critical command to update the library cache
-    ldconfig && \
-    cd .. && \
-    # Clean up build artifacts and package lists
-    rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install TA-Lib via conda (much more reliable than source compilation)
+RUN conda install -c conda-forge ta-lib -y \
+    && conda clean -afy
 
 # Copy requirements first for better caching
 COPY freqtrade/requirements.txt .
 
-# Upgrade pip and install requirements
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Install Python packages
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY freqtrade/ .
