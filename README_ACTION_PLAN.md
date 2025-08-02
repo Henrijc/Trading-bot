@@ -101,9 +101,14 @@ tail -n 100 /var/log/supervisor/backend.*.log
 ├── frontend/src/components/       # React components
 ├── freqtrade/                     # Trading bot
 ├── vps_deployment_package/        # Production deployment
-├── .github/workflows/deploy.yml   # CI/CD pipeline
+├── .github/workflows/deploy.yml   # CI/CD pipeline (RECENTLY UPDATED)
 └── test_result.md                 # CRITICAL: Testing protocols
 ```
+
+**Important**: The GitHub workflow has been updated to use new SSH secret names. Ensure these secrets are configured in GitHub:
+- `VPS_C_BOT_HOST` - VPS server IP/hostname
+- `VPS_C_BOT_USER` - VPS username  
+- `VPS_SSH_C_BOT_KEY` - SSH private key
 
 ### Color Scheme
 - Primary: Black background
