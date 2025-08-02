@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   mongodb:
@@ -32,8 +32,7 @@ services:
     environment:
       - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB_NAME}?authSource=admin
     depends_on:
-      mongodb:
-        condition: service_healthy
+      - mongodb
     volumes:
       - backend_logs:/app/logs
     networks:
@@ -42,12 +41,6 @@ services:
       - "127.0.0.1:8001:8001"
     env_file:
       - /opt/crypto-coach/.env
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   frontend:
     build:
@@ -59,18 +52,11 @@ services:
     environment:
       - REACT_APP_BACKEND_URL=https://crypto-coach.zikhethele.properties/api
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - crypto-coach-network
     ports:
       - "127.0.0.1:3000:3000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
 
   freqtrade:
     build:
@@ -80,8 +66,7 @@ services:
     container_name: crypto-coach-freqtrade-prod
     restart: unless-stopped
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     volumes:
       - freqtrade_logs:/freqtrade/user_data/logs
       - freqtrade_models:/freqtrade/user_data/models
@@ -91,16 +76,10 @@ services:
       - "127.0.0.1:8082:8082"
     env_file:
       - /opt/crypto-coach/.env
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/api/v1/status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
 networks:
   crypto-coach-network:
-    name: crypto-coach-network
+    driver: bridge
 
 volumes:
   mongodb_data:
