@@ -2,42 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /freqtrade
 
-# Install ALL system dependencies in one comprehensive step
+# Install system dependencies and build TA-Lib from source (THE ONLY WAY THAT WORKS)
 RUN apt-get update && apt-get install -y \
-    # Build essentials
     build-essential \
-    gcc \
-    g++ \
-    gfortran \
-    make \
-    cmake \
-    # Network tools
-    curl \
     wget \
-    # Development libraries
-    libffi-dev \
-    libssl-dev \
-    # Scientific computing libraries
-    libblas-dev \
-    liblapack-dev \
-    # Image processing libraries
-    libjpeg-dev \
-    libpng-dev \
-    libtiff-dev \
-    libfreetype6-dev \
-    # HDF5 and compression
-    libhdf5-dev \
-    liblzma-dev \
-    libbz2-dev \
-    zlib1g-dev \
-    # Additional dependencies
-    pkg-config \
-    python3-dev \
-    # Clean up
-    && rm -rf /var/lib/apt/lists/*
-
-# Install TA-Lib from source (the ONLY way that works reliably)
-RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+    && rm -rf /var/lib/apt/lists/* \
+    && wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
     && tar -xzf ta-lib-0.4.0-src.tar.gz \
     && cd ta-lib \
     && ./configure --prefix=/usr \
@@ -47,28 +17,20 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
     && rm -rf ta-lib ta-lib-0.4.0-src.tar.gz \
     && ldconfig
 
-# Copy requirements and install Python packages
+# Copy and install Python requirements
 COPY freqtrade/requirements.txt .
-RUN pip install --upgrade pip setuptools wheel \
+RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY freqtrade/ .
 
-# Create necessary directories
-RUN mkdir -p /freqtrade/user_data/models \
-    && mkdir -p /freqtrade/user_data/logs \
-    && mkdir -p /freqtrade/logs
-
-# Create non-root user
-RUN useradd -r -s /bin/false frequser \
+# Create directories and user
+RUN mkdir -p /freqtrade/user_data/models /freqtrade/user_data/logs /freqtrade/logs \
+    && useradd -r -s /bin/false frequser \
     && chown -R frequser:frequser /freqtrade
 
-# Expose port
 EXPOSE 8082
-
-# Switch to non-root user
 USER frequser
 
-# Default command
 CMD ["python3", "luno_trading_bot.py", "--config", "config.json", "--strategy", "LunoFreqAIStrategy"]
