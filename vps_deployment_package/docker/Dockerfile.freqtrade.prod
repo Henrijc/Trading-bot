@@ -2,11 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /freqtrade
 
-# Install system dependencies and build TA-Lib from source (THE ONLY WAY THAT WORKS)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    wget \
-    && rm -rf /var/lib/apt/lists/* \
+# Install TA-Lib system dependencies exactly as specified
+RUN apt-get update && apt-get install -y build-essential \
     && wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
     && tar -xzf ta-lib-0.4.0-src.tar.gz \
     && cd ta-lib \
@@ -15,22 +12,32 @@ RUN apt-get update && apt-get install -y \
     && make install \
     && cd .. \
     && rm -rf ta-lib ta-lib-0.4.0-src.tar.gz \
-    && ldconfig
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python requirements
+# Copy requirements first for better caching
 COPY freqtrade/requirements.txt .
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY freqtrade/ .
 
-# Create directories and user
-RUN mkdir -p /freqtrade/user_data/models /freqtrade/user_data/logs /freqtrade/logs \
-    && useradd -r -s /bin/false frequser \
-    && chown -R frequser:frequser /freqtrade
+# Create necessary directories
+RUN mkdir -p /freqtrade/user_data/models && \
+    mkdir -p /freqtrade/user_data/logs && \
+    mkdir -p /freqtrade/logs
 
+# Create non-root user
+RUN useradd -r -s /bin/false frequser && \
+    chown -R frequser:frequser /freqtrade
+
+# Expose port
 EXPOSE 8082
+
+# Switch to non-root user
 USER frequser
 
+# Default command
 CMD ["python3", "luno_trading_bot.py", "--config", "config.json", "--strategy", "LunoFreqAIStrategy"]
