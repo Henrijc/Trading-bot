@@ -17,7 +17,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # 1. Copy only the requirements file first
-COPY backend/requirements.txt .
+COPY ../../backend/requirements.txt .
 
 # 2. Install dependencies. This creates a cache layer that only changes
 #    when requirements.txt is modified.
@@ -25,7 +25,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # 3. Now, copy the rest of the application source code
-COPY backend/ .
+COPY ../../backend/ .
 
 # Create logs directory with proper permissions
 RUN mkdir -p /app/logs && chmod 755 /app/logs
