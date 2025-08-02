@@ -2,41 +2,67 @@ FROM python:3.11-slim
 
 WORKDIR /freqtrade
 
-# Install system dependencies and build TA-Lib from source
-RUN apt-get update && \
-    apt-get install -y gcc g++ curl wget build-essential libffi-dev libssl-dev libblas-dev liblapack-dev gfortran libjpeg-dev libpng-dev libtiff-dev libfreetype6-dev python3-pip && \
-    wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
-    tar -xzf ta-lib-0.4.0-src.tar.gz && \
-    cd ta-lib && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
-    rm -rf /var/lib/apt/lists/*
+# Install ALL system dependencies in one comprehensive step
+RUN apt-get update && apt-get install -y \
+    # Build essentials
+    build-essential \
+    gcc \
+    g++ \
+    gfortran \
+    make \
+    cmake \
+    # Network tools
+    curl \
+    wget \
+    # Development libraries
+    libffi-dev \
+    libssl-dev \
+    # Scientific computing libraries
+    libblas-dev \
+    liblapack-dev \
+    # Image processing libraries
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libfreetype6-dev \
+    # HDF5 and compression
+    libhdf5-dev \
+    liblzma-dev \
+    libbz2-dev \
+    zlib1g-dev \
+    # Additional dependencies
+    pkg-config \
+    python3-dev \
+    # Clean up
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# Install TA-Lib from source (the ONLY way that works reliably)
+RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz \
+    && tar -xzf ta-lib-0.4.0-src.tar.gz \
+    && cd ta-lib \
+    && ./configure --prefix=/usr \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf ta-lib ta-lib-0.4.0-src.tar.gz \
+    && ldconfig
+
+# Copy requirements and install Python packages
 COPY freqtrade/requirements.txt .
-
-# Upgrade pip and install requirements
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY freqtrade/ .
 
 # Create necessary directories
-RUN mkdir -p /freqtrade/user_data/models && \
-    mkdir -p /freqtrade/user_data/logs && \
-    mkdir -p /freqtrade/logs
+RUN mkdir -p /freqtrade/user_data/models \
+    && mkdir -p /freqtrade/user_data/logs \
+    && mkdir -p /freqtrade/logs
 
 # Create non-root user
-RUN useradd -r -s /bin/false frequser && \
-    chown -R frequser:frequser /freqtrade
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD curl -f http://localhost:8082/api/v1/ping || exit 1
+RUN useradd -r -s /bin/false frequser \
+    && chown -R frequser:frequser /freqtrade
 
 # Expose port
 EXPOSE 8082
