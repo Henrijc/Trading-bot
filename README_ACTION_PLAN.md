@@ -16,6 +16,10 @@ Frontend (React) ↔ Backend (FastAPI) ↔ MongoDB
 - CI/CD pipeline refactored into build-and-push and deploy-to-server jobs
 - Dockerfiles optimized for reliable builds
 - SSH timeouts increased to prevent deployment failures
+- **JUST COMPLETED**: GitHub workflow SSH secrets updated to use `_C_BOT_` naming convention:
+  - `VPS_HOST` → `VPS_C_BOT_HOST`
+  - `VPS_USER` → `VPS_C_BOT_USER` 
+  - `VPS_SSH_KEY` → `VPS_SSH_C_BOT_KEY`
 
 ## Pending Tasks (Priority Order)
 
