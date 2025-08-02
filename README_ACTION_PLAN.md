@@ -21,6 +21,21 @@ Frontend (React) ↔ Backend (FastAPI) ↔ MongoDB
   - `VPS_USER` → `VPS_C_BOT_USER` 
   - `VPS_SSH_KEY` → `VPS_SSH_C_BOT_KEY`
 
+## Current Status & Completed Tasks
+
+### ✅ Recently Completed
+- **GitHub Workflow SSH Configuration**: Updated `.github/workflows/deploy.yml` to use new secret naming convention:
+  ```yaml
+  host: ${{ secrets.VPS_C_BOT_HOST }}
+  username: ${{ secrets.VPS_C_BOT_USER }}
+  key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
+  ```
+- **Deployment Architecture**: Moved to GHCR-based deployment model
+- **Docker Optimization**: All Dockerfiles refined for reliable builds
+
+### ⏳ Next Required Action
+**CRITICAL**: Ensure GitHub repository secrets are configured with the new names before deployment.
+
 ## Pending Tasks (Priority Order)
 
 ### Phase 1: UI Fixes & Improvements
