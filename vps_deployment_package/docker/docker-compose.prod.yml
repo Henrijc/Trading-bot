@@ -23,10 +23,7 @@ services:
       start_period: 40s
 
   backend:
-    build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.backend.prod
-    image: henrijc/trading-bot-backend:latest
+    image: ghcr.io/henrijc/trading-bot-backend:latest
     container_name: crypto-coach-backend-prod
     restart: unless-stopped
     environment:
@@ -43,10 +40,7 @@ services:
       - /opt/crypto-coach/.env
 
   frontend:
-    build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.frontend.prod
-    image: henrijc/trading-bot-frontend:latest
+    image: ghcr.io/henrijc/trading-bot-frontend:latest
     container_name: crypto-coach-frontend-prod
     restart: unless-stopped
     environment:
@@ -59,10 +53,7 @@ services:
       - "127.0.0.1:3000:3000"
 
   freqtrade:
-    build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.freqtrade.prod
-    image: henrijc/trading-bot-freqtrade:latest
+    image: ghcr.io/henrijc/trading-bot-freqtrade:latest
     container_name: crypto-coach-freqtrade-prod
     restart: unless-stopped
     depends_on:
