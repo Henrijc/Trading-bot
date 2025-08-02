@@ -24,8 +24,8 @@ services:
 
   backend:
     build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.backend.prod
+      context: .
+      dockerfile: Dockerfile.backend.prod
     image: henrijc/trading-bot-backend:latest
     container_name: crypto-coach-backend-prod
     restart: unless-stopped
@@ -44,8 +44,8 @@ services:
 
   frontend:
     build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.frontend.prod
+      context: .
+      dockerfile: Dockerfile.frontend.prod
     image: henrijc/trading-bot-frontend:latest
     container_name: crypto-coach-frontend-prod
     restart: unless-stopped
@@ -60,8 +60,8 @@ services:
 
   freqtrade:
     build:
-      context: ../..
-      dockerfile: vps_deployment_package/docker/Dockerfile.freqtrade.prod
+      context: .
+      dockerfile: Dockerfile.freqtrade.prod
     image: henrijc/trading-bot-freqtrade:latest
     container_name: crypto-coach-freqtrade-prod
     restart: unless-stopped
