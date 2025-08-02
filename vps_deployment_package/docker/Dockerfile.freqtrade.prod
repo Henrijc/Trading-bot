@@ -2,8 +2,8 @@ FROM continuumio/miniconda3:latest
 
 WORKDIR /freqtrade
 
-# Install TA-Lib via conda (much more reliable than source compilation)
-RUN conda install -c conda-forge ta-lib -y \
+# Install Python 3.12 and TA-Lib via conda (much more reliable than source compilation)
+RUN conda install -c conda-forge python=3.12 ta-lib -y \
     && conda clean -afy
 
 # Copy requirements first for better caching
