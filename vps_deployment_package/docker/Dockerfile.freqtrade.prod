@@ -13,6 +13,15 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libta-lib0 \
     libta-lib0-dev \
+    libblas-dev \
+    liblapack-dev \
+    gfortran \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libhdf5-dev \
+    pkg-config \
+    libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
