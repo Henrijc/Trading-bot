@@ -156,6 +156,12 @@ tail -n 100 /var/log/supervisor/backend.*.log
 
 ## Emergency Contacts & Escalation
 
+### Deployment Status
+**Current State**: GitHub workflow has been updated with new SSH secret names. **Before any deployment**, verify these secrets are configured in GitHub repository settings:
+1. `VPS_C_BOT_HOST` - Your VPS server IP/hostname
+2. `VPS_C_BOT_USER` - Your VPS username
+3. `VPS_SSH_C_BOT_KEY` - Your SSH private key
+
 ### When to Call Troubleshoot Agent
 - After 3 consecutive failed attempts at same operation
 - Same error appears twice
