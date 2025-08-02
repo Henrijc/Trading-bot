@@ -6,7 +6,13 @@ WORKDIR /freqtrade
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        wget && \
+        gcc \
+        g++ \
+        make \
+        wget \
+        python3-dev \
+        libffi-dev \
+        libssl-dev && \
     wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz -q -O ta-lib-0.4.0-src.tar.gz && \
     tar -xzvf ta-lib-0.4.0-src.tar.gz && \
     cd ta-lib && \
@@ -18,7 +24,7 @@ RUN apt-get update && \
     cd .. && \
     # Clean up build artifacts and package lists
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
-    apt-get purge -y --auto-remove build-essential wget && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
