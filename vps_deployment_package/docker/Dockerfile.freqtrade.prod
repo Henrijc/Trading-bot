@@ -5,13 +5,14 @@ WORKDIR /freqtrade
 # Install Python 3.12, TA-Lib, and compilers via conda
 RUN conda install -c conda-forge python=3.12 ta-lib c-compiler cxx-compiler -y && conda clean -afy
 
-# Copy requirements first for better caching
+# 1. Copy only the requirements file first
 COPY freqtrade/requirements.txt .
 
-# Install Python packages
+# 2. Install dependencies. This creates a cache layer that only changes
+#    when requirements.txt is modified.
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# 3. Now, copy the rest of the application source code
 COPY freqtrade/ .
 
 # Create necessary directories
