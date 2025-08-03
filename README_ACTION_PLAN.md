@@ -24,12 +24,16 @@ Frontend (React) ↔ Backend (FastAPI) ↔ MongoDB
 ## Current Status & Completed Tasks
 
 ### ✅ Recently Completed
-- **GitHub Workflow SSH Configuration**: Updated `.github/workflows/deploy.yml` to use new secret naming convention:
+- **Workflow Separation**: Split CI/CD into two efficient workflows:
+  - `build.yml`: Automatic builds on push to for-deployment branch
+  - `deploy.yml`: Manual deployment via workflow_dispatch trigger
+- **GitHub Workflow SSH Configuration**: Updated to use new secret naming convention:
   ```yaml
   host: ${{ secrets.VPS_C_BOT_HOST }}
   username: ${{ secrets.VPS_C_BOT_USER }}
   key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
   ```
+- **GHCR Authentication**: Added Docker login for GitHub Container Registry access
 - **Deployment Architecture**: Moved to GHCR-based deployment model
 - **Docker Optimization**: All Dockerfiles refined for reliable builds
 
