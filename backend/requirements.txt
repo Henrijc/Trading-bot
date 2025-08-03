@@ -25,6 +25,8 @@ jq>=1.6.0
 typer>=0.9.0
 requests-cache>=1.2.0
 scipy>=1.11.0
+# Pure Python technical analysis - NO COMPILATION NEEDED
+ta>=0.10.2
 
 # Backtesting and Historical Data
 ccxt>=4.4.96
