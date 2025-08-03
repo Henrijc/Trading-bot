@@ -1,34 +1,32 @@
-FROM continuumio/miniconda3:latest
+# Use a Conda base image for robust dependency management
+FROM continuumio/miniconda3
 
-WORKDIR /freqtrade
+WORKDIR /app
 
-# Install Python 3.12, TA-Lib, and compilers via conda
-RUN conda install -c conda-forge python=3.12 ta-lib c-compiler cxx-compiler -y && conda clean -afy
+# Install all system-level dependencies and TA-Lib C-library
+# Then clean up to keep the image small
+RUN apt-get update && apt-get install -y build-essential wget && \
+    wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+    tar -xzvf ta-lib-0.4.0-src.tar.gz && \
+    cd ta-lib && \
+    ./configure --prefix=/usr && \
+    make && make install && \
+    ldconfig && \
+    cd .. && \
+    rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
+    apt-get purge -y --auto-remove build-essential wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# 1. Copy only the requirements file first
+# Copy requirements and install Python packages
 COPY freqtrade/requirements.txt .
-
-# 2. Install dependencies. This creates a cache layer that only changes
-#    when requirements.txt is modified.
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. Now, copy the rest of the application source code
+# Copy application code
 COPY freqtrade/ .
 
-# Create necessary directories
-RUN mkdir -p /freqtrade/user_data/models && \
-    mkdir -p /freqtrade/user_data/logs && \
-    mkdir -p /freqtrade/logs
+# Create non-root user and set permissions
+RUN useradd -r -s /bin/false appuser && chown -R appuser:appuser /app
 
-# Create non-root user
-RUN useradd -r -s /bin/false frequser && \
-    chown -R frequser:frequser /freqtrade
-
-# Expose port
-EXPOSE 8082
-
-# Switch to non-root user
-USER frequser
-
-# Default command
-CMD ["python3", "luno_trading_bot.py", "--config", "config.json", "--strategy", "LunoFreqAIStrategy"]
+USER appuser
+CMD ["python", "luno_trading_bot.py"]
