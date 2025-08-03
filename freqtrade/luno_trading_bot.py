@@ -16,13 +16,10 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-# Add the backend directory to Python path so we can import our services
-sys.path.append('/app/backend')
-sys.path.append('/app/freqtrade/user_data')
-
-from services.luno_service import LunoService
-from services.technical_analysis_service import TechnicalAnalysisService
-from services.historical_data_service import HistoricalDataService
+# Import services using the new Docker strategy with /app root
+from backend.services.luno_service import LunoService
+from backend.services.technical_analysis_service import TechnicalAnalysisService
+from backend.services.historical_data_service import HistoricalDataService
 from real_freqai_service import RealFreqAIService
 
 # Configure logging
