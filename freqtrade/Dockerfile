@@ -8,10 +8,25 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install dependencies
+# Install pip and setuptools
+RUN pip install --upgrade pip setuptools
+
+# Copy requirements and install base dependencies first
 COPY freqtrade/requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install freqtrade with --no-deps to avoid TA-Lib dependency
+RUN pip install --no-deps freqtrade==2024.1
+
+# Install missing freqtrade dependencies (without TA-Lib)
+RUN pip install --no-cache-dir \
+    aiofiles \
+    ast-comments \
+    freqtrade-client \
+    janus \
+    "python-telegram-bot>=20.1" \
+    schedule \
+    technical
 
 # Copy application code
 COPY freqtrade/ .
