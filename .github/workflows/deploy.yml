@@ -67,7 +67,7 @@ jobs:
           BUILDKIT_INLINE_CACHE=1
 
   deploy:
-    needs: [confirm-deployment, build-and-push]
+    needs: build-and-push
     runs-on: ubuntu-latest
     
     steps:
