@@ -1,16 +1,17 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Copy package files
-COPY frontend/package*.json ./
-COPY frontend/yarn.lock ./
+COPY frontend/package*.json ./frontend/
+COPY frontend/yarn.lock ./frontend/
 
 # Install dependencies
+WORKDIR /app/frontend
 RUN yarn install --frozen-lockfile
 
-# Copy source code
-COPY frontend/ .
+# Copy the entire project repository into /app
+COPY . /app
 
 # Build the application
 RUN yarn build
