@@ -55,7 +55,7 @@ services:
     networks:
       - crypto-coach-network
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:19545:3000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
       interval: 30s
