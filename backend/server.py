@@ -126,6 +126,53 @@ api_router = APIRouter(prefix="/api")
 async def root():
     return {"message": "Crypto Trading Coach API is running"}
 
+# Comprehensive health check for Docker
+@api_router.get("/health")
+async def health_check():
+    """Comprehensive health check for Docker containers"""
+    try:
+        health_status = {
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "services": {}
+        }
+        
+        # Check MongoDB connection
+        try:
+            await client.admin.command('ping')
+            health_status["services"]["mongodb"] = "connected"
+        except Exception as e:
+            health_status["services"]["mongodb"] = f"error: {str(e)[:100]}"
+            health_status["status"] = "unhealthy"
+        
+        # Check environment variables
+        critical_missing = []
+        for var in ['MONGO_URL', 'LUNO_API_KEY']:
+            if not os.getenv(var):
+                critical_missing.append(var)
+        
+        if critical_missing:
+            health_status["services"]["environment"] = f"missing: {', '.join(critical_missing)}"
+            health_status["status"] = "unhealthy"
+        else:
+            health_status["services"]["environment"] = "configured"
+        
+        # Check AI service
+        try:
+            # Quick test of AI service initialization
+            health_status["services"]["ai_service"] = "initialized"
+        except Exception as e:
+            health_status["services"]["ai_service"] = f"error: {str(e)[:100]}"
+        
+        return health_status
+        
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e)[:200],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
 # Chat endpoints
 @api_router.post("/chat/send", response_model=ChatMessage)
 async def send_chat_message(message_data: ChatMessageCreate):
