@@ -15,11 +15,6 @@ jobs:
       contents: read
       packages: write
     
-    outputs:
-      backend-digest: ${{ steps.backend.outputs.digest }}
-      frontend-digest: ${{ steps.frontend.outputs.digest }}
-      freqtrade-digest: ${{ steps.freqtrade.outputs.digest }}
-    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -35,7 +30,6 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build and push backend image
-      id: backend
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -46,7 +40,6 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Build and push frontend image
-      id: frontend
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -57,7 +50,6 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Build and push freqtrade image
-      id: freqtrade
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -78,18 +70,13 @@ jobs:
         host: ${{ secrets.VPS_C_BOT_HOST }}
         username: ${{ secrets.VPS_C_BOT_USER }}
         key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
-        timeout: 300s
+        timeout: 1200s
         script: |
-          # Log in to the container registry
           echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           
-          # Go to the application directory
           cd /opt/crypto-coach
-          
-          # Add these lines to pull the latest compose file
           git fetch --all
           git reset --hard origin/for-deployment
           
-          # Pull the latest images and restart the application
           sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env pull
           sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env up -d
