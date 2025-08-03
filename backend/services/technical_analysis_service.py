@@ -6,9 +6,6 @@ from datetime import datetime, timedelta
 import asyncio
 import logging
 
-# FIXED: Use pandas-ta instead of TA-Lib to avoid compilation issues
-import pandas_ta as ta
-
 class TechnicalAnalysisService:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -51,8 +48,75 @@ class TechnicalAnalysisService:
             # Return empty DataFrame with proper structure
             return pd.DataFrame(columns=['open', 'high', 'low', 'close', 'volume'])
     
+    def calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
+        """Calculate RSI manually without external dependencies"""
+        try:
+            delta = prices.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs))
+            return rsi
+        except:
+            return pd.Series([50] * len(prices), index=prices.index)
+    
+    def calculate_sma(self, prices: pd.Series, period: int) -> pd.Series:
+        """Calculate Simple Moving Average"""
+        try:
+            return prices.rolling(window=period).mean()
+        except:
+            return pd.Series([0] * len(prices), index=prices.index)
+    
+    def calculate_ema(self, prices: pd.Series, period: int) -> pd.Series:
+        """Calculate Exponential Moving Average"""
+        try:
+            return prices.ewm(span=period).mean()
+        except:
+            return pd.Series([0] * len(prices), index=prices.index)
+    
+    def calculate_macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> Dict:
+        """Calculate MACD manually"""
+        try:
+            ema_fast = self.calculate_ema(prices, fast)
+            ema_slow = self.calculate_ema(prices, slow)
+            macd_line = ema_fast - ema_slow
+            signal_line = self.calculate_ema(macd_line, signal)
+            histogram = macd_line - signal_line
+            
+            return {
+                'macd': macd_line,
+                'signal': signal_line,
+                'histogram': histogram
+            }
+        except:
+            return {
+                'macd': pd.Series([0] * len(prices), index=prices.index),
+                'signal': pd.Series([0] * len(prices), index=prices.index),
+                'histogram': pd.Series([0] * len(prices), index=prices.index)
+            }
+    
+    def calculate_bollinger_bands(self, prices: pd.Series, period: int = 20, std_dev: int = 2) -> Dict:
+        """Calculate Bollinger Bands manually"""
+        try:
+            sma = self.calculate_sma(prices, period)
+            std = prices.rolling(window=period).std()
+            upper_band = sma + (std * std_dev)
+            lower_band = sma - (std * std_dev)
+            
+            return {
+                'upper': upper_band,
+                'middle': sma,
+                'lower': lower_band
+            }
+        except:
+            return {
+                'upper': pd.Series([0] * len(prices), index=prices.index),
+                'middle': pd.Series([0] * len(prices), index=prices.index),
+                'lower': pd.Series([0] * len(prices), index=prices.index)
+            }
+    
     async def calculate_technical_indicators(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate technical indicators using pandas-ta"""
+        """Calculate technical indicators using pure Python"""
         try:
             if df.empty or len(df) < 14:
                 return {
@@ -63,40 +127,40 @@ class TechnicalAnalysisService:
                 }
             
             # RSI (14-period)
-            df['rsi'] = ta.rsi(df['close'], length=14)
+            rsi_values = self.calculate_rsi(df['close'], 14)
             
             # MACD
-            macd_data = ta.macd(df['close'])
+            macd_data = self.calculate_macd(df['close'])
             
             # Bollinger Bands
-            bb_data = ta.bbands(df['close'], length=20)
+            bb_data = self.calculate_bollinger_bands(df['close'])
             
             # Moving Averages
-            df['sma_20'] = ta.sma(df['close'], length=20)
-            df['sma_50'] = ta.sma(df['close'], length=50)
-            df['ema_12'] = ta.ema(df['close'], length=12)
-            df['ema_26'] = ta.ema(df['close'], length=26)
+            sma_20 = self.calculate_sma(df['close'], 20)
+            sma_50 = self.calculate_sma(df['close'], 50)
+            ema_12 = self.calculate_ema(df['close'], 12)
+            ema_26 = self.calculate_ema(df['close'], 26)
             
-            # Get latest values
-            latest = df.iloc[-1]
+            # Get latest values safely
+            latest_idx = -1
             
             indicators = {
-                'rsi': float(latest.get('rsi', 50)) if pd.notna(latest.get('rsi')) else 50,
+                'rsi': float(rsi_values.iloc[latest_idx]) if not pd.isna(rsi_values.iloc[latest_idx]) else 50,
                 'macd': {
-                    'macd': float(macd_data['MACD_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACD_12_26_9' in macd_data.columns else 0,
-                    'signal': float(macd_data['MACDs_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACDs_12_26_9' in macd_data.columns else 0,
-                    'histogram': float(macd_data['MACDh_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACDh_12_26_9' in macd_data.columns else 0
+                    'macd': float(macd_data['macd'].iloc[latest_idx]) if not pd.isna(macd_data['macd'].iloc[latest_idx]) else 0,
+                    'signal': float(macd_data['signal'].iloc[latest_idx]) if not pd.isna(macd_data['signal'].iloc[latest_idx]) else 0,
+                    'histogram': float(macd_data['histogram'].iloc[latest_idx]) if not pd.isna(macd_data['histogram'].iloc[latest_idx]) else 0
                 },
                 'bollinger_bands': {
-                    'upper': float(bb_data['BBU_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBU_20_2.0' in bb_data.columns else 0,
-                    'middle': float(bb_data['BBM_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBM_20_2.0' in bb_data.columns else 0,
-                    'lower': float(bb_data['BBL_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBL_20_2.0' in bb_data.columns else 0
+                    'upper': float(bb_data['upper'].iloc[latest_idx]) if not pd.isna(bb_data['upper'].iloc[latest_idx]) else 0,
+                    'middle': float(bb_data['middle'].iloc[latest_idx]) if not pd.isna(bb_data['middle'].iloc[latest_idx]) else 0,
+                    'lower': float(bb_data['lower'].iloc[latest_idx]) if not pd.isna(bb_data['lower'].iloc[latest_idx]) else 0
                 },
                 'moving_averages': {
-                    'sma_20': float(latest.get('sma_20', 0)) if pd.notna(latest.get('sma_20')) else 0,
-                    'sma_50': float(latest.get('sma_50', 0)) if pd.notna(latest.get('sma_50')) else 0,
-                    'ema_12': float(latest.get('ema_12', 0)) if pd.notna(latest.get('ema_12')) else 0,
-                    'ema_26': float(latest.get('ema_26', 0)) if pd.notna(latest.get('ema_26')) else 0
+                    'sma_20': float(sma_20.iloc[latest_idx]) if not pd.isna(sma_20.iloc[latest_idx]) else 0,
+                    'sma_50': float(sma_50.iloc[latest_idx]) if not pd.isna(sma_50.iloc[latest_idx]) else 0,
+                    'ema_12': float(ema_12.iloc[latest_idx]) if not pd.isna(ema_12.iloc[latest_idx]) else 0,
+                    'ema_26': float(ema_26.iloc[latest_idx]) if not pd.isna(ema_26.iloc[latest_idx]) else 0
                 }
             }
             
@@ -124,18 +188,18 @@ class TechnicalAnalysisService:
                 }
             
             # Calculate trend using moving averages
-            df['sma_20'] = ta.sma(df['close'], length=20)
-            df['sma_50'] = ta.sma(df['close'], length=50)
+            sma_20 = self.calculate_sma(df['close'], 20)
+            sma_50 = self.calculate_sma(df['close'], 50)
             
             current_price = df['close'].iloc[-1]
-            sma_20 = df['sma_20'].iloc[-1]
-            sma_50 = df['sma_50'].iloc[-1]
+            sma_20_val = sma_20.iloc[-1]
+            sma_50_val = sma_50.iloc[-1]
             
             # Determine trend
-            if pd.notna(sma_20) and pd.notna(sma_50):
-                if current_price > sma_20 > sma_50:
+            if pd.notna(sma_20_val) and pd.notna(sma_50_val):
+                if current_price > sma_20_val > sma_50_val:
                     trend = 'bullish'
-                elif current_price < sma_20 < sma_50:
+                elif current_price < sma_20_val < sma_50_val:
                     trend = 'bearish'
                 else:
                     trend = 'neutral'
