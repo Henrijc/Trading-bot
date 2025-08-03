@@ -120,14 +120,21 @@ tail -n 100 /var/log/supervisor/backend.*.log
 ├── frontend/src/components/       # React components
 ├── freqtrade/                     # Trading bot
 ├── vps_deployment_package/        # Production deployment
-├── .github/workflows/deploy.yml   # CI/CD pipeline (RECENTLY UPDATED)
+├── .github/workflows/
+│   ├── build.yml                  # NEW: Auto-build on push to for-deployment
+│   └── deploy.yml                 # UPDATED: Manual deploy via workflow_dispatch
 └── test_result.md                 # CRITICAL: Testing protocols
 ```
 
-**Important**: The GitHub workflow has been updated to use new SSH secret names. Ensure these secrets are configured in GitHub:
+**Important**: Two separate GitHub workflows now exist:
+1. **build.yml**: Automatically builds and pushes Docker images to GHCR when code is pushed to for-deployment branch
+2. **deploy.yml**: Manually deployable workflow that pulls latest images and restarts containers
+
+**Required GitHub Secrets:**
 - `VPS_C_BOT_HOST` - VPS server IP/hostname
 - `VPS_C_BOT_USER` - VPS username  
 - `VPS_SSH_C_BOT_KEY` - SSH private key
+- `GHCR_PAT` - GitHub Container Registry Personal Access Token
 
 ### Color Scheme
 - Primary: Black background
