@@ -1,9 +1,10 @@
-# Freqtrade Trading Bot Requirements - WITH FREQTRADE RESTORED
+# Freqtrade Trading Bot Requirements - TA-LIB FREE VERSION
 freqtrade==2024.1
 ccxt>=4.2.0
 numpy>=1.21.0
 pandas>=1.5.0
-TA-Lib>=0.4.0
+# REMOVED TA-Lib - using pure Python alternatives
+pandas-ta>=0.3.14
 scikit-learn>=1.1.0
 scipy>=1.9.0
 requests>=2.31.0
