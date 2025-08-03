@@ -81,8 +81,12 @@ jobs:
         key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
         timeout: 300s
         script: |
+          # Log in to GitHub Container Registry using the PAT
+          echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          
+          # Proceed with the existing deployment commands
           cd /opt/crypto-coach
           git fetch --all
           git reset --hard origin/for-deployment
-          sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env pull
-          sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env up -d
+          sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml pull
+          sudo docker-compose -f vps_deployment_package/docker/docker-compose.prod.yml up -d
