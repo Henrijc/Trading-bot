@@ -1,22 +1,8 @@
-# Freqtrade Trading Bot Requirements - BULLETPROOF VERSION
-freqtrade==2024.1
-ccxt>=4.2.0
-numpy>=1.21.0
-pandas>=1.5.0
-# NO TA-LIB OR PANDAS-TA - pure Python alternatives
-scikit-learn>=1.1.0
-scipy>=1.9.0
+# Freqtrade Trading Bot Requirements - ULTRA MINIMAL VERSION
 requests>=2.31.0
-python-telegram-bot>=20.0
-matplotlib>=3.6.0
-plotly>=5.11.0
-jinja2>=3.1.0
-tables>=3.8.0
-blosc>=1.11.0
-joblib>=1.2.0
-pyarrow>=10.0.0
+pandas>=1.5.0
+numpy>=1.21.0
+ccxt>=4.2.0
 fastapi>=0.100.0
 uvicorn>=0.23.0
-websockets>=11.0
-orjson>=3.8.0
-yfinance>=0.2.0
+python-dotenv>=1.0.1
