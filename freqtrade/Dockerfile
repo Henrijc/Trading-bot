@@ -1,51 +1,43 @@
-FROM python:3.11-slim
+FROM python:3.11-bullseye
 
-WORKDIR /freqtrade
+WORKDIR /app # Set WORKDIR to the root of the copied application
 
-# Install only essential system dependencies
+# Install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install pip and setuptools
-RUN pip install --upgrade pip setuptools
-
-# Copy requirements and install base dependencies first
-COPY freqtrade/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip to the latest version
+RUN pip install --upgrade pip
 
 # Install freqtrade with --no-deps to avoid TA-Lib dependency
 RUN pip install --no-deps freqtrade==2024.1
 
-# Install missing freqtrade dependencies (without TA-Lib)
-RUN pip install --no-cache-dir \
-    aiofiles \
-    ast-comments \
-    freqtrade-client \
-    janus \
-    "python-telegram-bot>=20.1" \
-    schedule \
-    technical
+# Copy freqtrade requirements.txt and install dependencies
+# Note: This copies only freqtrade/requirements.txt relative to the build context
+COPY freqtrade/requirements.txt ./freqtrade/requirements.txt
+RUN pip install --no-cache-dir -r ./freqtrade/requirements.txt
 
-# Copy application code
-COPY freqtrade/ .
+# Copy the entire project repository into /app
+# This is the key change to ensure all files are present
+COPY . /app
 
-# Copy shared services from backend (CRITICAL FOR IMPORTS)
-COPY backend/services ./services
+# Set PYTHONPATH to include the /app root
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
-# Set PYTHONPATH to find services
-ENV PYTHONPATH="/freqtrade:/freqtrade/services:$PYTHONPATH"
-
-# Create user_data directory
-RUN mkdir -p /freqtrade/user_data/logs
+# Create user_data directory (now relative to /app/freqtrade)
+RUN mkdir -p /app/freqtrade/user_data/logs
 
 # Expose port
 EXPOSE 8082
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8082/health || exit 1
+CMD curl -f http://localhost:8082/api/v1/ping || exit 1
 
-# Start the trading bot
-CMD ["python", "luno_trading_bot.py"]
+# Start the trading bot with the CORRECT filename
+# Path is now relative to /app, which contains /app/freqtrade
+CMD ["python", "freqtrade/luno_trading_bot.py"]
