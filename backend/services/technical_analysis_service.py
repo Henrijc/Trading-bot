@@ -6,13 +6,8 @@ from datetime import datetime, timedelta
 import asyncio
 import logging
 
-# Try to import TA-Lib, fall back to manual calculations if not available
-try:
-    import talib
-    HAS_TALIB = True
-except ImportError:
-    HAS_TALIB = False
-    print("TA-Lib not available, using manual calculations")
+# Use pure Python technical analysis library
+import ta
 
 class TechnicalAnalysisService:
     def __init__(self):
@@ -63,34 +58,8 @@ class TechnicalAnalysisService:
             # Return empty DataFrame with proper structure
             return pd.DataFrame(columns=['open', 'high', 'low', 'close', 'volume'])
     
-    def calculate_rsi_manual(self, prices: pd.Series, period: int = 14) -> pd.Series:
-        """Calculate RSI manually without TA-Lib"""
-        try:
-            delta = prices.diff()
-            gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-            loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-            rs = gain / loss
-            rsi = 100 - (100 / (1 + rs))
-            return rsi
-        except:
-            return pd.Series([50] * len(prices), index=prices.index)
-    
-    def calculate_sma(self, prices: pd.Series, period: int) -> pd.Series:
-        """Calculate Simple Moving Average"""
-        try:
-            return prices.rolling(window=period).mean()
-        except:
-            return pd.Series([0] * len(prices), index=prices.index)
-    
-    def calculate_ema(self, prices: pd.Series, period: int) -> pd.Series:
-        """Calculate Exponential Moving Average"""
-        try:
-            return prices.ewm(span=period).mean()
-        except:
-            return pd.Series([0] * len(prices), index=prices.index)
-    
     async def calculate_technical_indicators(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate technical indicators using TA-Lib if available, otherwise manual"""
+        """Calculate technical indicators using pure Python 'ta' library"""
         try:
             if df.empty or len(df) < 14:
                 return {
@@ -100,57 +69,47 @@ class TechnicalAnalysisService:
                     'moving_averages': {'sma_20': 0, 'sma_50': 0, 'ema_12': 0, 'ema_26': 0}
                 }
             
-            # Prepare price data
-            close_prices = df['close'].values
-            high_prices = df['high'].values
-            low_prices = df['low'].values
+            # Use 'ta' library - pure Python, no compilation needed
+            # RSI
+            rsi_value = ta.momentum.RSIIndicator(df['close'], window=14).rsi().iloc[-1]
             
-            if HAS_TALIB:
-                # Use TA-Lib for calculations
-                try:
-                    # RSI
-                    rsi_values = talib.RSI(close_prices, timeperiod=14)
-                    
-                    # MACD
-                    macd, macd_signal, macd_histogram = talib.MACD(close_prices)
-                    
-                    # Bollinger Bands
-                    bb_upper, bb_middle, bb_lower = talib.BBANDS(close_prices)
-                    
-                    # Moving Averages
-                    sma_20 = talib.SMA(close_prices, timeperiod=20)
-                    sma_50 = talib.SMA(close_prices, timeperiod=50)
-                    ema_12 = talib.EMA(close_prices, timeperiod=12)
-                    ema_26 = talib.EMA(close_prices, timeperiod=26)
-                    
-                    indicators = {
-                        'rsi': float(rsi_values[-1]) if not pd.isna(rsi_values[-1]) else 50,
-                        'macd': {
-                            'macd': float(macd[-1]) if not pd.isna(macd[-1]) else 0,
-                            'signal': float(macd_signal[-1]) if not pd.isna(macd_signal[-1]) else 0,
-                            'histogram': float(macd_histogram[-1]) if not pd.isna(macd_histogram[-1]) else 0
-                        },
-                        'bollinger_bands': {
-                            'upper': float(bb_upper[-1]) if not pd.isna(bb_upper[-1]) else 0,
-                            'middle': float(bb_middle[-1]) if not pd.isna(bb_middle[-1]) else 0,
-                            'lower': float(bb_lower[-1]) if not pd.isna(bb_lower[-1]) else 0
-                        },
-                        'moving_averages': {
-                            'sma_20': float(sma_20[-1]) if not pd.isna(sma_20[-1]) else 0,
-                            'sma_50': float(sma_50[-1]) if not pd.isna(sma_50[-1]) else 0,
-                            'ema_12': float(ema_12[-1]) if not pd.isna(ema_12[-1]) else 0,
-                            'ema_26': float(ema_26[-1]) if not pd.isna(ema_26[-1]) else 0
-                        }
-                    }
-                    
-                except Exception as e:
-                    self.logger.error(f"TA-Lib calculation error: {e}")
-                    # Fall back to manual calculations
-                    return await self._calculate_indicators_manual(df)
-                    
-            else:
-                # Use manual calculations
-                return await self._calculate_indicators_manual(df)
+            # MACD
+            macd_indicator = ta.trend.MACD(df['close'])
+            macd_line = macd_indicator.macd().iloc[-1] if not macd_indicator.macd().empty else 0
+            macd_signal = macd_indicator.macd_signal().iloc[-1] if not macd_indicator.macd_signal().empty else 0
+            macd_histogram = macd_indicator.macd_diff().iloc[-1] if not macd_indicator.macd_diff().empty else 0
+            
+            # Bollinger Bands
+            bb_indicator = ta.volatility.BollingerBands(df['close'])
+            bb_upper = bb_indicator.bollinger_hband().iloc[-1] if not bb_indicator.bollinger_hband().empty else 0
+            bb_middle = bb_indicator.bollinger_mavg().iloc[-1] if not bb_indicator.bollinger_mavg().empty else 0
+            bb_lower = bb_indicator.bollinger_lband().iloc[-1] if not bb_indicator.bollinger_lband().empty else 0
+            
+            # Moving Averages
+            sma_20 = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator().iloc[-1]
+            sma_50 = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator().iloc[-1] if len(df) >= 50 else 0
+            ema_12 = ta.trend.EMAIndicator(df['close'], window=12).ema_indicator().iloc[-1]
+            ema_26 = ta.trend.EMAIndicator(df['close'], window=26).ema_indicator().iloc[-1]
+            
+            indicators = {
+                'rsi': float(rsi_value) if not pd.isna(rsi_value) else 50,
+                'macd': {
+                    'macd': float(macd_line) if not pd.isna(macd_line) else 0,
+                    'signal': float(macd_signal) if not pd.isna(macd_signal) else 0,
+                    'histogram': float(macd_histogram) if not pd.isna(macd_histogram) else 0
+                },
+                'bollinger_bands': {
+                    'upper': float(bb_upper) if not pd.isna(bb_upper) else 0,
+                    'middle': float(bb_middle) if not pd.isna(bb_middle) else 0,
+                    'lower': float(bb_lower) if not pd.isna(bb_lower) else 0
+                },
+                'moving_averages': {
+                    'sma_20': float(sma_20) if not pd.isna(sma_20) else 0,
+                    'sma_50': float(sma_50) if not pd.isna(sma_50) else 0,
+                    'ema_12': float(ema_12) if not pd.isna(ema_12) else 0,
+                    'ema_26': float(ema_26) if not pd.isna(ema_26) else 0
+                }
+            }
             
             return indicators
             
@@ -163,62 +122,8 @@ class TechnicalAnalysisService:
                 'moving_averages': {'sma_20': 0, 'sma_50': 0, 'ema_12': 0, 'ema_26': 0}
             }
     
-    async def _calculate_indicators_manual(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Manual calculation fallback"""
-        try:
-            # RSI
-            rsi_values = self.calculate_rsi_manual(df['close'], 14)
-            
-            # Moving Averages
-            sma_20 = self.calculate_sma(df['close'], 20)
-            sma_50 = self.calculate_sma(df['close'], 50)
-            ema_12 = self.calculate_ema(df['close'], 12)
-            ema_26 = self.calculate_ema(df['close'], 26)
-            
-            # Simple MACD
-            macd_line = ema_12 - ema_26
-            macd_signal = self.calculate_ema(macd_line, 9)
-            macd_histogram = macd_line - macd_signal
-            
-            # Simple Bollinger Bands
-            bb_middle = sma_20
-            bb_std = df['close'].rolling(window=20).std()
-            bb_upper = bb_middle + (bb_std * 2)
-            bb_lower = bb_middle - (bb_std * 2)
-            
-            indicators = {
-                'rsi': float(rsi_values.iloc[-1]) if not pd.isna(rsi_values.iloc[-1]) else 50,
-                'macd': {
-                    'macd': float(macd_line.iloc[-1]) if not pd.isna(macd_line.iloc[-1]) else 0,
-                    'signal': float(macd_signal.iloc[-1]) if not pd.isna(macd_signal.iloc[-1]) else 0,
-                    'histogram': float(macd_histogram.iloc[-1]) if not pd.isna(macd_histogram.iloc[-1]) else 0
-                },
-                'bollinger_bands': {
-                    'upper': float(bb_upper.iloc[-1]) if not pd.isna(bb_upper.iloc[-1]) else 0,
-                    'middle': float(bb_middle.iloc[-1]) if not pd.isna(bb_middle.iloc[-1]) else 0,
-                    'lower': float(bb_lower.iloc[-1]) if not pd.isna(bb_lower.iloc[-1]) else 0
-                },
-                'moving_averages': {
-                    'sma_20': float(sma_20.iloc[-1]) if not pd.isna(sma_20.iloc[-1]) else 0,
-                    'sma_50': float(sma_50.iloc[-1]) if not pd.isna(sma_50.iloc[-1]) else 0,
-                    'ema_12': float(ema_12.iloc[-1]) if not pd.isna(ema_12.iloc[-1]) else 0,
-                    'ema_26': float(ema_26.iloc[-1]) if not pd.isna(ema_26.iloc[-1]) else 0
-                }
-            }
-            
-            return indicators
-            
-        except Exception as e:
-            self.logger.error(f"Error in manual calculations: {e}")
-            return {
-                'rsi': 50,
-                'macd': {'macd': 0, 'signal': 0, 'histogram': 0},
-                'bollinger_bands': {'upper': 0, 'middle': 0, 'lower': 0},
-                'moving_averages': {'sma_20': 0, 'sma_50': 0, 'ema_12': 0, 'ema_26': 0}
-            }
-    
     async def analyze_trend(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze price trend"""
+        """Analyze price trend using pure Python calculations"""
         try:
             if df.empty or len(df) < 20:
                 return {
@@ -230,15 +135,15 @@ class TechnicalAnalysisService:
                 }
             
             # Calculate trend using moving averages
-            sma_20 = self.calculate_sma(df['close'], 20)
-            sma_50 = self.calculate_sma(df['close'], 50)
+            sma_20 = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
+            sma_50 = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator() if len(df) >= 50 else pd.Series([0])
             
             current_price = df['close'].iloc[-1]
-            sma_20_val = sma_20.iloc[-1]
-            sma_50_val = sma_50.iloc[-1]
+            sma_20_val = sma_20.iloc[-1] if not sma_20.empty else 0
+            sma_50_val = sma_50.iloc[-1] if not sma_50.empty and len(sma_50) > 0 else 0
             
             # Determine trend
-            if pd.notna(sma_20_val) and pd.notna(sma_50_val):
+            if pd.notna(sma_20_val) and pd.notna(sma_50_val) and sma_50_val > 0:
                 if current_price > sma_20_val > sma_50_val:
                     trend = 'bullish'
                 elif current_price < sma_20_val < sma_50_val:
@@ -362,18 +267,6 @@ class TechnicalAnalysisService:
             elif trend_direction == 'bearish':
                 signals.append('Bearish trend confirmed')
                 confidence_score -= 25
-            
-            # Moving Average Analysis
-            ma_data = indicators.get('moving_averages', {})
-            current_price = float(df['close'].iloc[-1])
-            sma_20 = ma_data.get('sma_20', 0)
-            
-            if current_price > sma_20 and sma_20 > 0:
-                signals.append('Price above 20-day SMA')
-                confidence_score += 10
-            elif current_price < sma_20 and sma_20 > 0:
-                signals.append('Price below 20-day SMA')
-                confidence_score -= 10
             
             # Generate final recommendation
             if confidence_score > 30:
