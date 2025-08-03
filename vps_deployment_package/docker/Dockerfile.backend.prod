@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install all build dependencies for Python packages
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
@@ -17,21 +17,22 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# CRITICAL: Install emergentintegrations FIRST with proper extra-index-url
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip
 
-# Copy requirements and install remaining dependencies
+# Copy requirements first for better caching
 COPY backend/requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire backend directory structure
+# Copy the backend application
 COPY backend/ ./
 
-# Set PYTHONPATH to ensure all imports work correctly
+# Set PYTHONPATH for imports
 ENV PYTHONPATH="/app:/app/services"
 
-# Create logs directory with proper permissions
+# Create logs directory
 RUN mkdir -p /app/logs && chmod 755 /app/logs
 
 # Create non-root user for security
@@ -44,9 +45,9 @@ EXPOSE 8001
 # Switch to non-root user
 USER appuser
 
-# Health check to ensure service is responding
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8001/api/health || exit 1
 
-# Run application with multiple workers for production
-CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2", "--access-log", "--log-level", "info"]
+# Run the application
+CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2"]

@@ -1,6 +1,12 @@
 import os
 import asyncio
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+# TEMPORARY FIX: Use mock instead of emergentintegrations
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+except ImportError:
+    print("WARNING: emergentintegrations not available, using mock implementation")
+    from services.emergent_mock import LlmChat, UserMessage
+
 from typing import List, Dict, Any
 import json
 from datetime import datetime
