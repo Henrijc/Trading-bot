@@ -1,9 +1,8 @@
-# Use a standard, stable Python 3.12 image
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Proactively install ALL build tools, compilers, Python headers, and the TA-Lib C-library in one go.
+# Install build dependencies and TA-Lib C-library
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
@@ -11,6 +10,7 @@ RUN apt-get update && \
         g++ \
         make \
         wget \
+        curl \
         python3-dev \
         libffi-dev \
         libssl-dev && \
@@ -21,23 +21,41 @@ RUN apt-get update && \
     ./configure --prefix=/usr && \
     make && \
     make install && \
-    # Update the library cache so the system can find the new library
     ldconfig && \
     cd .. && \
-    # Clean up build artifacts and package lists to keep the image small
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Now, copy and install Python packages into the prepared environment
+# CRITICAL: Install emergentintegrations FIRST
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
+
+# Copy requirements and install Python dependencies
 COPY freqtrade/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
-COPY freqtrade/. ./
+# Copy freqtrade application code
+COPY freqtrade/ ./
 
-# Run as a non-root user for security
-RUN useradd -r -s /bin/false appuser && chown -R appuser:appuser /app
+# CRITICAL: Also copy backend/services for shared dependencies
+COPY backend/services ./services
+
+# Set PYTHONPATH to find both local and shared modules
+ENV PYTHONPATH="/app:/app/services"
+
+# Create necessary directories
+RUN mkdir -p /app/user_data/logs /app/user_data/models && \
+    chmod 755 /app/user_data/logs /app/user_data/models
+
+# Create non-root user for security
+RUN useradd -r -s /bin/false appuser && \
+    chown -R appuser:appuser /app
+
 USER appuser
+
+# Health check for freqtrade service
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8082/api/v1/ping || exit 1
 
 CMD ["python", "luno_trading_bot.py"]

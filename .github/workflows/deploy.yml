@@ -38,6 +38,8 @@ jobs:
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
 
     - name: Build and push frontend image
       uses: docker/build-push-action@v5
@@ -48,6 +50,8 @@ jobs:
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
 
     - name: Build and push freqtrade image
       uses: docker/build-push-action@v5
@@ -58,6 +62,8 @@ jobs:
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-freqtrade:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
 
   deploy:
     needs: build-and-push
@@ -65,20 +71,44 @@ jobs:
     
     steps:
     - name: Deploy to VPS
-      uses: appleboy/ssh-action@v0.1.5
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.VPS_C_BOT_HOST }}
-        username: ${{ secrets.VPS_C_BOT_USER }}
+        host: 156.155.253.224
+        username: cryptoadmin
         key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
-        timeout: 1200s
-        command_timeout: 1800s
+        timeout: 1800s
+        command_timeout: 2400s
         script: |
+          # Login to GHCR
           echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           
-          cd /opt/crypto-coach || (git clone --branch for-deployment git@github.com:Henrijc/Trading-bot.git /opt/crypto-coach && cd /opt/crypto-coach)
+          # Navigate to deployment directory
+          cd /opt/crypto-coach || {
+            sudo git clone --branch for-deployment https://github.com/Henrijc/Trading-bot.git /opt/crypto-coach
+            cd /opt/crypto-coach
+            sudo chown -R cryptoadmin:cryptoadmin /opt/crypto-coach
+          }
           
+          # Update to latest code
           git fetch --all
           git reset --hard origin/for-deployment
           
+          # Stop existing containers gracefully
+          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env down --remove-orphans || true
+          
+          # Clean up old images to save space
+          sudo docker system prune -f --volumes
+          
+          # Pull latest images
           sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env pull
-          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env up -d --remove-orphans
+          
+          # Start all services
+          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env up -d --remove-orphans --force-recreate
+          
+          # Wait for services to be ready
+          sleep 30
+          
+          # Verify deployment
+          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml ps
+          
+          echo "Deployment completed successfully!"

@@ -41,3 +41,6 @@ pillow==10.1.0
 # Monitoring & Logging
 structlog==23.2.0
 sentry-sdk==1.39.2
+
+# CRITICAL: Emergent Platform Integration - MUST BE FIRST
+emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/

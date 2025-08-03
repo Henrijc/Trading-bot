@@ -10,29 +10,33 @@ RUN apt-get update && \
         g++ \
         make \
         wget \
+        curl \
         python3-dev \
         libffi-dev \
         libssl-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 1. Copy only the requirements file first
-COPY backend/requirements.txt .
-
-# 2. Install dependencies. This creates a cache layer that only changes
-#    when requirements.txt is modified.
+# CRITICAL: Install emergentintegrations FIRST with proper extra-index-url
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
 
-# 3. Now, copy the rest of the application source code
-COPY backend/ .
+# Copy requirements and install remaining dependencies
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire backend directory structure
+COPY backend/ ./
+
+# Set PYTHONPATH to ensure all imports work correctly
+ENV PYTHONPATH="/app:/app/services"
 
 # Create logs directory with proper permissions
 RUN mkdir -p /app/logs && chmod 755 /app/logs
 
 # Create non-root user for security
-RUN useradd -r -s /bin/false appuser \
-    && chown -R appuser:appuser /app
+RUN useradd -r -s /bin/false appuser && \
+    chown -R appuser:appuser /app
 
 # Expose port
 EXPOSE 8001
@@ -40,5 +44,9 @@ EXPOSE 8001
 # Switch to non-root user
 USER appuser
 
+# Health check to ensure service is responding
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8001/api/health || exit 1
+
 # Run application with multiple workers for production
-CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "4", "--access-log", "--log-level", "info"]
+CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2", "--access-log", "--log-level", "info"]
