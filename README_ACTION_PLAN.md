@@ -168,7 +168,20 @@ tail -n 100 /var/log/supervisor/backend.*.log
 ## Emergency Contacts & Escalation
 
 ### Deployment Status
-**Current State**: GitHub workflow has been updated with new SSH secret names. **Before any deployment**, verify these secrets are configured in GitHub repository settings:
+**Current State**: CI/CD pipeline has been split into two efficient workflows:
+
+**Build Workflow** (`build.yml`):
+- Triggers automatically on push to `for-deployment` branch
+- Builds all Docker images (backend, frontend, freqtrade)
+- Pushes images to GitHub Container Registry (GHCR)
+
+**Deploy Workflow** (`deploy.yml`):
+- Triggers manually via GitHub Actions UI (workflow_dispatch)
+- SSH into VPS server
+- Login to GHCR and pull latest images
+- Restart containers with docker-compose
+
+**Before any deployment**, verify these secrets are configured in GitHub repository settings:
 1. `VPS_C_BOT_HOST` - Your VPS server IP/hostname
 2. `VPS_C_BOT_USER` - Your VPS username
 3. `VPS_SSH_C_BOT_KEY` - Your SSH private key
