@@ -36,8 +36,10 @@ services:
       - "127.0.0.1:8001:8001"
     env_file:
       - /opt/crypto-coach/.env
+    environment:
+      - PYTHONPATH=/app:/app/services
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -69,13 +71,16 @@ services:
       backend:
         condition: service_healthy
     volumes:
-      - freqtrade_logs:/freqtrade/user_data/logs
+      - freqtrade_logs:/app/user_data/logs
+      - freqtrade_models:/app/user_data/models
     networks:
       - crypto-coach-network
     ports:
       - "127.0.0.1:8082:8082"
     env_file:
       - /opt/crypto-coach/.env
+    environment:
+      - PYTHONPATH=/app:/app/services
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/api/v1/ping"]
       interval: 30s
@@ -86,8 +91,10 @@ services:
 networks:
   crypto-coach-network:
     name: crypto-coach-network
+    driver: bridge
 
 volumes:
   mongodb_data:
   backend_logs:
   freqtrade_logs:
+  freqtrade_models:
