@@ -31,6 +31,12 @@ RUN pip install --no-cache-dir \
 # Copy application code
 COPY freqtrade/ .
 
+# Copy shared services from backend (CRITICAL FOR IMPORTS)
+COPY backend/services ./services
+
+# Set PYTHONPATH to find services
+ENV PYTHONPATH="/freqtrade:/freqtrade/services:$PYTHONPATH"
+
 # Create user_data directory
 RUN mkdir -p /freqtrade/user_data/logs
 
