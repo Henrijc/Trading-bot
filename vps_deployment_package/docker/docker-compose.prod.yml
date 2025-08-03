@@ -76,7 +76,7 @@ services:
     networks:
       - crypto-coach-network
     ports:
-      - "127.0.0.1:8082:8082"
+      - "127.0.0.1:19546:8082"
     env_file:
       - /opt/crypto-coach/.env
     environment:
