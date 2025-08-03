@@ -19,7 +19,20 @@ env:
   IMAGE_NAME: henrijc/trading-bot
 
 jobs:
+  # Safety check to prevent accidental deployments
+  confirm-deployment:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Confirm Deployment
+      run: |
+        if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
+          echo "❌ Deployment cancelled. You must type 'DEPLOY' to confirm."
+          exit 1
+        fi
+        echo "✅ Deployment confirmed. Proceeding..."
+
   build-and-push:
+    needs: confirm-deployment
     runs-on: ubuntu-latest
     permissions:
       contents: read
