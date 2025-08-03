@@ -44,19 +44,13 @@ services:
     container_name: crypto-coach-frontend-prod
     restart: unless-stopped
     environment:
-      - REACT_APP_BACKEND_URL=https://crypto-coach.zikhethele.properties/api
+      REACT_APP_BACKEND_URL: https://crypto-coach.zikhethele.properties/api
     depends_on:
       - backend
     networks:
       - crypto-coach-network
     ports:
       - "127.0.0.1:3000:3000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   freqtrade:
     image: ghcr.io/henrijc/trading-bot-freqtrade:latest
