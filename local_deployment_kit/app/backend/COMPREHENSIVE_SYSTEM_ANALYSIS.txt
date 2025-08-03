@@ -40,7 +40,7 @@ SYSTEM ARCHITECTURE OVERVIEW
 2. BACKEND ORCHESTRATOR (FastAPI + MongoDB)
    - Location: /app/backend/
    - Technology: FastAPI, MongoDB, Python 3.x
-   - External Access: https://e71cee88-608d-403e-bceb-d46c3daefab2.preview.emergentagent.com
+   - External Access: https://5b00008a-d098-4123-8e76-c8d22937a417.preview.emergentagent.com
    - API Endpoints: 50+ endpoints across multiple services
    - Database: MongoDB for user data, targets, trading history
    - Security: JWT authentication, bcrypt hashing, rate limiting
@@ -640,7 +640,7 @@ DEPLOYMENT & OPERATIONAL STATUS
 
 Deployment Platform:
 - Platform: Emergent.sh PaaS (Platform as a Service)
-- External URL: https://e71cee88-608d-403e-bceb-d46c3daefab2.preview.emergentagent.com
+- External URL: https://5b00008a-d098-4123-8e76-c8d22937a417.preview.emergentagent.com
 - Internal Architecture: Containerized services
 - Process Management: Supervisor daemon
 - Service Monitoring: Real-time health checks

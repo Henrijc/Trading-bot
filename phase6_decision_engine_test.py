@@ -45,7 +45,7 @@ from typing import Dict, Any, List
 import re
 
 # Get backend URL from environment
-BACKEND_URL = "https://e71cee88-608d-403e-bceb-d46c3daefab2.preview.emergentagent.com/api"
+BACKEND_URL = "https://5b00008a-d098-4123-8e76-c8d22937a417.preview.emergentagent.com/api"
 
 class Phase6DecisionEngineTester:
     def __init__(self, base_url: str):

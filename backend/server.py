@@ -1735,7 +1735,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", 
-        "https://e71cee88-608d-403e-bceb-d46c3daefab2.preview.emergentagent.com",
+        "https://5b00008a-d098-4123-8e76-c8d22937a417.preview.emergentagent.com",
         "http://34.121.6.206:3000",  # Public frontend URL
         "http://34.121.6.206:8001",  # Public backend URL
     ],
