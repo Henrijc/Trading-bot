@@ -1,17 +1,39 @@
+# PROPER FREQTRADE DOCKERFILE WITH TA-LIB FIXED
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install minimal system dependencies (NO TA-LIB C LIBRARY)
+# Install system dependencies for TA-Lib compilation
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        build-essential \
+        wget \
         curl \
-        wget && \
+        gcc \
+        g++ \
+        make \
+        libc6-dev \
+        && \
+    # Download and build TA-Lib from source (PROPER WAY)
+    cd /tmp && \
+    wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+    tar -xvf ta-lib-0.4.0-src.tar.gz && \
+    cd ta-lib/ && \
+    ./configure --prefix=/usr && \
+    make && \
+    make install && \
+    ldconfig && \
+    cd / && \
+    rm -rf /tmp/ta-lib* && \
+    # Clean up build dependencies
+    apt-get remove -y build-essential wget gcc g++ make libc6-dev && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip
-RUN pip install --upgrade pip
+# Install TA-Lib Python wrapper AFTER C library is installed
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir TA-Lib
 
 # Copy requirements and install Python dependencies
 COPY freqtrade/requirements.txt .
@@ -20,7 +42,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy freqtrade application code
 COPY freqtrade/ ./
 
-# Copy backend/services for shared dependencies
+# Copy backend/services for shared dependencies  
 COPY backend/services ./services
 
 # Set PYTHONPATH
@@ -36,7 +58,7 @@ RUN useradd -r -s /bin/false appuser && \
 
 USER appuser
 
-# Health check (simple curl check)
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8082/health || exit 1
 
