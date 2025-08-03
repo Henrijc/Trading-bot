@@ -1,713 +1,357 @@
 import pandas as pd
 import numpy as np
-import asyncio
 from typing import Dict, List, Any, Optional
+import ccxt
 from datetime import datetime, timedelta
-import requests
-from services.luno_service import LunoService
-import ta
-from ta.utils import dropna
-from ta.volatility import BollingerBands
-from ta.trend import SMAIndicator, EMAIndicator, MACD
-from ta.momentum import RSIIndicator, StochasticOscillator
+import asyncio
+import logging
+
+# FIXED: Use pandas-ta instead of TA-Lib to avoid compilation issues
+import pandas_ta as ta
 
 class TechnicalAnalysisService:
     def __init__(self):
-        self.luno_service = LunoService()
-        self.cache = {}
-        self.cache_ttl = 300  # 5 minutes cache
+        self.logger = logging.getLogger(__name__)
+        # Initialize exchanges for data
+        self.exchanges = {
+            'binance': ccxt.binance(),
+            'coinbase': ccxt.coinbasepro() 
+        }
         
-    async def get_historical_data(self, symbol: str, days: int = 30) -> pd.DataFrame:
-        """Get historical price data for technical analysis"""
+    async def get_historical_data(self, symbol: str, timeframe: str = '1d', limit: int = 100) -> pd.DataFrame:
+        """Get historical OHLCV data for a symbol"""
         try:
-            # Check cache first
-            cache_key = f"{symbol}_{days}"
-            if cache_key in self.cache:
-                cached_data, timestamp = self.cache[cache_key]
-                if datetime.utcnow() - timestamp < timedelta(seconds=self.cache_ttl):
-                    return cached_data
-            
-            # Try to get current market data from Luno service first
-            try:
-                market_data = await self.luno_service.get_market_data()
-                current_crypto = next((crypto for crypto in market_data if crypto['symbol'] == symbol), None)
-                
-                if current_crypto:
-                    # Create mock historical data based on current price
-                    # This is a simplified approach for when external APIs are not available
-                    current_price = current_crypto['price']
-                    dates = pd.date_range(end=datetime.utcnow(), periods=min(days, 30), freq='D')
-                    
-                    # Generate mock price data with some volatility
-                    import random
-                    prices = []
-                    base_price = current_price
-                    
-                    for i in range(len(dates)):
-                        # Add some realistic volatility (±5% daily)
-                        volatility = random.uniform(-0.05, 0.05)
-                        if i > 0:
-                            base_price = prices[-1] * (1 + volatility)
-                        else:
-                            base_price = current_price * (1 + volatility)
-                        prices.append(base_price)
-                    
-                    # Create DataFrame
-                    df = pd.DataFrame({
-                        'price': prices,
-                        'close': prices,
-                        'open': [p * (1 + random.uniform(-0.01, 0.01)) for p in prices],
-                        'high': [p * (1 + random.uniform(0.01, 0.03)) for p in prices],
-                        'low': [p * (1 + random.uniform(-0.03, -0.01)) for p in prices],
-                        'volume': [1000000 + random.randint(-100000, 100000) for _ in prices]
-                    }, index=dates)
-                    
-                    # Cache the data
-                    self.cache[cache_key] = (df, datetime.utcnow())
-                    return df
-            except Exception as e:
-                print(f"Error using Luno market data: {e}")
-            
-            # Since CoinGecko is not working, let's use the existing approach but with fallback
-            # Create a basic DataFrame with current price data
+            # Convert common symbols to exchange format
             symbol_mapping = {
-                'BTC': 'bitcoin',
-                'ETH': 'ethereum',
-                'ADA': 'cardano',
-                'XRP': 'ripple',
-                'SOL': 'solana',
-                'TRX': 'tron',
-                'XLM': 'stellar',
-                'HBAR': 'hedera-hashgraph',
-                'LTC': 'litecoin',
-                'DOGE': 'dogecoin',
-                'DOT': 'polkadot',
-                'AVAX': 'avalanche-2',
-                'ATOM': 'cosmos',
-                'ALGO': 'algorand',
-                'BCH': 'bitcoin-cash'
+                'BTC': 'BTC/USDT',
+                'ETH': 'ETH/USDT', 
+                'ADA': 'ADA/USDT',
+                'XRP': 'XRP/USDT',
+                'SOL': 'SOL/USDT',
+                'TRX': 'TRX/USDT',
+                'XLM': 'XLM/USDT',
+                'HBAR': 'HBAR/USDT'
             }
             
-            # Fallback: Create synthetic historical data for technical analysis
-            # This allows the indicators to work even when external APIs are down
-            dates = pd.date_range(end=datetime.utcnow(), periods=min(days, 30), freq='D')
+            exchange_symbol = symbol_mapping.get(symbol, f'{symbol}/USDT')
             
-            # Use symbol-based baseline prices
-            baseline_prices = {
-                'BTC': 480000,
-                'ETH': 16000,
-                'ADA': 2.5,
-                'XRP': 6.5,
-                'SOL': 900,
-                'TRX': 0.12,
-                'XLM': 0.5,
-                'HBAR': 0.3,
-                'LTC': 450,
-                'DOGE': 0.8,
-                'DOT': 30,
-                'AVAX': 200,
-                'ATOM': 50,
-                'ALGO': 1.2,
-                'BCH': 2500
-            }
+            # Try to get data from Binance first
+            exchange = self.exchanges['binance']
+            ohlcv = exchange.fetch_ohlcv(exchange_symbol, timeframe, limit=limit)
             
-            base_price = baseline_prices.get(symbol, 100)
+            # Convert to DataFrame
+            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+            df.set_index('timestamp', inplace=True)
             
-            # Generate realistic price movement
-            import random
-            prices = []
-            for i in range(len(dates)):
-                if i == 0:
-                    price = base_price
-                else:
-                    # Add realistic daily volatility
-                    change = random.uniform(-0.05, 0.05)
-                    price = prices[-1] * (1 + change)
-                prices.append(price)
-            
-            # Create comprehensive DataFrame
-            df = pd.DataFrame({
-                'price': prices,
-                'close': prices,
-                'open': [p * (1 + random.uniform(-0.01, 0.01)) for p in prices],
-                'high': [p * (1 + random.uniform(0.01, 0.03)) for p in prices],
-                'low': [p * (1 + random.uniform(-0.03, -0.01)) for p in prices],
-                'volume': [1000000 + random.randint(-100000, 100000) for _ in prices]
-            }, index=dates)
-            
-            # Cache the data
-            self.cache[cache_key] = (df, datetime.utcnow())
             return df
-                
+            
         except Exception as e:
-            print(f"Error getting historical data for {symbol}: {e}")
-            return pd.DataFrame()
+            self.logger.error(f"Error getting historical data for {symbol}: {e}")
+            # Return empty DataFrame with proper structure
+            return pd.DataFrame(columns=['open', 'high', 'low', 'close', 'volume'])
     
-    def calculate_rsi(self, df: pd.DataFrame, period: int = 14) -> pd.Series:
-        """Calculate RSI (Relative Strength Index)"""
+    async def calculate_technical_indicators(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Calculate technical indicators using pandas-ta"""
         try:
-            if df.empty or 'close' not in df.columns:
-                return pd.Series()
+            if df.empty or len(df) < 14:
+                return {
+                    'rsi': 50,
+                    'macd': {'macd': 0, 'signal': 0, 'histogram': 0},
+                    'bollinger_bands': {'upper': 0, 'middle': 0, 'lower': 0},
+                    'moving_averages': {'sma_20': 0, 'sma_50': 0, 'ema_12': 0, 'ema_26': 0}
+                }
             
-            rsi = RSIIndicator(close=df['close'], window=period)
-            return rsi.rsi()
-        except Exception as e:
-            print(f"Error calculating RSI: {e}")
-            return pd.Series()
-    
-    def calculate_macd(self, df: pd.DataFrame, fast: int = 12, slow: int = 26, signal: int = 9) -> Dict[str, pd.Series]:
-        """Calculate MACD indicator"""
-        try:
-            if df.empty or 'close' not in df.columns:
-                return {'macd': pd.Series(), 'signal': pd.Series(), 'histogram': pd.Series()}
+            # RSI (14-period)
+            df['rsi'] = ta.rsi(df['close'], length=14)
             
-            macd = MACD(close=df['close'], window_fast=fast, window_slow=slow, window_sign=signal)
+            # MACD
+            macd_data = ta.macd(df['close'])
             
-            return {
-                'macd': macd.macd(),
-                'signal': macd.macd_signal(),
-                'histogram': macd.macd_diff()
-            }
-        except Exception as e:
-            print(f"Error calculating MACD: {e}")
-            return {'macd': pd.Series(), 'signal': pd.Series(), 'histogram': pd.Series()}
-    
-    def calculate_bollinger_bands(self, df: pd.DataFrame, period: int = 20, std_dev: int = 2) -> Dict[str, pd.Series]:
-        """Calculate Bollinger Bands"""
-        try:
-            if df.empty or 'close' not in df.columns:
-                return {'upper': pd.Series(), 'middle': pd.Series(), 'lower': pd.Series()}
+            # Bollinger Bands
+            bb_data = ta.bbands(df['close'], length=20)
             
-            bb = BollingerBands(close=df['close'], window=period, window_dev=std_dev)
-            
-            return {
-                'upper': bb.bollinger_hband(),
-                'middle': bb.bollinger_mavg(),
-                'lower': bb.bollinger_lband()
-            }
-        except Exception as e:
-            print(f"Error calculating Bollinger Bands: {e}")
-            return {'upper': pd.Series(), 'middle': pd.Series(), 'lower': pd.Series()}
-    
-    def calculate_moving_averages(self, df: pd.DataFrame, periods: List[int] = [10, 20, 50, 200]) -> Dict[str, pd.Series]:
-        """Calculate Simple and Exponential Moving Averages"""
-        try:
-            if df.empty or 'close' not in df.columns:
-                return {}
-            
-            results = {}
-            
-            for period in periods:
-                # Simple Moving Average
-                sma = SMAIndicator(close=df['close'], window=period)
-                results[f'sma_{period}'] = sma.sma_indicator()
-                
-                # Exponential Moving Average
-                ema = EMAIndicator(close=df['close'], window=period)
-                results[f'ema_{period}'] = ema.ema_indicator()
-            
-            return results
-        except Exception as e:
-            print(f"Error calculating moving averages: {e}")
-            return {}
-    
-    def calculate_stochastic(self, df: pd.DataFrame, k_period: int = 14, d_period: int = 3) -> Dict[str, pd.Series]:
-        """Calculate Stochastic Oscillator"""
-        try:
-            if df.empty or not all(col in df.columns for col in ['high', 'low', 'close']):
-                return {'%k': pd.Series(), '%d': pd.Series()}
-            
-            stoch = StochasticOscillator(
-                high=df['high'], 
-                low=df['low'], 
-                close=df['close'], 
-                window=k_period, 
-                smooth_window=d_period
-            )
-            
-            return {
-                '%k': stoch.stoch(),
-                '%d': stoch.stoch_signal()
-            }
-        except Exception as e:
-            print(f"Error calculating Stochastic: {e}")
-            return {'%k': pd.Series(), '%d': pd.Series()}
-    
-    def detect_support_resistance(self, df: pd.DataFrame, window: int = 20) -> Dict[str, float]:
-        """Detect support and resistance levels"""
-        try:
-            if df.empty or 'close' not in df.columns:
-                return {'support': 0, 'resistance': 0}
-            
-            # Find local minima and maxima
-            closes = df['close'].tail(window * 2)
-            
-            # Support: recent low levels
-            support = closes.rolling(window=window).min().tail(1).iloc[0]
-            
-            # Resistance: recent high levels
-            resistance = closes.rolling(window=window).max().tail(1).iloc[0]
-            
-            return {
-                'support': float(support),
-                'resistance': float(resistance)
-            }
-        except Exception as e:
-            print(f"Error detecting support/resistance: {e}")
-            return {'support': 0, 'resistance': 0}
-    
-    def analyze_trend(self, df: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze current trend using multiple indicators"""
-        try:
-            if df.empty:
-                return {'trend': 'neutral', 'strength': 0, 'signals': []}
-            
-            signals = []
-            bullish_signals = 0
-            bearish_signals = 0
+            # Moving Averages
+            df['sma_20'] = ta.sma(df['close'], length=20)
+            df['sma_50'] = ta.sma(df['close'], length=50)
+            df['ema_12'] = ta.ema(df['close'], length=12)
+            df['ema_26'] = ta.ema(df['close'], length=26)
             
             # Get latest values
-            latest_close = df['close'].iloc[-1]
+            latest = df.iloc[-1]
             
-            # Moving Average Analysis
-            ma_data = self.calculate_moving_averages(df, [10, 20, 50])
-            if ma_data:
-                ma_10 = ma_data['sma_10'].iloc[-1] if not ma_data['sma_10'].empty else 0
-                ma_20 = ma_data['sma_20'].iloc[-1] if not ma_data['sma_20'].empty else 0
-                ma_50 = ma_data['sma_50'].iloc[-1] if not ma_data['sma_50'].empty else 0
-                
-                if ma_10 > ma_20 > ma_50:
-                    signals.append("Strong bullish trend: Short MA > Medium MA > Long MA")
-                    bullish_signals += 2
-                elif ma_10 > ma_20:
-                    signals.append("Bullish trend: Short MA > Medium MA")
-                    bullish_signals += 1
-                elif ma_10 < ma_20 < ma_50:
-                    signals.append("Strong bearish trend: Short MA < Medium MA < Long MA")
-                    bearish_signals += 2
-                elif ma_10 < ma_20:
-                    signals.append("Bearish trend: Short MA < Medium MA")
-                    bearish_signals += 1
+            indicators = {
+                'rsi': float(latest.get('rsi', 50)) if pd.notna(latest.get('rsi')) else 50,
+                'macd': {
+                    'macd': float(macd_data['MACD_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACD_12_26_9' in macd_data.columns else 0,
+                    'signal': float(macd_data['MACDs_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACDs_12_26_9' in macd_data.columns else 0,
+                    'histogram': float(macd_data['MACDh_12_26_9'].iloc[-1]) if len(macd_data) > 0 and 'MACDh_12_26_9' in macd_data.columns else 0
+                },
+                'bollinger_bands': {
+                    'upper': float(bb_data['BBU_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBU_20_2.0' in bb_data.columns else 0,
+                    'middle': float(bb_data['BBM_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBM_20_2.0' in bb_data.columns else 0,
+                    'lower': float(bb_data['BBL_20_2.0'].iloc[-1]) if len(bb_data) > 0 and 'BBL_20_2.0' in bb_data.columns else 0
+                },
+                'moving_averages': {
+                    'sma_20': float(latest.get('sma_20', 0)) if pd.notna(latest.get('sma_20')) else 0,
+                    'sma_50': float(latest.get('sma_50', 0)) if pd.notna(latest.get('sma_50')) else 0,
+                    'ema_12': float(latest.get('ema_12', 0)) if pd.notna(latest.get('ema_12')) else 0,
+                    'ema_26': float(latest.get('ema_26', 0)) if pd.notna(latest.get('ema_26')) else 0
+                }
+            }
             
-            # RSI Analysis
-            rsi = self.calculate_rsi(df)
-            if not rsi.empty:
-                current_rsi = rsi.iloc[-1]
-                if current_rsi > 70:
-                    signals.append(f"RSI overbought: {current_rsi:.1f}")
-                    bearish_signals += 1
-                elif current_rsi < 30:
-                    signals.append(f"RSI oversold: {current_rsi:.1f}")
-                    bullish_signals += 1
-                elif current_rsi > 50:
-                    signals.append(f"RSI bullish: {current_rsi:.1f}")
-                    bullish_signals += 0.5
+            return indicators
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating technical indicators: {e}")
+            return {
+                'rsi': 50,
+                'macd': {'macd': 0, 'signal': 0, 'histogram': 0},
+                'bollinger_bands': {'upper': 0, 'middle': 0, 'lower': 0},
+                'moving_averages': {'sma_20': 0, 'sma_50': 0, 'ema_12': 0, 'ema_26': 0}
+            }
+    
+    async def analyze_trend(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Analyze price trend"""
+        try:
+            if df.empty or len(df) < 20:
+                return {
+                    'trend': 'neutral',
+                    'strength': 'weak',
+                    'direction': 'sideways',
+                    'support_levels': [],
+                    'resistance_levels': []
+                }
+            
+            # Calculate trend using moving averages
+            df['sma_20'] = ta.sma(df['close'], length=20)
+            df['sma_50'] = ta.sma(df['close'], length=50)
+            
+            current_price = df['close'].iloc[-1]
+            sma_20 = df['sma_20'].iloc[-1]
+            sma_50 = df['sma_50'].iloc[-1]
+            
+            # Determine trend
+            if pd.notna(sma_20) and pd.notna(sma_50):
+                if current_price > sma_20 > sma_50:
+                    trend = 'bullish'
+                elif current_price < sma_20 < sma_50:
+                    trend = 'bearish'
                 else:
-                    signals.append(f"RSI bearish: {current_rsi:.1f}")
-                    bearish_signals += 0.5
-            
-            # MACD Analysis
-            macd_data = self.calculate_macd(df)
-            if not macd_data['macd'].empty:
-                macd_current = macd_data['macd'].iloc[-1]
-                signal_current = macd_data['signal'].iloc[-1]
-                
-                if macd_current > signal_current:
-                    signals.append("MACD bullish: MACD above signal line")
-                    bullish_signals += 1
-                else:
-                    signals.append("MACD bearish: MACD below signal line")
-                    bearish_signals += 1
-            
-            # Bollinger Bands Analysis
-            bb_data = self.calculate_bollinger_bands(df)
-            if not bb_data['upper'].empty:
-                upper = bb_data['upper'].iloc[-1]
-                lower = bb_data['lower'].iloc[-1]
-                
-                if latest_close > upper:
-                    signals.append("Price above upper Bollinger Band - potential reversal")
-                    bearish_signals += 0.5
-                elif latest_close < lower:
-                    signals.append("Price below lower Bollinger Band - potential bounce")
-                    bullish_signals += 0.5
-            
-            # Determine overall trend
-            net_signals = bullish_signals - bearish_signals
-            
-            if net_signals > 1:
-                trend = "bullish"
-                strength = min(net_signals / 3, 1.0)  # Normalize to 0-1
-            elif net_signals < -1:
-                trend = "bearish"
-                strength = min(abs(net_signals) / 3, 1.0)
+                    trend = 'neutral'
             else:
-                trend = "neutral"
-                strength = 0.5
+                trend = 'neutral'
+            
+            # Calculate trend strength based on price movement
+            price_change_5d = (df['close'].iloc[-1] - df['close'].iloc[-6]) / df['close'].iloc[-6] * 100 if len(df) > 5 else 0
+            
+            if abs(price_change_5d) > 5:
+                strength = 'strong'
+            elif abs(price_change_5d) > 2:
+                strength = 'moderate'
+            else:
+                strength = 'weak'
+            
+            # Simple support/resistance using recent highs/lows
+            recent_highs = df['high'].tail(20).nlargest(3).tolist()
+            recent_lows = df['low'].tail(20).nsmallest(3).tolist()
             
             return {
                 'trend': trend,
                 'strength': strength,
-                'signals': signals,
-                'bullish_signals': bullish_signals,
-                'bearish_signals': bearish_signals
+                'direction': 'up' if price_change_5d > 0 else 'down' if price_change_5d < 0 else 'sideways',
+                'price_change_5d': round(price_change_5d, 2),
+                'support_levels': [round(level, 2) for level in recent_lows],
+                'resistance_levels': [round(level, 2) for level in recent_highs]
             }
             
         except Exception as e:
-            print(f"Error analyzing trend: {e}")
-            return {'trend': 'neutral', 'strength': 0, 'signals': []}
+            self.logger.error(f"Error analyzing trend: {e}")
+            return {
+                'trend': 'neutral',
+                'strength': 'weak', 
+                'direction': 'sideways',
+                'price_change_5d': 0,
+                'support_levels': [],
+                'resistance_levels': []
+            }
     
-    async def generate_trading_signals(self, symbol: str, days: int = 30) -> Dict[str, Any]:
+    async def generate_trading_signals(self, symbol: str, period_days: int = 30) -> Dict[str, Any]:
         """Generate comprehensive trading signals for a symbol"""
         try:
             # Get historical data
-            df = await self.get_historical_data(symbol, days)
+            df = await self.get_historical_data(symbol, '1d', period_days + 50)
             
             if df.empty:
-                return {'symbol': symbol, 'error': 'No historical data available'}
+                return {
+                    'error': f'No data available for {symbol}',
+                    'recommendation': {'action': 'HOLD', 'confidence': 0},
+                    'technical_indicators': {},
+                    'trend_analysis': {}
+                }
             
-            # Calculate all indicators
-            rsi = self.calculate_rsi(df)
-            macd = self.calculate_macd(df)
-            bb = self.calculate_bollinger_bands(df)
-            ma = self.calculate_moving_averages(df)
-            stoch = self.calculate_stochastic(df)
-            sr = self.detect_support_resistance(df)
-            trend = self.analyze_trend(df)
+            # Calculate indicators
+            indicators = await self.calculate_technical_indicators(df)
+            trend_analysis = await self.analyze_trend(df)
             
-            # Get current price
-            current_price = df['close'].iloc[-1]
+            # Generate trading recommendation
+            recommendation = self._generate_recommendation(indicators, trend_analysis, df)
             
-            # Generate specific trading signals
-            signals = []
-            
-            # RSI Signals
-            if not rsi.empty:
-                current_rsi = rsi.iloc[-1]
-                if not pd.isna(current_rsi):
-                    if current_rsi < 30:
-                        signals.append({
-                            'type': 'BUY',
-                            'reason': f'RSI oversold at {current_rsi:.1f}',
-                            'strength': 'strong',
-                            'indicator': 'RSI'
-                        })
-                    elif current_rsi > 70:
-                        signals.append({
-                            'type': 'SELL',
-                            'reason': f'RSI overbought at {current_rsi:.1f}',
-                            'strength': 'strong',
-                            'indicator': 'RSI'
-                        })
-            
-            # MACD Signals
-            if not macd['macd'].empty and len(macd['macd']) >= 2:
-                current_macd = macd['macd'].iloc[-1]
-                prev_macd = macd['macd'].iloc[-2]
-                current_signal = macd['signal'].iloc[-1]
-                prev_signal = macd['signal'].iloc[-2]
-                
-                if not any(pd.isna([current_macd, prev_macd, current_signal, prev_signal])):
-                    # MACD crossover
-                    if prev_macd <= prev_signal and current_macd > current_signal:
-                        signals.append({
-                            'type': 'BUY',
-                            'reason': 'MACD bullish crossover',
-                            'strength': 'medium',
-                            'indicator': 'MACD'
-                        })
-                    elif prev_macd >= prev_signal and current_macd < current_signal:
-                        signals.append({
-                            'type': 'SELL',
-                            'reason': 'MACD bearish crossover',
-                            'strength': 'medium',
-                            'indicator': 'MACD'
-                        })
-            
-            # Bollinger Bands Signals
-            if not bb['upper'].empty:
-                upper = bb['upper'].iloc[-1]
-                lower = bb['lower'].iloc[-1]
-                
-                if not pd.isna(upper) and not pd.isna(lower):
-                    if current_price <= lower:
-                        signals.append({
-                            'type': 'BUY',
-                            'reason': 'Price touching lower Bollinger Band',
-                            'strength': 'medium',
-                            'indicator': 'Bollinger Bands'
-                        })
-                    elif current_price >= upper:
-                        signals.append({
-                            'type': 'SELL',
-                            'reason': 'Price touching upper Bollinger Band',
-                            'strength': 'medium',
-                            'indicator': 'Bollinger Bands'
-                        })
-            
-            # Support/Resistance Signals
-            if sr['support'] > 0 and sr['resistance'] > 0:
-                if current_price <= sr['support'] * 1.02:  # Within 2% of support
-                    signals.append({
-                        'type': 'BUY',
-                        'reason': f'Price near support level at {sr["support"]:.2f}',
-                        'strength': 'medium',
-                        'indicator': 'Support/Resistance'
-                    })
-                elif current_price >= sr['resistance'] * 0.98:  # Within 2% of resistance
-                    signals.append({
-                        'type': 'SELL',
-                        'reason': f'Price near resistance level at {sr["resistance"]:.2f}',
-                        'strength': 'medium',
-                        'indicator': 'Support/Resistance'
-                    })
-            
-            # Helper function to safely convert pandas values to JSON-serializable
-            def safe_convert(value):
-                if pd.isna(value):
-                    return None
-                if isinstance(value, (pd.Series, pd.DataFrame)):
-                    return None
-                return float(value) if isinstance(value, (int, float)) else value
-            
-            # Compile final analysis
             return {
                 'symbol': symbol,
-                'current_price': safe_convert(current_price),
                 'timestamp': datetime.utcnow().isoformat(),
-                'trend_analysis': trend,
-                'technical_indicators': {
-                    'rsi': safe_convert(rsi.iloc[-1] if not rsi.empty else None),
-                    'macd': {
-                        'macd': safe_convert(macd['macd'].iloc[-1] if not macd['macd'].empty else None),
-                        'signal': safe_convert(macd['signal'].iloc[-1] if not macd['signal'].empty else None),
-                        'histogram': safe_convert(macd['histogram'].iloc[-1] if not macd['histogram'].empty else None)
-                    },
-                    'bollinger_bands': {
-                        'upper': safe_convert(bb['upper'].iloc[-1] if not bb['upper'].empty else None),
-                        'middle': safe_convert(bb['middle'].iloc[-1] if not bb['middle'].empty else None),
-                        'lower': safe_convert(bb['lower'].iloc[-1] if not bb['lower'].empty else None)
-                    },
-                    'support_resistance': {
-                        'support': safe_convert(sr['support']),
-                        'resistance': safe_convert(sr['resistance'])
-                    },
-                    'moving_averages': {
-                        key: safe_convert(value.iloc[-1] if not value.empty else None)
-                        for key, value in ma.items()
-                    }
-                },
-                'trading_signals': signals,
-                'recommendation': self._generate_recommendation(signals, trend),
-                'data_points': len(df)
+                'current_price': float(df['close'].iloc[-1]),
+                'recommendation': recommendation,
+                'technical_indicators': indicators,
+                'trend_analysis': trend_analysis,
+                'volume_analysis': {
+                    'avg_volume_20d': float(df['volume'].tail(20).mean()),
+                    'current_volume': float(df['volume'].iloc[-1]),
+                    'volume_trend': 'increasing' if df['volume'].iloc[-1] > df['volume'].tail(20).mean() else 'decreasing'
+                }
             }
             
         except Exception as e:
-            print(f"Error generating trading signals for {symbol}: {e}")
-            return {'symbol': symbol, 'error': str(e)}
+            self.logger.error(f"Error generating trading signals for {symbol}: {e}")
+            return {
+                'error': str(e),
+                'symbol': symbol,
+                'recommendation': {'action': 'HOLD', 'confidence': 0},
+                'technical_indicators': {},
+                'trend_analysis': {}
+            }
     
-    def _generate_recommendation(self, signals: List[Dict], trend: Dict) -> Dict[str, Any]:
-        """Generate overall recommendation based on signals"""
+    def _generate_recommendation(self, indicators: Dict, trend: Dict, df: pd.DataFrame) -> Dict[str, Any]:
+        """Generate trading recommendation based on technical analysis"""
         try:
-            buy_signals = [s for s in signals if s['type'] == 'BUY']
-            sell_signals = [s for s in signals if s['type'] == 'SELL']
+            signals = []
+            confidence_score = 0
             
-            buy_strength = sum(2 if s['strength'] == 'strong' else 1 for s in buy_signals)
-            sell_strength = sum(2 if s['strength'] == 'strong' else 1 for s in sell_signals)
+            # RSI Analysis
+            rsi = indicators.get('rsi', 50)
+            if rsi < 30:
+                signals.append('RSI oversold - potential buy')
+                confidence_score += 20
+            elif rsi > 70:
+                signals.append('RSI overbought - potential sell')
+                confidence_score -= 20
             
-            if buy_strength > sell_strength + 1:
+            # MACD Analysis  
+            macd_data = indicators.get('macd', {})
+            macd = macd_data.get('macd', 0)
+            signal = macd_data.get('signal', 0)
+            
+            if macd > signal and macd > 0:
+                signals.append('MACD bullish crossover')
+                confidence_score += 15
+            elif macd < signal and macd < 0:
+                signals.append('MACD bearish crossover')
+                confidence_score -= 15
+            
+            # Trend Analysis
+            trend_direction = trend.get('trend', 'neutral')
+            if trend_direction == 'bullish':
+                signals.append('Bullish trend confirmed')
+                confidence_score += 25
+            elif trend_direction == 'bearish':
+                signals.append('Bearish trend confirmed')
+                confidence_score -= 25
+            
+            # Moving Average Analysis
+            ma_data = indicators.get('moving_averages', {})
+            current_price = float(df['close'].iloc[-1])
+            sma_20 = ma_data.get('sma_20', 0)
+            
+            if current_price > sma_20 and sma_20 > 0:
+                signals.append('Price above 20-day SMA')
+                confidence_score += 10
+            elif current_price < sma_20 and sma_20 > 0:
+                signals.append('Price below 20-day SMA')
+                confidence_score -= 10
+            
+            # Generate final recommendation
+            if confidence_score > 30:
                 action = 'BUY'
-                confidence = min(buy_strength / 5, 1.0)
-            elif sell_strength > buy_strength + 1:
+                confidence = min(confidence_score, 85)
+            elif confidence_score < -30:
                 action = 'SELL'
-                confidence = min(sell_strength / 5, 1.0)
+                confidence = min(abs(confidence_score), 85)
             else:
                 action = 'HOLD'
-                confidence = 0.5
+                confidence = 50
             
             return {
                 'action': action,
                 'confidence': confidence,
-                'buy_signals': len(buy_signals),
-                'sell_signals': len(sell_signals),
-                'trend': trend['trend'],
-                'trend_strength': trend['strength']
+                'signals': signals,
+                'score': confidence_score,
+                'reasoning': f"Based on {len(signals)} technical indicators showing {action.lower()} signals"
             }
             
         except Exception as e:
-            print(f"Error generating recommendation: {e}")
-            return {'action': 'HOLD', 'confidence': 0.5}
+            self.logger.error(f"Error generating recommendation: {e}")
+            return {
+                'action': 'HOLD',
+                'confidence': 0,
+                'signals': ['Error analyzing data'],
+                'score': 0,
+                'reasoning': 'Technical analysis unavailable'
+            }
     
-    async def analyze_portfolio_technical(self, portfolio_data: Dict) -> Dict[str, Any]:
-        """Analyze entire portfolio using technical analysis"""
+    async def get_market_overview(self, symbols: List[str] = None) -> Dict[str, Any]:
+        """Get market overview for multiple symbols"""
         try:
-            holdings = portfolio_data.get('holdings', [])
+            if not symbols:
+                symbols = ['BTC', 'ETH', 'ADA', 'XRP', 'SOL']
             
-            if not holdings:
-                return {'error': 'No holdings to analyze'}
+            overview = {
+                'timestamp': datetime.utcnow().isoformat(),
+                'symbols': {}
+            }
             
-            analysis_results = []
-            
-            for holding in holdings:
-                symbol = holding['symbol']
+            # Get signals for each symbol
+            for symbol in symbols:
                 try:
-                    # Get technical analysis for each asset
-                    signals = await self.generate_trading_signals(symbol)
-                    signals['holding_value'] = holding['value']
-                    signals['allocation'] = holding['allocation']
-                    analysis_results.append(signals)
+                    signals = await self.generate_trading_signals(symbol, 14)
+                    overview['symbols'][symbol] = {
+                        'price': signals.get('current_price', 0),
+                        'recommendation': signals.get('recommendation', {}),
+                        'trend': signals.get('trend_analysis', {}).get('trend', 'neutral')
+                    }
                 except Exception as e:
-                    print(f"Error analyzing {symbol}: {e}")
-                    continue
+                    self.logger.error(f"Error getting overview for {symbol}: {e}")
+                    overview['symbols'][symbol] = {
+                        'price': 0,
+                        'recommendation': {'action': 'HOLD', 'confidence': 0},
+                        'trend': 'error'
+                    }
             
-            # Generate portfolio-level insights
-            portfolio_insights = self._generate_portfolio_insights(analysis_results)
+            # Calculate market sentiment
+            buy_signals = sum(1 for s in overview['symbols'].values() if s['recommendation'].get('action') == 'BUY')
+            sell_signals = sum(1 for s in overview['symbols'].values() if s['recommendation'].get('action') == 'SELL')
+            total_signals = len(symbols)
             
-            return {
-                'portfolio_total': portfolio_data.get('total_value', 0),
-                'analyzed_assets': len(analysis_results),
-                'asset_analysis': analysis_results,
-                'portfolio_insights': portfolio_insights,
-                'generated_at': datetime.utcnow().isoformat()
-            }
-            
-        except Exception as e:
-            print(f"Error analyzing portfolio technical: {e}")
-            return {'error': str(e)}
-    
-    def _generate_portfolio_insights(self, analysis_results: List[Dict]) -> Dict[str, Any]:
-        """Generate portfolio-level insights from individual asset analysis"""
-        try:
-            total_value = sum(r.get('holding_value', 0) for r in analysis_results)
-            
-            # Count recommendations by type
-            buy_assets = []
-            sell_assets = []
-            hold_assets = []
-            
-            for result in analysis_results:
-                if 'recommendation' in result:
-                    action = result['recommendation']['action']
-                    if action == 'BUY':
-                        buy_assets.append(result['symbol'])
-                    elif action == 'SELL':
-                        sell_assets.append(result['symbol'])
-                    else:
-                        hold_assets.append(result['symbol'])
-            
-            # Calculate portfolio risk score
-            risk_score = self._calculate_portfolio_risk_score(analysis_results)
-            
-            # Generate rebalancing suggestions
-            rebalancing_suggestions = self._generate_rebalancing_suggestions(analysis_results)
-            
-            return {
-                'total_assets': len(analysis_results),
-                'buy_recommendations': len(buy_assets),
-                'sell_recommendations': len(sell_assets),
-                'hold_recommendations': len(hold_assets),
-                'buy_assets': buy_assets,
-                'sell_assets': sell_assets,
-                'risk_score': risk_score,
-                'rebalancing_suggestions': rebalancing_suggestions,
-                'overall_trend': self._determine_overall_trend(analysis_results)
-            }
-            
-        except Exception as e:
-            print(f"Error generating portfolio insights: {e}")
-            return {}
-    
-    def _calculate_portfolio_risk_score(self, analysis_results: List[Dict]) -> float:
-        """Calculate overall portfolio risk score based on technical indicators"""
-        try:
-            risk_factors = 0
-            total_factors = 0
-            
-            for result in analysis_results:
-                if 'technical_indicators' in result:
-                    indicators = result['technical_indicators']
-                    
-                    # RSI risk
-                    if indicators.get('rsi'):
-                        rsi = indicators['rsi']
-                        if rsi > 70 or rsi < 30:
-                            risk_factors += 1
-                        total_factors += 1
-                    
-                    # Trend risk
-                    if 'trend_analysis' in result:
-                        trend_strength = result['trend_analysis'].get('strength', 0)
-                        if trend_strength > 0.8:  # Very strong trend (could reverse)
-                            risk_factors += 0.5
-                        total_factors += 1
-            
-            if total_factors == 0:
-                return 0.5  # Neutral risk
-            
-            return min(risk_factors / total_factors, 1.0)
-            
-        except Exception as e:
-            print(f"Error calculating portfolio risk score: {e}")
-            return 0.5
-    
-    def _generate_rebalancing_suggestions(self, analysis_results: List[Dict]) -> List[Dict]:
-        """Generate suggestions for portfolio rebalancing"""
-        try:
-            suggestions = []
-            
-            for result in analysis_results:
-                symbol = result.get('symbol', '')
-                recommendation = result.get('recommendation', {})
-                allocation = result.get('allocation', 0)
-                
-                if recommendation.get('action') == 'SELL' and allocation > 20:
-                    suggestions.append({
-                        'action': 'REDUCE',
-                        'asset': symbol,
-                        'reason': f'Technical analysis suggests selling {symbol}, consider reducing allocation from {allocation:.1f}%',
-                        'current_allocation': allocation,
-                        'suggested_allocation': max(allocation * 0.7, 5)
-                    })
-                elif recommendation.get('action') == 'BUY' and allocation < 5:
-                    suggestions.append({
-                        'action': 'INCREASE',
-                        'asset': symbol,
-                        'reason': f'Technical analysis suggests buying {symbol}, consider increasing allocation from {allocation:.1f}%',
-                        'current_allocation': allocation,
-                        'suggested_allocation': min(allocation * 1.5, 15)
-                    })
-            
-            return suggestions
-            
-        except Exception as e:
-            print(f"Error generating rebalancing suggestions: {e}")
-            return []
-    
-    def _determine_overall_trend(self, analysis_results: List[Dict]) -> str:
-        """Determine overall market trend from portfolio analysis"""
-        try:
-            bullish_count = 0
-            bearish_count = 0
-            neutral_count = 0
-            
-            for result in analysis_results:
-                trend_analysis = result.get('trend_analysis', {})
-                trend = trend_analysis.get('trend', 'neutral')
-                
-                if trend == 'bullish':
-                    bullish_count += 1
-                elif trend == 'bearish':
-                    bearish_count += 1
-                else:
-                    neutral_count += 1
-            
-            if bullish_count > bearish_count + neutral_count:
-                return 'bullish'
-            elif bearish_count > bullish_count + neutral_count:
-                return 'bearish'
+            if buy_signals > sell_signals:
+                market_sentiment = 'bullish'
+            elif sell_signals > buy_signals:
+                market_sentiment = 'bearish'
             else:
-                return 'neutral'
-                
+                market_sentiment = 'neutral'
+            
+            overview['market_sentiment'] = {
+                'sentiment': market_sentiment,
+                'buy_signals': buy_signals,
+                'sell_signals': sell_signals,
+                'hold_signals': total_signals - buy_signals - sell_signals
+            }
+            
+            return overview
+            
         except Exception as e:
-            print(f"Error determining overall trend: {e}")
-            return 'neutral'
+            self.logger.error(f"Error getting market overview: {e}")
+            return {
+                'error': str(e),
+                'timestamp': datetime.utcnow().isoformat(),
+                'symbols': {},
+                'market_sentiment': {'sentiment': 'error', 'buy_signals': 0, 'sell_signals': 0, 'hold_signals': 0}
+            }
