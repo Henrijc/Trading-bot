@@ -1,0 +1,267 @@
+AI Crypto Trading Coach - Complete Repository Structure
+=====================================================
+Synchronized with GitHub Repository: for-deployment branch
+Commit: df37243 Update Dockerfile.freqtrade.prod
+
+ROOT DIRECTORY STRUCTURE
+========================
+
+/.github/workflows/
+    deploy.yml                          # CI/CD deployment workflow
+
+/backend/                               # FastAPI Backend Service
+    .env                               # Environment variables
+    server.py                          # Main FastAPI application
+    models.py                          # Database models
+    requirements.txt                   # Python dependencies
+    
+    /ai_knowledge_base/
+        README.md
+        Trading Data for AIbot.txt
+        /market_knowledge/
+            south_african_market.md
+        /risk_management/
+            portfolio_rules.md
+        /trading_strategies/
+            advanced_strategies.md
+    
+    /services/                         # Backend service modules
+        ai_knowledge_base.py
+        ai_memory_service.py
+        ai_service.py
+        authentication_service.py
+        backtest_api_service.py
+        backtesting_service.py
+        decision_engine.py
+        freqtrade_service.py
+        historical_data_service.py
+        live_trading_service.py
+        luno_service.py
+        security_monitoring_service.py
+        security_service.py
+        semi_auto_trade_service.py
+        target_service.py
+        technical_analysis_service.py
+        trading_campaign_service.py
+
+/frontend/                             # React Frontend Service
+    .env                              # Frontend environment variables
+    .env.production                   # Production environment config
+    package.json                      # Node dependencies & scripts
+    yarn.lock                         # Yarn lockfile
+    components.json                   # Component configuration
+    tailwind.config.js                # Tailwind CSS config
+    craco.config.js                   # CRACO configuration
+    
+    /src/
+        index.js                      # React entry point
+        App.js                        # Main React component
+        
+        /components/                  # React components
+            CryptoTraderCoach.jsx     # Main dashboard component
+            LoginSystem.jsx           # Authentication system
+            SimpleLogin.jsx           # Simple login form
+            BacktestingDashboard.jsx  # Backtesting interface
+            mockData.js               # Mock data for testing
+            
+            /ui/                      # UI component library (shadcn/ui)
+                accordion.jsx
+                alert-dialog.jsx
+                alert.jsx
+                aspect-ratio.jsx
+                avatar.jsx
+                badge.jsx
+                breadcrumb.jsx
+                button.jsx
+                calendar.jsx
+                card.jsx
+                carousel.jsx
+                checkbox.jsx
+                collapsible.jsx
+                command.jsx
+                context-menu.jsx
+                dialog.jsx
+                drawer.jsx
+                dropdown-menu.jsx
+                form.jsx
+                hover-card.jsx
+                input-otp.jsx
+                input.jsx
+                label.jsx
+                menubar.jsx
+                navigation-menu.jsx
+                pagination.jsx
+                popover.jsx
+                progress.jsx
+                radio-group.jsx
+                resizable.jsx
+                scroll-area.jsx
+                select.jsx
+                separator.jsx
+                sheet.jsx
+                skeleton.jsx
+                slider.jsx
+                sonner.jsx
+                switch.jsx
+                table.jsx
+                tabs.jsx
+                textarea.jsx
+                toast.jsx
+                toaster.jsx
+                toggle-group.jsx
+                toggle.jsx
+                tooltip.jsx
+        
+        /hooks/
+            use-toast.js              # Toast hook utility
+        
+        /lib/
+            utils.js                  # Utility functions
+    
+    /build/                           # Built React application
+        asset-manifest.json
+        /static/js/
+            main.25f2de99.js
+            main.25f2de99.js.LICENSE.txt
+    
+    /node_modules/                    # Node.js dependencies (extensive)
+    /public/                          # Public assets
+
+/freqtrade/                           # Trading Bot Service (Freqtrade-inspired)
+    config.json                       # Trading configuration
+    luno_trading_bot.py              # Main trading bot
+    requirements.txt                 # Python dependencies
+    create_data.py                   # Data creation utility
+    create_sample_data.py            # Sample data generator
+    
+    /user_data/                      # Freqtrade user data
+        freqai_data_service.py       # FreqAI data service
+        real_freqai_service.py       # Real FreqAI service
+        
+        /data/binance/               # Historical data
+            BTC_USDT-5m.json
+            ETH_USDT-5m.json
+        
+        /models/                     # AI model metadata
+            ETH_ZAR_freqai_metadata.json
+            ETH_ZAR_metadata.json
+            XRP_ZAR_freqai_metadata.json
+            XRP_ZAR_metadata.json
+        
+        /strategies/                 # Trading strategies
+            LunoFreqAIStrategy.py    # FreqAI-powered strategy
+            luno_test_strategy.py    # Test strategy
+
+/vps_deployment_package/             # Production Deployment Files
+    .env.example                     # Environment template
+    README.md                        # Deployment documentation
+    crypto_coach_installer.sh        # Installation script
+    
+    /docker/                         # Docker configuration
+        docker-compose.prod.yml      # Production compose file
+        Dockerfile.backend.prod      # Backend production Dockerfile
+        Dockerfile.frontend.prod     # Frontend production Dockerfile
+        Dockerfile.freqtrade.prod    # Freqtrade production Dockerfile
+        nginx.conf                   # Nginx configuration
+    
+    /scripts/                        # Deployment scripts
+        deploy.sh                    # Deployment script
+        health-check.sh              # Health check utility
+
+/local_deployment_kit/               # Local Development Setup
+    docker-compose.yml               # Local compose file
+    start.sh                         # Linux startup script
+    start.bat                        # Windows startup script
+    config.luno.example.json         # Luno config template
+    
+    /app/                           # Local copies of application (mirrors main structure)
+        /backend/                   # (Complete copy of backend)
+        /frontend/                  # (Complete copy of frontend)
+
+TESTING FILES
+=============
+authentication_test.py
+backend_test.py
+backend_test_critical.py
+backend_test_new.py
+backtesting_test.py
+comprehensive_backend_test.py
+comprehensive_backend_test_fixed.py
+comprehensive_phase5_test.py
+comprehensive_verification_test.py
+critical_backend_test.py
+deployment_verification_test.py
+final_auth_test.py
+freqai_test.py
+phase4_freqtrade_test.py
+phase6_decision_engine_test.py
+priority2_backend_test.py
+quick_test.py
+ta_direct_test.py
+test_result.md                      # CRITICAL: Testing protocols & results
+
+DOCUMENTATION FILES
+==================
+README.md                           # Main project documentation
+README_ACTION_PLAN.md              # Action plan for next agent
+DevelopmentFramework.md             # Development framework
+DevelopmentPlan.md                  # Development plan
+Development_Rules.md                # Development rules
+DEPENDENCY_AUDIT_REPORT.md          # Dependency audit
+BUG_FIX_REPORT_TRADING_MODE_UI.md  # Bug fix report
+FREQTRADE_INTEGRATION_COMPLETE.md  # Freqtrade integration docs
+FREQTRADE_INTEGRATION_SUMMARY.md   # Integration summary
+INSTALLER_BUGS_FIXED.md            # Installer bug fixes
+SECURE_LOGIN_SETUP.md              # Security setup
+SECURITY_IMPLEMENTATION.md         # Security implementation
+STANDALONE_DEPLOYMENT_COMPLETE.md  # Deployment completion
+SYSTEM_DIAGNOSTIC_REPORT.md        # System diagnostics
+TRADING_MODE_UI_VISUALIZATION.md   # UI visualization
+VPS_CICD_DEPLOYMENT_COMPLETE.md    # VPS deployment
+VPS_CICD_DEPLOYMENT_GUIDE.md       # Deployment guide
+
+CONFIGURATION FILES
+==================
+.gitignore                          # Git ignore rules
+yarn.lock                          # Root yarn lockfile
+updated_yarn.lock                  # Updated yarn lockfile
+advance-lacing-466323-r9-d2ddb4048837.json  # Google service account
+
+INSTALLER SCRIPTS
+================
+crypto_coach_installer.sh          # Main installer script
+crypto_coach_installer_v2.sh       # Updated installer script
+
+AUXILIARY FILES
+===============
+mongodb_security_setup.js          # MongoDB security setup
+setup_henrijc_2fa.py               # 2FA setup script
+COMPREHENSIVE_SYSTEM_ANALYSIS.txt  # System analysis
+
+KEY TECHNICAL STACK
+===================
+- Backend: FastAPI (Python)
+- Frontend: React with Tailwind CSS & shadcn/ui
+- Database: MongoDB
+- Trading: Freqtrade-inspired with FreqAI
+- Deployment: Docker + Docker Compose + GitHub Actions CI/CD
+- Container Registry: GitHub Container Registry (GHCR)
+- Production: VPS with Ubuntu 22.04
+
+DEPLOYMENT ARCHITECTURE
+======================
+- Build Workflow: Automatic on push to for-deployment branch
+- Deploy Workflow: Manual trigger via workflow_dispatch
+- Images: Pre-built and pushed to ghcr.io/henrijc/trading-bot-*
+- Services: MongoDB, Backend (FastAPI), Frontend (React), Freqtrade
+- Health Checks: Comprehensive service monitoring
+- Security: Non-root containers, environment-based configuration
+
+CURRENT STATUS
+=============
+- Environment: Synchronized with GitHub for-deployment branch
+- HEAD Commit: df37243 Update Dockerfile.freqtrade.prod
+- Services: Frontend and Backend running in supervisor
+- Ready for: Production deployment and further development
+
+END OF STRUCTURE REPORT
