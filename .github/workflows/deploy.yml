@@ -1,18 +1,9 @@
 name: Build and Deploy to VPS
 
 on:
-  # AUTOMATIC DEPLOYMENT DISABLED
-  # Only runs when manually triggered from GitHub Actions tab
+  push:
+    branches: [ for-deployment ]
   workflow_dispatch:
-    inputs:
-      confirm_deployment:
-        description: 'Type "DEPLOY" to confirm deployment'
-        required: true
-        default: 'CANCEL'
-  
-  # AUTOMATIC TRIGGERS DISABLED:
-  # push:
-  #   branches: [ for-deployment ]
 
 env:
   REGISTRY: ghcr.io
