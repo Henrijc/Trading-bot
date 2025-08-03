@@ -13,7 +13,7 @@ services:
     networks:
       - crypto-coach-network
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:19543:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 30s
