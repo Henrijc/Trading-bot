@@ -126,7 +126,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         </h2>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', color: '#f0ad4e', marginBottom: '5px' }}>
+          <label style={{ display: 'block', color: '#22d3ee', marginBottom: '5px' }}> // Cyan color
             Username
           </label>
           <input
