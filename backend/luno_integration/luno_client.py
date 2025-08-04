@@ -107,7 +107,7 @@ class LunoClient:
     async def get_ticker(self, pair: str) -> Dict[str, Any]:
         """Get ticker information for a trading pair"""
         try:
-            response = await self._make_request("GET", "/ticker", params={"pair": pair})
+            response = await self._make_request("GET", "/ticker", params={"pair": pair}, auth_required=False)
             
             ticker_data = {
                 "pair": pair,
