@@ -146,7 +146,7 @@ function App() {
           <div style={{ fontSize: '0.875rem', display: 'flex', gap: '1rem' }}>
             <span>Luno: {systemHealth?.services?.luno || 'unknown'}</span>
             <span>DB: {systemHealth?.services?.database || 'unknown'}</span>
-            <span>AI: {systemHealth?.services?.freqtrade || 'ready'}</span>
+            <span>AI: {aiTradingActive ? 'active' : 'ready'}</span>
           </div>
         </div>
       </div>
