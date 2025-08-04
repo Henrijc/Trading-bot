@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 # Get backend URL from environment
-BACKEND_URL = "https://5b00008a-d098-4123-8e76-c8d22937a417.preview.emergentagent.com/api"
+BACKEND_URL = "https://0cfbd3ed-dae1-446a-a9cf-a2c7cbb1213a.preview.emergentagent.com/api"
 
 class DeploymentVerificationTester:
     def __init__(self, base_url: str):
