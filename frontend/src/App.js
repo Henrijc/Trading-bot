@@ -309,15 +309,25 @@ function App() {
                   backgroundColor: '#e5e7eb', 
                   borderRadius: '9999px', 
                   height: '0.5rem', 
-                  marginTop: '0.5rem' 
+                  marginTop: '0.5rem',
+                  position: 'relative'
                 }}>
                   <div style={{ 
                     backgroundColor: '#3b82f6', 
                     height: '100%', 
                     borderRadius: '9999px', 
-                    width: '0%',
+                    width: '2px', // BlikSIM fix: minimum visible width instead of 0%
+                    minWidth: '2px', // Ensure always visible
                     transition: 'width 0.3s ease' 
                   }}></div>
+                  <span style={{
+                    position: 'absolute',
+                    right: '0.5rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '0.75rem',
+                    color: '#6b7280'
+                  }}>0%</span>
                 </div>
               </div>
             </div>
