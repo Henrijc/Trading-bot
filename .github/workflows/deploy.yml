@@ -1,65 +1,37 @@
-version: '3.8'
+name: Deploy to VPS
 
-services:
-  mongodb:
-    image: mongo:7-jammy
-    container_name: cryptobot_mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: cryptobot
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_INITDB_DATABASE: cryptobot_db
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - cryptobot_network
+on:
+  push:
+    branches:
+      - main
 
-  redis:
-    image: redis:7-alpine
-    container_name: cryptobot_redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - redis_data:/data
-    networks:
-      - cryptobot_network
+jobs:
+  deploy:
+    name: Deploy to Production VPS
+    runs-on: ubuntu-latest
 
-  backend:
-    build:
-      context: ./backend
-    container_name: cryptobot_backend
-    restart: unless-stopped
-    environment:
-      - MONGO_URL=mongodb://cryptobot:${MONGO_PASSWORD}@mongodb:27017/cryptobot_db?authSource=admin
-      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
-      - LUNO_API_KEY=${LUNO_API_KEY}
-      - LUNO_API_SECRET=${LUNO_API_SECRET}
-      - API_TOKEN=${API_TOKEN}
-      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET}
-    depends_on:
-      - mongodb
-      - redis
-    networks:
-      - cryptobot_network
-    ports:
-      - "8004:8004"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-  frontend:
-    build:
-      context: ./frontend
-    container_name: cryptobot_frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    networks:
-      - cryptobot_network
-    ports:
-      - "3003:3000"
+    - name: Setup SSH Key
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.VPS_SSH_KEY_HENJEN }}
 
-networks:
-  cryptobot_network:
-    driver: bridge
-
-volumes:
-  mongodb_data:
-  redis_data:
+    - name: Deploy to VPS and Restart Application
+      env:
+        ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS_HENJEN }}
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME_HENJEN }}@${{ secrets.HENJEN_VPS_HOST }} << 'EOF'
+          cd /opt/cryptobot
+          
+          git fetch origin
+          git reset --hard origin/main
+          
+          echo "$ENV_FILE_CONTENTS" > .env
+          
+          docker-compose up -d --build
+          
+          docker image prune -f
+        EOF
