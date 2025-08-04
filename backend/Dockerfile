@@ -1,6 +1,6 @@
 FROM python:3.11-bullseye
 
-WORKDIR /app # Set WORKDIR to the root of the copied application
+WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && \
@@ -9,23 +9,22 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend requirements.txt and install dependencies
-COPY backend/requirements.txt ./backend/requirements.txt
-RUN pip install --no-cache-dir -r ./backend/requirements.txt
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
 
-# Copy the entire project repository into /app
-COPY . /app
+# Copy the backend code
+COPY . .
+
+# Copy the shared services from parent directory 
+COPY ../backend/services ./services
 
 # Ensure directories are explicitly created for writing
-# These paths are relative to /app
-RUN mkdir -p /app/backend/logs
-RUN mkdir -p /app/backend/historical_data
-RUN chmod 755 /app/backend/logs /app/backend/historical_data
-
-# Set PYTHONPATH to include the /app root
-ENV PYTHONPATH="/app:$PYTHONPATH"
+RUN mkdir -p /app/logs
+RUN mkdir -p /app/historical_data
+RUN chmod 755 /app/logs /app/historical_data
 
 # Expose the port
 EXPOSE 8001
 
-# Command to run the application (assuming server.py is in /app/backend)
-CMD ["python", "-m", "uvicorn", "backend.server:app", "--host", "0.0.0.0", "--port", "8001"]
+# Command to run the application
+CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001"]
