@@ -13,9 +13,9 @@ import logging
 from dataclasses import dataclass
 
 # Import existing services
-from services.luno_service import LunoService
-from services.target_service import TargetService
-from services.freqtrade_service import FreqtradeService
+from backend.services.luno_service import LunoService
+from backend.services.target_service import TargetService
+from backend.services.freqtrade_service import FreqtradeService
 
 logger = logging.getLogger(__name__)
 
