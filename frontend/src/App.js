@@ -66,6 +66,47 @@ function App() {
     }).format(amount);
   };
 
+  // Trading control functions - BlikSIM recommended
+  const startAITrading = async () => {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const response = await axios.post(`${API}/trading/start`, {}, {
+        headers: { 'Authorization': 'Bearer secure_token_123' }
+      });
+      setAiTradingActive(true);
+      setMessage({ type: 'success', text: '🚀 AI Trading Started Successfully!' });
+    } catch (error) {
+      setMessage({ type: 'error', text: `❌ Failed to start AI trading: ${error.response?.data?.detail || error.message}` });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const stopAITrading = async () => {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const response = await axios.post(`${API}/trading/stop`, {}, {
+        headers: { 'Authorization': 'Bearer secure_token_123' }
+      });
+      setAiTradingActive(false);
+      setMessage({ type: 'success', text: '🛑 AI Trading Stopped Successfully!' });
+    } catch (error) {
+      setMessage({ type: 'error', text: `❌ Failed to stop AI trading: ${error.response?.data?.detail || error.message}` });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openManualTradeModal = () => {
+    setMessage({ type: 'info', text: '📊 Manual trading interface coming soon!' });
+  };
+
+  const openConfigModal = () => {
+    setMessage({ type: 'info', text: '⚙️ AI configuration panel coming soon!' });
+  };
+
   return (
     <div className="App">
       {/* System Status Header */}
