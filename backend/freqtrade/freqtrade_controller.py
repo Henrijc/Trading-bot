@@ -180,9 +180,9 @@ class FreqTradeController:
         """Get available strategies"""
         try:
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 
-                async with session.get(f"{self.base_url}/api/v1/strategies", auth=auth) as response:
+                async with session.get(f"{self.base_url}/api/v1/strategies", headers=headers) as response:
                     if response.status == 200:
                         data = await response.json()
                         return data.get('strategies', [])
