@@ -253,10 +253,8 @@ class FreqTradeController:
                 "listen_port": 8080,
                 "verbosity": "info",
                 "enable_openapi": False,
-                "jwt_secret_key": os.environ.get('FREQTRADE_JWT_SECRET', 'random_secret_key'),
-                "CORS_origins": [],
-                "username": self.username,
-                "password": self.password
+                "jwt_secret_key": self.jwt_secret,
+                "CORS_origins": []
             },
             "bot_name": "AI_Crypto_Bot",
             "initial_state": "running",
