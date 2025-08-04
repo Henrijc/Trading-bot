@@ -133,7 +133,7 @@ Concise, factual summary in 3-4 sentences that the AI can reference later to pro
 """
             
             # Dynamic import to avoid circular dependency
-            from services.ai_service import AICoachService
+            from backend.services.ai_service import AICoachService
             ai_service = AICoachService()
             
             # Use AI to generate memory summary
