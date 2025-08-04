@@ -32,18 +32,27 @@ function App() {
   const [goals, setGoals] = useState(null);
 
   useEffect(() => {
-    checkSystemHealth();
-    loadBalance();
-    loadMarketData();
+    loadAllData();
     
-    const healthInterval = setInterval(checkSystemHealth, 30000);
-    const dataInterval = setInterval(loadMarketData, 10000);
+    const healthInterval = setInterval(loadAllData, 30000);
+    const quickDataInterval = setInterval(loadMarketData, 10000);
     
     return () => {
       clearInterval(healthInterval);
-      clearInterval(dataInterval);
+      clearInterval(quickDataInterval);
     };
   }, []);
+
+  const loadAllData = async () => {
+    await Promise.all([
+      checkSystemHealth(),
+      loadBalance(),
+      loadMarketData(),
+      loadPerformanceData(),
+      loadTrades(),
+      loadGoals()
+    ]);
+  };
 
   const checkSystemHealth = async () => {
     try {
