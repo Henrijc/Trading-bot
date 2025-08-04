@@ -47,8 +47,8 @@ class FreqTradeController:
         try:
             # Send stop command to FreqTrade
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
-                async with session.post(f"{self.base_url}/api/v1/stop", auth=auth) as response:
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
+                async with session.post(f"{self.base_url}/api/v1/stop", headers=headers) as response:
                     if response.status == 200:
                         self.is_running = False
                         return {"status": "success", "message": "FreqTrade stopped"}
