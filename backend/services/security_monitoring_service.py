@@ -3,9 +3,9 @@ import asyncio
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
-import smtplib
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+# import smtplib
+# from email.mime.text import MimeText
+# from email.mime.multipart import MimeMultipart
 
 class SecurityMonitoringService:
     def __init__(self):
