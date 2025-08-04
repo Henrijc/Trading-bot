@@ -79,7 +79,7 @@ class FreqTradeController:
         """Get performance metrics from FreqTrade"""
         try:
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 
                 # Get multiple endpoints
                 endpoints = {
@@ -92,7 +92,7 @@ class FreqTradeController:
                 results = {}
                 for key, endpoint in endpoints.items():
                     try:
-                        async with session.get(f"{self.base_url}{endpoint}", auth=auth) as response:
+                        async with session.get(f"{self.base_url}{endpoint}", headers=headers) as response:
                             if response.status == 200:
                                 results[key] = await response.json()
                     except Exception as e:
