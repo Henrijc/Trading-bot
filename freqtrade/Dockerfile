@@ -1,6 +1,6 @@
 FROM python:3.11-bullseye
 
-WORKDIR /app # Set WORKDIR to the root of the copied application
+WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && \
@@ -18,22 +18,20 @@ RUN pip install --upgrade pip
 RUN pip install --no-deps freqtrade==2024.1
 
 # Copy freqtrade requirements.txt and install dependencies
-COPY freqtrade/requirements.txt ./freqtrade/requirements.txt
-RUN pip install --no-cache-dir -r ./freqtrade/requirements.txt
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
 
 # Install additional dependencies required by shared services (like luno_service)
-# This includes 'aiohttp' which was previously missing
-RUN pip install --no-cache-dir \
-    aiohttp
+RUN pip install --no-cache-dir aiohttp
 
-# Copy the entire project repository into /app
-COPY . /app
+# Copy the freqtrade code
+COPY . .
 
-# Set PYTHONPATH to include the /app root
-ENV PYTHONPATH="/app:$PYTHONPATH"
+# Copy shared backend services
+COPY ../backend/services ./backend_services
 
-# Create user_data directory (now relative to /app/freqtrade)
-RUN mkdir -p /app/freqtrade/user_data/logs
+# Create user_data directory
+RUN mkdir -p /app/user_data/logs
 
 # Expose port
 EXPOSE 8082
@@ -43,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 CMD curl -f http://localhost:8082/api/v1/ping || exit 1
 
 # Start the trading bot
-CMD ["python", "/app/freqtrade/luno_trading_bot.py"]
+CMD ["python", "luno_trading_bot.py"]
