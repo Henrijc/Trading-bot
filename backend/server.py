@@ -326,6 +326,19 @@ async def get_performance_metrics():
 async def get_ai_strategy_status():
     """Get current AI strategy status and predictions"""
     try:
+        if not ai_strategy:
+            return {
+                "status": "success",
+                "data": {
+                    "strategy_status": "disabled",
+                    "predictions": [],
+                    "model_confidence": 0.0,
+                    "last_retrain": None,
+                    "next_retrain": None,
+                    "message": "AI strategy temporarily disabled due to dependency issues"
+                }
+            }
+        
         status = await ai_strategy.get_status()
         predictions = await ai_strategy.get_current_predictions()
         
