@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # MongoDB Database
   mongodb:
     image: mongo:7-jammy
     container_name: cryptobot_mongodb
@@ -14,10 +13,7 @@ services:
       - mongodb_data:/data/db
     networks:
       - cryptobot_network
-    ports:
-      - "27017:27017"
 
-  # Redis for caching
   redis:
     image: redis:7-alpine
     container_name: cryptobot_redis
@@ -27,30 +23,10 @@ services:
       - redis_data:/data
     networks:
       - cryptobot_network
-    ports:
-      - "6379:6379"
 
-  # Freqtrade Bot
-  freqtrade:
-    build:
-      context: ./freqtrade  # Assumes your Freqtrade code is in a 'freqtrade' folder
-      dockerfile: Dockerfile
-    container_name: cryptobot_freqtrade
-    restart: unless-stopped
-    depends_on:
-      - mongodb
-    volumes:
-      - freqtrade_data:/freqtrade/user_data
-      - ./freqtrade/config.json:/freqtrade/config.json:ro # Mount config read-only
-    networks:
-      - cryptobot_network
-    # Freqtrade does not need to expose ports unless you use its UI, which we can add later.
-
-  # Backend API
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: cryptobot_backend
     restart: unless-stopped
     environment:
@@ -59,21 +35,18 @@ services:
       - LUNO_API_KEY=${LUNO_API_KEY}
       - LUNO_API_SECRET=${LUNO_API_SECRET}
       - API_TOKEN=${API_TOKEN}
-      # ... add all your other backend environment variables here ...
+      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET}
     depends_on:
       - mongodb
       - redis
-      - freqtrade # Backend now depends on Freqtrade
     networks:
       - cryptobot_network
     ports:
       - "8004:8004"
 
-  # Frontend React App
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: cryptobot_frontend
     restart: unless-stopped
     depends_on:
@@ -90,4 +63,3 @@ networks:
 volumes:
   mongodb_data:
   redis_data:
-  freqtrade_data:
