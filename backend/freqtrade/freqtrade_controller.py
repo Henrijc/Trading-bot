@@ -64,8 +64,8 @@ class FreqTradeController:
         """Get FreqTrade status"""
         try:
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
-                async with session.get(f"{self.base_url}/api/v1/status", auth=auth) as response:
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
+                async with session.get(f"{self.base_url}/api/v1/status", headers=headers) as response:
                     if response.status == 200:
                         return await response.json()
                     else:
