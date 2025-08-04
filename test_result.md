@@ -240,6 +240,24 @@ backend:
         - agent: "testing"
         - comment: "TESTED: Backtesting router integration is working correctly. ✅ ROUTER REGISTRATION: backtest_router properly included in main FastAPI app at line 1100. ✅ ENDPOINT ACCESSIBILITY: All backtesting endpoints accessible via /api/backtest/ prefix. ✅ HEALTH CHECK: /api/backtest/health returns healthy status with all services available. ✅ CORS CONFIGURATION: Backtesting endpoints properly configured for frontend access. Integration successful and ready for production use."
 
+  - task: "Login Page Color Theme Fix - Replace Amber/Gold with Cyan"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/SimpleLogin.jsx, /app/frontend/src/index.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "User reported persistent amber/gold colors on login page instead of desired cyan/turquoise theme"
+        - working: false
+        - agent: "main"
+        - comment: "Identified that SimpleLogin.jsx component had hardcoded #f0ad4e amber colors throughout. Updated all color references from amber (#f0ad4e) to cyan (#22d3ee) including borders, text, labels, and button gradient. Also updated CSS variables in index.css to use cyan-themed dark mode as default."
+        - working: true
+        - agent: "main"
+        - comment: "VISUAL CONFIRMATION: Screenshot shows complete color theme conversion successful. ✅ Card border is now cyan instead of amber/gold. ✅ Title and labels are now cyan instead of amber/gold. ✅ Input field borders and text are now cyan instead of amber/gold. ✅ Button gradient updated to cyan theme. No amber colors detected - all successfully converted to cyan theme as requested."
+
   - task: "Critical Module Import Fixes for Container Stability"
     implemented: true
     working: true
