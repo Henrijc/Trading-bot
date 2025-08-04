@@ -24,8 +24,7 @@ ccxt>=4.2.0
 ta-lib
 technical>=1.4.0
 
-# Luno API
-python-luno>=0.0.17
+# Luno API (using requests for direct API calls)
 requests-oauthlib>=2.0.0
 
 # Machine Learning
