@@ -15,9 +15,7 @@ services:
       - "127.0.0.1:27018:27017"
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: crypto-coach-backend
     restart: unless-stopped
     depends_on:
@@ -25,16 +23,14 @@ services:
     environment:
       - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB_NAME}?authSource=admin
     env_file:
-      - ../.env
+      - .env
     networks:
       - crypto-coach-network
     ports:
       - "8002:8001"
 
   frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    build: ./frontend
     container_name: crypto-coach-frontend
     restart: unless-stopped
     depends_on:
@@ -46,26 +42,9 @@ services:
     ports:
       - "3001:3000"
 
-  freqtrade:
-    build:
-      context: ./freqtrade
-      dockerfile: Dockerfile
-    container_name: crypto-coach-freqtrade
-    restart: unless-stopped
-    depends_on:
-      - backend
-    env_file:
-      - ../.env
-    networks:
-      - crypto-coach-network
-    ports:
-      - "127.0.0.1:8083:8082"
-
 networks:
   crypto-coach-network:
     driver: bridge
 
 volumes:
   mongodb_data:
-  backend_logs:
-  freqtrade_logs:
