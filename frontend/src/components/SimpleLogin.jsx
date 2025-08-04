@@ -56,7 +56,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
           maxWidth: '600px',
           textAlign: 'center'
         }}>
-          <h2 style={{ color: '#f0ad4e', marginBottom: '20px' }}>🎉 Welcome Back, Henrijc!</h2>
+          <h2 style={{ color: '#22d3ee', marginBottom: '20px' }}>🎉 Welcome Back, Henrijc!</h2>
           
           <div style={{ marginBottom: '20px', fontSize: '18px' }}>
             <div style={{ color: '#5cb85c', fontSize: '24px', fontWeight: 'bold' }}>
