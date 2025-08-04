@@ -167,7 +167,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', color: '#f0ad4e', marginBottom: '5px' }}>
+          <label style={{ display: 'block', color: '#22d3ee', marginBottom: '5px' }}> // Cyan color
             2FA Code (Google Authenticator)
           </label>
           <input
