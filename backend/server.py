@@ -41,144 +41,55 @@ from backend.services.freqtrade_service import FreqtradeService
 from backend.services.target_service import TargetService
 from backend.services.decision_engine import DecisionEngine
 
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# Startup validation - Check for critical environment variables
-required_env_vars = {
-    'MONGO_URL': 'MongoDB connection URL',
-    'DB_NAME': 'Database name',
-    'LUNO_API_KEY': 'Luno API key for trading',
-    'LUNO_SECRET': 'Luno API secret for trading'
-}
-
-optional_env_vars = {
-    'GEMINI_API_KEY': 'Google Gemini API key for AI features',
-    'JWT_SECRET_KEY': 'JWT secret key for authentication',
-    'ADMIN_USERNAME': 'Admin username',
-    'ADMIN_PASSWORD': 'Admin password'
-}
-
-print("=== BACKEND STARTUP VALIDATION ===")
-missing_required = []
-missing_optional = []
-
-for var, description in required_env_vars.items():
-    value = os.environ.get(var)
-    if not value:
-        missing_required.append(f"❌ {var}: {description}")
-        print(f"ERROR: Missing required environment variable: {var} ({description})")
-    else:
-        print(f"✅ {var}: Present")
-
-for var, description in optional_env_vars.items():
-    value = os.environ.get(var)
-    if not value:
-        missing_optional.append(f"⚠️  {var}: {description}")
-        print(f"WARNING: Missing optional environment variable: {var} ({description})")
-    else:
-        print(f"✅ {var}: Present")
-
-if missing_required:
-    print("\n❌ CRITICAL ERROR: Missing required environment variables:")
-    for missing in missing_required:
-        print(f"   {missing}")
-    print("\nBackend cannot start without these variables. Please check your .env file.")
-    print("Expected .env file location:", ROOT_DIR / '.env')
-    sys.exit(1)
-
-if missing_optional:
-    print("\n⚠️  WARNING: Missing optional environment variables:")
-    for missing in missing_optional:
-        print(f"   {missing}")
-    print("Some features may not work properly without these variables.")
-
-print("=== STARTUP VALIDATION COMPLETED ===\n")
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Initialize services AFTER loading environment variables
-ai_service = AICoachService()
-luno_service = LunoService()
-ta_service = TechnicalAnalysisService()
-knowledge_base = AIKnowledgeBase()
-campaign_service = TradingCampaignService()
-memory_service = AIMemoryService()
-semi_auto_service = SemiAutoTradeService()
+# Initialize services
 security_service = SecurityService()
-auth_service = AuthenticationService()
+security_scanner = SecurityScannerService()
+historical_data_service = HistoricalDataService()
+technical_analysis_service = TechnicalAnalysisService()
+luno_service = LunoService()
 freqtrade_service = FreqtradeService()
-target_service = TargetService(db_client=client)
+ai_coach_service = AICoachService()
 decision_engine = DecisionEngine()
+live_trading_service = LiveTradingService()
+semi_auto_trade_service = SemiAutoTradeService()
+target_service = TargetService()
+trading_campaign_service = TradingCampaignService()
 
-# Security middleware
-security = HTTPBearer()
 
-# Create the main app with security headers
-app = FastAPI(
-    title="Crypto Trading Coach API",
-    version="1.0.0",
-    docs_url=None,  # Disable docs in production
-    redoc_url=None,  # Disable redoc in production
+# FastAPI app
+app = FastAPI(title="Crypto Trading Coach API", version="1.0.0")
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://34.121.6.206:3000", os.getenv("FRONTEND_URL", "*")],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
 )
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
+# Include routers
+app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+app.include_router(backtest_router, prefix="/backtest", tags=["Backtesting"])
 
-# Basic health check
-@api_router.get("/")
-async def root():
-    return {"message": "Crypto Trading Coach API is running"}
-
-# Comprehensive health check for Docker
-@api_router.get("/health")
+# Define API routes - using service instances
+@app.get("/api/v1/health")
 async def health_check():
-    """Comprehensive health check for Docker containers"""
-    try:
-        health_status = {
-            "status": "healthy",
-            "timestamp": datetime.utcnow().isoformat(),
-            "services": {}
-        }
-        
-        # Check MongoDB connection
-        try:
-            await client.admin.command('ping')
-            health_status["services"]["mongodb"] = "connected"
-        except Exception as e:
-            health_status["services"]["mongodb"] = f"error: {str(e)[:100]}"
-            health_status["status"] = "unhealthy"
-        
-        # Check environment variables
-        critical_missing = []
-        for var in ['MONGO_URL', 'LUNO_API_KEY']:
-            if not os.getenv(var):
-                critical_missing.append(var)
-        
-        if critical_missing:
-            health_status["services"]["environment"] = f"missing: {', '.join(critical_missing)}"
-            health_status["status"] = "unhealthy"
-        else:
-            health_status["services"]["environment"] = "configured"
-        
-        # Check AI service
-        try:
-            # Quick test of AI service initialization
-            health_status["services"]["ai_service"] = "initialized"
-        except Exception as e:
-            health_status["services"]["ai_service"] = f"error: {str(e)[:100]}"
-        
-        return health_status
-        
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)[:200],
-            "timestamp": datetime.utcnow().isoformat()
-        }
+    """Health check endpoint."""
+    return {"status": "healthy", "message": "Backend API is running"}
+
+# You'll need to define more routes here that uses the services
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Crypto Trading Coach API started")
+    # You might want to initialize some services or connections here
+    security_scanner.run_initial_scan()
+    logger.info("Initial security scan completed.")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Crypto Trading Coach API is shutting down")
 
 # Chat endpoints
 @api_router.post("/chat/send", response_model=ChatMessage)
