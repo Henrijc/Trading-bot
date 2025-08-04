@@ -16,7 +16,7 @@ from backend.services.historical_data_service import HistoricalDataService
 from backend.services.backtesting_service import CryptoBacktester, BacktestResult, TradeAction
 
 # Import existing services
-from services.luno_service import LunoService
+from backend.services.luno_service import LunoService
 
 # Create router for backtesting endpoints
 backtest_router = APIRouter(prefix="/backtest", tags=["backtesting"])
