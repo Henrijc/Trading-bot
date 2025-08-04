@@ -8,7 +8,8 @@ from typing import Dict, Any, Optional, Tuple
 import sys
 sys.path.insert(0, '/app')
 from backend.services.security_service import SecurityService
-from services.luno_service import LunoService
+from backend.services.luno_service import LunoService
+from backend.services.database_service import get_database_client
 import json
 
 class AuthenticationService:
