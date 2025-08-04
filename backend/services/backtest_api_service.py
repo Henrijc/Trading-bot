@@ -12,8 +12,8 @@ import json
 from pathlib import Path
 
 # Import our new services
-from services.historical_data_service import HistoricalDataService
-from services.backtesting_service import CryptoBacktester, BacktestResult, TradeAction
+from backend.services.historical_data_service import HistoricalDataService
+from backend.services.backtesting_service import CryptoBacktester, BacktestResult, TradeAction
 
 # Import existing services
 from services.luno_service import LunoService
