@@ -43,22 +43,26 @@ class LunoClient:
             "Content-Type": "application/json"
         }
         
-    async def _make_request(self, method: str, endpoint: str, params: Dict = None, data: Dict = None) -> Dict[str, Any]:
+    async def _make_request(self, method: str, endpoint: str, params: Dict = None, data: Dict = None, auth_required: bool = True) -> Dict[str, Any]:
         """Make authenticated API request"""
         url = f"{self.base_url}{endpoint}"
         
         # Prepare request parameters
         query_params = params or {}
-        request_body = json.dumps(data) if data else ""
         
         # Generate auth headers
-        headers = self._get_auth_headers(method, endpoint, request_body)
+        headers = self._get_auth_headers(method, endpoint)
+        
+        # Add authentication for private endpoints
+        auth = None
+        if auth_required:
+            auth = httpx.BasicAuth(self.api_key, self.api_secret)
         
         try:
             if method.upper() == "GET":
-                response = await self.client.get(url, params=query_params, headers=headers)
+                response = await self.client.get(url, params=query_params, headers=headers, auth=auth)
             elif method.upper() == "POST":
-                response = await self.client.post(url, json=data, params=query_params, headers=headers)
+                response = await self.client.post(url, json=data, params=query_params, headers=headers, auth=auth)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
                 
