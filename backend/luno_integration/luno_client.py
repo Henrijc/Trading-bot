@@ -38,13 +38,9 @@ class LunoClient:
         
     def _get_auth_headers(self, method: str, path: str, params: str = "") -> Dict[str, str]:
         """Get authentication headers for API requests"""
-        signature, timestamp = self._generate_signature(method, path, params)
-        
+        # Luno uses HTTP Basic Authentication
         return {
-            "Content-Type": "application/json",
-            "X-API-KEY": self.api_key,
-            "X-API-TIMESTAMP": str(timestamp),
-            "X-API-SIGNATURE": signature
+            "Content-Type": "application/json"
         }
         
     async def _make_request(self, method: str, endpoint: str, params: Dict = None, data: Dict = None) -> Dict[str, Any]:
