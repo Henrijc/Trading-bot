@@ -40,8 +40,8 @@ from typing import Dict, Any, List
 import subprocess
 
 # Get backend URL from environment
-BACKEND_URL = "https://0cfbd3ed-dae1-446a-a9cf-a2c7cbb1213a.preview.emergentagent.com/api"
-BASE_URL = "https://0cfbd3ed-dae1-446a-a9cf-a2c7cbb1213a.preview.emergentagent.com"
+BACKEND_URL = "https://d0af62ce-0968-4a79-b4d2-85f524cb47f1.preview.emergentagent.com/api"
+BASE_URL = "https://d0af62ce-0968-4a79-b4d2-85f524cb47f1.preview.emergentagent.com"
 
 class AuthenticationTester:
     def __init__(self, base_url: str):
