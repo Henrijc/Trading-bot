@@ -12,10 +12,10 @@ import json
 from enum import Enum
 
 # Import existing services
-from services.luno_service import LunoService
-from services.ai_service import AICoachService
-from services.backtest_api_service import CryptoBacktester
-from services.historical_data_service import HistoricalDataService
+from backend.services.luno_service import LunoService
+from backend.services.ai_service import AICoachService
+from backend.services.backtest_api_service import CryptoBacktester
+from backend.services.historical_data_service import HistoricalDataService
 
 # Create router for live trading
 live_trading_router = APIRouter(prefix="/live-trading", tags=["live_trading"])
