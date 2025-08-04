@@ -240,6 +240,24 @@ backend:
         - agent: "testing"
         - comment: "TESTED: Backtesting router integration is working correctly. ✅ ROUTER REGISTRATION: backtest_router properly included in main FastAPI app at line 1100. ✅ ENDPOINT ACCESSIBILITY: All backtesting endpoints accessible via /api/backtest/ prefix. ✅ HEALTH CHECK: /api/backtest/health returns healthy status with all services available. ✅ CORS CONFIGURATION: Backtesting endpoints properly configured for frontend access. Integration successful and ready for production use."
 
+  - task: "Critical Module Import Fixes for Container Stability"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py, /app/freqtrade/requirements.txt"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+        - working: false
+        - agent: "user"
+        - comment: "CRITICAL CONTAINER FAILURE: Backend container failing with 'No module named services' error causing restart loops, freqtrade container failing with 'No module named requests_cache' error"
+        - working: false
+        - agent: "main"
+        - comment: "Fixed backend/server.py lines 1522 and 1674: Changed relative imports 'from services.decision_engine' to absolute imports 'from backend.services.decision_engine'. Added missing 'requests-cache>=1.0.0' dependency to freqtrade/requirements.txt"
+        - working: true
+        - agent: "testing"
+        - comment: "CONTAINER STABILITY TESTING COMPLETED - 100% SUCCESS RATE: ✅ Backend Server Import - server.py imports successfully without ModuleNotFoundError. ✅ TradeSignal Import & Creation - TradeSignal successfully imported from backend.services.decision_engine (lines 1522 and 1674 fixes working). ✅ DecisionEngine Import - DecisionEngine imports and instantiates correctly. ✅ Requests Cache Import - requests_cache v1.2.1 working for freqtrade container stability. ✅ Luno Service Import - LunoService imports and uses requests_cache without errors. Additional relative import issues were fixed during testing. Both backend and freqtrade containers now start without ModuleNotFoundError restart loops."
+
   - task: "Critical Authentication System Fix"
     implemented: true
     working: true
