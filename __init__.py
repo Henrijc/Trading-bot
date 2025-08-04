@@ -1,0 +1,1 @@
+# AI Crypto Trading Coach - Root Package
