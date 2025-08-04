@@ -14,10 +14,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 import pandas as pd
 import numpy as np
-try:
-    import aioredis
-except ImportError:
-    aioredis = None
+# Redis temporarily disabled due to compatibility issues
+# try:
+#     import aioredis
+# except ImportError:
+#     aioredis = None
+aioredis = None
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
