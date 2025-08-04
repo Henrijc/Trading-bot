@@ -17,10 +17,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import services using the new Docker strategy with /app root
-from backend.services.luno_service import LunoService
-from backend.services.technical_analysis_service import TechnicalAnalysisService
-from backend.services.historical_data_service import HistoricalDataService
-from freqtrade.real_freqai_service import RealFreqAIService
+from backend_services.luno_service import LunoService
+from backend_services.technical_analysis_service import TechnicalAnalysisService
+from backend_services.historical_data_service import HistoricalDataService
+from user_data.real_freqai_service import RealFreqAIService
 
 # Configure logging
 logging.basicConfig(
