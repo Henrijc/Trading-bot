@@ -32,14 +32,9 @@ class LunoClient:
         if timestamp is None:
             timestamp = int(time.time() * 1000)
             
-        message = f"{timestamp}{method.upper()}{path}{params}"
-        signature = hmac.new(
-            self.api_secret.encode(),
-            message.encode(),
-            hashlib.sha512
-        ).hexdigest()
-        
-        return signature, timestamp
+        # For Luno API, we need to use Basic Auth instead of custom signature
+        # Luno uses HTTP Basic Authentication with API key and secret
+        return None, timestamp
         
     def _get_auth_headers(self, method: str, path: str, params: str = "") -> Dict[str, str]:
         """Get authentication headers for API requests"""
