@@ -5,14 +5,22 @@ try:
     from emergentintegrations.llm.chat import LlmChat, UserMessage
 except ImportError:
     print("WARNING: emergentintegrations not available, using mock implementation")
-    from services.emergent_mock import LlmChat, UserMessage
+    try:
+        from backend.services.emergent_mock import LlmChat, UserMessage
+    except ImportError:
+        # Fallback for container deployment
+        import sys
+        sys.path.insert(0, '/app')
+        from backend.services.emergent_mock import LlmChat, UserMessage
 
 from typing import List, Dict, Any
 import json
 from datetime import datetime
 import requests
-from services.luno_service import LunoService
-from services.ai_knowledge_base import AIKnowledgeBase
+import sys
+sys.path.insert(0, '/app')
+from backend.services.luno_service import LunoService
+from backend.services.ai_knowledge_base import AIKnowledgeBase
 
 class AICoachService:
     def __init__(self):
