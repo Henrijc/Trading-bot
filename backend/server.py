@@ -107,8 +107,11 @@ luno_client = LunoClient(
     api_secret=os.environ['LUNO_API_SECRET']
 )
 goal_calculator = GoalProbabilityCalculator()
-freqtrade_controller = FreqTradeController()
-ai_strategy = FreqAITradingStrategy()
+# Temporarily disabled due to dependency issues
+# freqtrade_controller = FreqTradeController()
+# ai_strategy = FreqAITradingStrategy()
+freqtrade_controller = None
+ai_strategy = None
 
 # WebSocket connection manager
 class ConnectionManager:
