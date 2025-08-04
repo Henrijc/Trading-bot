@@ -1,6 +1,6 @@
 FROM python:3.11-bullseye
 
-WORKDIR /app
+WORKDIR /app # Set WORKDIR to the root of the copied application
 
 # Install system dependencies
 RUN apt-get update && \

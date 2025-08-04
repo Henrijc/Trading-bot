@@ -32,7 +32,7 @@ services:
     networks:
       - crypto-coach-network
     ports:
-      - "8002:8001"  # Maps container port 8001 to HOST port 8002
+      - "8002:8001"
 
   frontend:
     build:
@@ -47,7 +47,7 @@ services:
     networks:
       - crypto-coach-network
     ports:
-      - "3001:3000"  # Maps container port 3000 to HOST port 3001
+      - "3001:3000"
 
   freqtrade:
     build:

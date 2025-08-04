@@ -1,6 +1,6 @@
 FROM python:3.11-bullseye
 
-WORKDIR /app
+WORKDIR /app # Set WORKDIR to the root of the copied application
 
 # Install system dependencies
 RUN apt-get update && \
@@ -24,7 +24,7 @@ RUN chmod 755 /app/backend/logs /app/backend/historical_data
 # Set PYTHONPATH to include the /app root
 ENV PYTHONPATH="/app:$PYTHONPATH"
 
-# Expose the port the application listens on
+# Expose the port
 EXPOSE 8001
 
 # Command to run the application (assuming server.py is in /app/backend)
