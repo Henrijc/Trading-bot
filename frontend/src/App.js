@@ -84,6 +84,33 @@ function App() {
     }
   };
 
+  const loadPerformanceData = async () => {
+    try {
+      const response = await axios.get(`${API}/performance`);
+      setPerformanceData(response.data.data);
+    } catch (error) {
+      console.error('Performance data fetch failed:', error);
+    }
+  };
+
+  const loadTrades = async () => {
+    try {
+      const response = await axios.get(`${API}/trades/history?limit=10`);
+      setTrades(response.data.data.trades || []);
+    } catch (error) {
+      console.error('Trades fetch failed:', error);
+    }
+  };
+
+  const loadGoals = async () => {
+    try {
+      const response = await axios.get(`${API}/goals/probability`);
+      setGoals(response.data.data);
+    } catch (error) {
+      console.error('Goals data fetch failed:', error);
+    }
+  };
+
   const formatCurrency = (amount) => {
     if (!amount && amount !== 0) return 'R0.00';
     return new Intl.NumberFormat('en-ZA', {
