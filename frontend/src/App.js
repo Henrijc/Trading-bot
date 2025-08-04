@@ -151,6 +151,62 @@ function App() {
             </p>
           </div>
 
+          {/* Message Display - BlikSIM recommended */}
+          {message && (
+            <div style={{
+              padding: '1rem',
+              marginBottom: '1.5rem',
+              borderRadius: '0.5rem',
+              border: `1px solid ${
+                message.type === 'success' ? '#10b981' : 
+                message.type === 'error' ? '#ef4444' : '#3b82f6'
+              }`,
+              backgroundColor: 
+                message.type === 'success' ? '#ecfdf5' : 
+                message.type === 'error' ? '#fef2f2' : '#eff6ff',
+              color: 
+                message.type === 'success' ? '#059669' : 
+                message.type === 'error' ? '#dc2626' : '#1d4ed8'
+            }}>
+              <p style={{ margin: 0, fontWeight: '500' }}>{message.text}</p>
+            </div>
+          )}
+
+          {/* Loading Overlay - BlikSIM recommended */}
+          {loading && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000
+            }}>
+              <div style={{
+                backgroundColor: 'white',
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem'
+              }}>
+                <div style={{
+                  width: '2rem',
+                  height: '2rem',
+                  border: '3px solid #e5e7eb',
+                  borderTop: '3px solid #3b82f6',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
+                <span style={{ fontWeight: '500' }}>Processing...</span>
+              </div>
+            </div>
+          )}
+
           {/* Key Metrics Grid */}
           <div style={{ 
             display: 'grid', 
