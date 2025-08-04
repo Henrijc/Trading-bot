@@ -1,26 +1,30 @@
+import os
+import sys
+import logging
+import time
+import uuid
+import json
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import List, Dict, Any
+
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-import time
-import sys
-from datetime import datetime
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import logging
-from pathlib import Path
 from pydantic import BaseModel
-from typing import List, Dict, Any
-import uuid
-from datetime import datetime, timedelta
-import json
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure logging for the backend
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Import our models and services
-import sys
-sys.path.insert(0, '/app')
-
 from backend.models import *
 from backend.services.ai_service import AICoachService
 from backend.services.luno_service import LunoService
