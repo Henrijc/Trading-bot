@@ -23,7 +23,7 @@ from backend.services.historical_data_service import HistoricalDataService
 from backend.services.live_trading_service import live_trading_router
 from backend.services.luno_service import LunoService
 from backend.services.security_monitoring_service import SecurityMonitoringService
-from backend.services.security_service import SecurityScannerService
+from backend.services.security_service import SecurityService
 from backend.services.semi_auto_trade_service import SemiAutoTradeService
 from backend.services.target_service import TargetService
 from backend.services.technical_analysis_service import TechnicalAnalysisService
@@ -32,7 +32,7 @@ from backend.services.trading_campaign_service import TradingCampaignService
 
 # Initialize services
 security_service = SecurityService()
-security_scanner = SecurityScannerService()
+security_scanner = SecurityService()
 historical_data_service = HistoricalDataService()
 technical_analysis_service = TechnicalAnalysisService()
 luno_service = LunoService()
