@@ -10,6 +10,9 @@ function App() {
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [balance, setBalance] = useState(null);
   const [marketData, setMarketData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [aiTradingActive, setAiTradingActive] = useState(false);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     checkSystemHealth();
