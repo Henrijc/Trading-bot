@@ -311,9 +311,9 @@ class FreqTradeController:
         """Reload FreqTrade configuration"""
         try:
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 
-                async with session.post(f"{self.base_url}/api/v1/reload_config", auth=auth) as response:
+                async with session.post(f"{self.base_url}/api/v1/reload_config", headers=headers) as response:
                     if response.status == 200:
                         return await response.json()
                     else:
