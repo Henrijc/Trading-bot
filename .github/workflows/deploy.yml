@@ -18,7 +18,7 @@ jobs:
       with:
         host: 156.155.253.224
         username: cryptoadmin
-        password: ${{ secrets.VPS_PASSWORD }}  # Add this secret if using password
+        key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
         timeout: 300s
         command_timeout: 600s
         script: |
