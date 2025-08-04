@@ -227,7 +227,7 @@ Be professional, direct, contextually aware, and use the actual data provided to
             if has_trade_request:
                 try:
                     # Import to avoid circular import
-                    from services.semi_auto_trade_service import SemiAutoTradeService
+                    from backend.services.semi_auto_trade_service import SemiAutoTradeService
                     trade_service = SemiAutoTradeService()
                     
                     # Check if user wants to execute all pending trades
