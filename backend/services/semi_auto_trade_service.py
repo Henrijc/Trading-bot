@@ -2,8 +2,10 @@ import os
 import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
-from services.luno_service import LunoService
-from services.technical_analysis_service import TechnicalAnalysisService
+import sys
+sys.path.insert(0, '/app')
+from backend.services.luno_service import LunoService
+from backend.services.technical_analysis_service import TechnicalAnalysisService
 import json
 import uuid
 
