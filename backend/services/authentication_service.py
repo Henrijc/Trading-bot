@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-class AuthService:
+class AuthenticationService:
     def __init__(self):
         self.security_service = SecurityService()
         self.db_client = get_database_client()
-        logger.info("AuthService initialized.")
+        logger.info("AuthenticationService initialized.")
 
     async def register_user(self, username, password):
         """Registers a new user after hashing the password."""
@@ -65,7 +65,7 @@ class AuthService:
             raise credentials_exception
 
 # Initialize the service
-auth_service = AuthService()
+auth_service = AuthenticationService()
 
 # Authentication router
 auth_router = APIRouter()
