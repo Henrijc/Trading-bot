@@ -1,1 +1,0 @@
-# Freqtrade User Data Package
