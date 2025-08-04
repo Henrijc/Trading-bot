@@ -158,13 +158,13 @@ class FreqTradeController:
         """Get recent trades"""
         try:
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 params = {"limit": limit}
                 
                 async with session.get(
                     f"{self.base_url}/api/v1/trades",
                     params=params,
-                    auth=auth
+                    headers=headers
                 ) as response:
                     if response.status == 200:
                         data = await response.json()
