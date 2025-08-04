@@ -218,7 +218,7 @@ async def execute_live_trade(trade_request: LiveTradeRequest):
     """Execute a live trade with Decision Engine evaluation"""
     try:
         # Import Decision Engine for integration
-        from services.decision_engine import DecisionEngine, TradeSignal
+        from backend.services.decision_engine import DecisionEngine, TradeSignal
         
         decision_engine = DecisionEngine()
         
