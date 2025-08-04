@@ -1,67 +1,41 @@
-# Temporary mock for emergentintegrations until proper package is available
 """
-Mock implementation of emergentintegrations.llm.chat module
-This allows the application to run while the real package is being resolved
+Mock implementation for emergentintegrations
+This provides fallback functionality when emergentintegrations is not available
 """
+
+import logging
+from typing import List, Dict, Any, Optional
+import asyncio
+
+logger = logging.getLogger(__name__)
 
 class UserMessage:
-    def __init__(self, text: str):
-        self.text = text
+    """Mock UserMessage class"""
+    def __init__(self, content: str):
+        self.content = content
+        self.role = "user"
 
 class LlmChat:
-    def __init__(self, api_key: str, session_id: str = None, system_message: str = None):
-        self.api_key = api_key
-        self.session_id = session_id
-        self.system_message = system_message
-        self.model_name = "gemini"
-        self.model_version = "gemini-2.0-flash"
-        self.max_tokens = 4000
+    """Mock LlmChat class for emergentintegrations fallback"""
+    
+    def __init__(self, model_name: str = "mock-llm"):
+        self.model_name = model_name
+        logger.warning(f"Using mock LlmChat for {model_name}. No actual AI calls will be made.")
+    
+    async def send_message(self, message: str, history: Optional[List[Any]] = None) -> str:
+        """Mock send_message implementation"""
+        logger.warning(f"Mock LlmChat received message: {message[:50]}... Returning dummy response.")
         
-    def with_model(self, provider: str, model: str):
-        """Chain method to set model"""
-        self.model_name = provider
-        self.model_version = model
-        return self
-        
-    def with_max_tokens(self, tokens: int):
-        """Chain method to set max tokens"""
-        self.max_tokens = tokens
-        return self
-        
-    async def send_message(self, message: UserMessage) -> str:
-        """Send message using Google Gemini API"""
-        try:
-            import google.generativeai as genai
-            
-            # Configure Gemini
-            genai.configure(api_key=self.api_key)
-            model = genai.GenerativeModel('gemini-2.0-flash-exp')
-            
-            # Build full prompt with system message
-            full_prompt = ""
-            if self.system_message:
-                full_prompt += f"System: {self.system_message}\n\n"
-            full_prompt += f"User: {message.text}"
-            
-            # Generate response
-            response = await model.generate_content_async(full_prompt)
-            return response.text
-            
-        except Exception as e:
-            print(f"Error in mock LlmChat: {e}")
-            # Fallback response if Gemini fails
-            return f"""I'm currently experiencing technical difficulties with the AI service. 
-
-Your message has been received: "{message.text[:100]}..."
-
-**Your Trading Goals Noted:**
-- Monthly profit target: R100,000
-- Risk management: Conservative approach
-- Portfolio optimization focus
-
-**Available Actions:**
-- Check your portfolio on the Dashboard tab
-- Review Technical Analysis for market insights
-- View trading opportunities in the Campaign tab
-
-I'll be back online shortly to provide detailed trading advice."""
+        # Provide basic mock responses based on message content
+        if "market" in message.lower() or "crypto" in message.lower():
+            return f"Mock analysis: The cryptocurrency market is showing mixed signals. This is a mock response for development purposes."
+        elif "trade" in message.lower() or "buy" in message.lower() or "sell" in message.lower():
+            return f"Mock trading advice: Consider your risk tolerance before making any trades. This is a mock response."
+        elif "portfolio" in message.lower():
+            return f"Mock portfolio analysis: Your portfolio appears to be well-diversified. This is a mock response."
+        else:
+            return f"Mock response for '{message[:30]}...' from {self.model_name}. (This is a mock, replace with real LLM integration)"
+    
+    def send_message_sync(self, message: str, history: Optional[List[Any]] = None) -> str:
+        """Synchronous version of send_message"""
+        return asyncio.run(self.send_message(message, history))
