@@ -481,8 +481,16 @@ async def startup_event():
     """Initialize services on startup"""
     logger.info("Starting AI Crypto Trading Bot")
     
-    # Initialize Redis connection
-    app.state.redis = await aioredis.from_url(redis_url)
+    # Initialize Redis connection if available
+    if aioredis:
+        try:
+            app.state.redis = await aioredis.from_url(redis_url)
+        except Exception as e:
+            logger.warning(f"Redis connection failed: {e}")
+            app.state.redis = None
+    else:
+        logger.warning("aioredis not available, Redis features disabled")
+        app.state.redis = None
     
     # Start AI trading loop
     asyncio.create_task(ai_trading_loop())
