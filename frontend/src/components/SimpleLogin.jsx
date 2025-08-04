@@ -114,7 +114,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         width: '100%'
       }}>
         <h2 style={{ 
-          color: '#f0ad4e', 
+          color: '#22d3ee', // Cyan color 
           textAlign: 'center', 
           marginBottom: '30px',
           display: 'flex',
