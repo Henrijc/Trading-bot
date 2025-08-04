@@ -369,11 +369,11 @@ function App() {
                 </div>
               </div>
               <div>
-                <p style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#8b5cf6', margin: 0 }}>
-                  Ready
+                <p style={{ fontSize: '1.875rem', fontWeight: 'bold', color: aiTradingActive ? '#16a34a' : '#8b5cf6', margin: 0 }}>
+                  {aiTradingActive ? '🔥 Active' : '⚡ Ready'}
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
-                  AI models loaded and monitoring market
+                  {aiTradingActive ? 'AI actively trading and managing positions' : 'AI models loaded and monitoring market'}
                 </p>
               </div>
             </div>
