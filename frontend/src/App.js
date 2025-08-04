@@ -1,31 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import CryptoTraderCoach from './components/CryptoTraderCoach.jsx';
+import React, { useState } from 'react';
+import SimpleDashboard from './components/SimpleDashboard.jsx';
 import SimpleLogin from './components/SimpleLogin.jsx';
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userSession, setUserSession] = useState(null);
   
-  useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      setIsAuthenticated(true);
-      setUserSession({ token });
-    }
-  }, []);
-
-  const handleLoginSuccess = (session) => {
-    localStorage.setItem('auth_token', session.token);
+  const handleLoginSuccess = () => {
     setIsAuthenticated(true);
-    setUserSession(session);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
     setIsAuthenticated(false);
-    setUserSession(null);
   };
 
   if (!isAuthenticated) {
@@ -34,10 +20,7 @@ function App() {
 
   return (
     <div className="App">
-      <CryptoTraderCoach 
-        userSession={userSession}
-        onLogout={handleLogout}
-      />
+      <SimpleDashboard onLogout={handleLogout} />
     </div>
   );
 }
