@@ -437,7 +437,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 "type": "live_update",
                 "timestamp": datetime.utcnow().isoformat(),
                 "balance": await luno_client.get_balance(),
-                "active_trades": await ai_strategy.get_active_trades(),
+                "active_trades": await ai_strategy.get_active_trades() if ai_strategy else [],
                 "daily_pnl": await get_daily_pnl()
             }
             
