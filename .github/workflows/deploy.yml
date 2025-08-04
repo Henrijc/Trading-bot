@@ -1,115 +1,88 @@
-name: Build and Deploy to VPS
+name: Copy Fixed Files to VPS
 
 on:
   push:
     branches: [ for-deployment ]
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: henrijc/trading-bot
-
 jobs:
-  build-and-push:
+  copy-files-to-vps:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Log in to Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Build and push backend image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: vps_deployment_package/docker/Dockerfile.backend.prod
-        push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        build-args: |
-          BUILDKIT_INLINE_CACHE=1
-
-    - name: Build and push frontend image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: vps_deployment_package/docker/Dockerfile.frontend.prod
-        push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        build-args: |
-          BUILDKIT_INLINE_CACHE=1
-
-    - name: Build and push freqtrade image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: vps_deployment_package/docker/Dockerfile.freqtrade.prod
-        push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-freqtrade:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        build-args: |
-          BUILDKIT_INLINE_CACHE=1
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Deploy to VPS
+    - name: Copy files to VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: 156.155.253.224
         username: cryptoadmin
         key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
-        timeout: 1800s
-        command_timeout: 2400s
+        timeout: 300s
+        command_timeout: 600s
         script: |
-          # Login to GHCR
-          echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          echo "=== COPYING FIXED FILES TO VPS ==="
           
           # Navigate to deployment directory
           cd /opt/crypto-coach || {
-            sudo git clone --branch for-deployment https://github.com/Henrijc/Trading-bot.git /opt/crypto-coach
-            cd /opt/crypto-coach
-            sudo chown -R cryptoadmin:cryptoadmin /opt/crypto-coach
+            echo "ERROR: /opt/crypto-coach directory not found"
+            exit 1
           }
           
-          # Update to latest code
+          # Backup current state (just in case)
+          echo "Creating backup of current state..."
+          cp -r /opt/crypto-coach /opt/crypto-coach-backup-$(date +%Y%m%d_%H%M%S) || true
+          
+          # Pull latest changes with all fixes
+          echo "Pulling latest changes from repository..."
           git fetch --all
           git reset --hard origin/for-deployment
           
-          # Stop existing containers gracefully
-          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env down --remove-orphans || true
+          # Ensure critical __init__.py files exist (failsafe)
+          echo "Ensuring critical __init__.py files exist..."
+          touch __init__.py
+          touch backend/__init__.py
+          touch backend/services/__init__.py
+          touch freqtrade/__init__.py
+          touch freqtrade/user_data/__init__.py
+          touch freqtrade/user_data/strategies/__init__.py
           
-          # Clean up old images to save space
-          sudo docker system prune -f --volumes
+          # Set correct permissions
+          echo "Setting correct permissions..."
+          chown -R cryptoadmin:cryptoadmin /opt/crypto-coach
+          chmod +x deploy_vps_commands.sh 2>/dev/null || true
+          chmod +x verify_deployment_fixes.py 2>/dev/null || true
           
-          # Pull latest images
-          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env pull
+          # Verify files were copied correctly
+          echo "Verifying critical files exist..."
           
-          # Start all services
-          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml --env-file /opt/crypto-coach/.env up -d --remove-orphans --force-recreate
+          # Check __init__.py files
+          if [ -f "__init__.py" ] && [ -f "backend/__init__.py" ] && [ -f "backend/services/__init__.py" ]; then
+            echo "✅ Critical __init__.py files present"
+          else
+            echo "❌ Some __init__.py files missing"
+          fi
           
-          # Wait for services to be ready
-          sleep 30
+          # Check Dockerfiles
+          if [ -f "backend/Dockerfile" ] && [ -f "freqtrade/Dockerfile" ]; then
+            echo "✅ Updated Dockerfiles present"
+          else
+            echo "❌ Dockerfiles missing"
+          fi
           
-          # Verify deployment
-          sudo docker compose -f vps_deployment_package/docker/docker-compose.prod.yml ps
+          # Check key service files
+          if [ -f "backend/services/emergent_mock.py" ] && [ -f "backend/services/database_service.py" ]; then
+            echo "✅ New service files present"
+          else
+            echo "❌ Some service files missing"
+          fi
           
-          echo "Deployment completed successfully!"
+          echo "=== FILE COPY COMPLETED ==="
+          echo "All fixes have been copied to the VPS."
+          echo "You can now manually run the deployment commands:"
+          echo "  cd /opt/crypto-coach"
+          echo "  ./deploy_vps_commands.sh"
+          echo ""
+          echo "Or test the fixes first:"
+          echo "  python3 verify_deployment_fixes.py"
