@@ -461,7 +461,7 @@ async def ai_trading_loop():
     """Background task for AI trading execution"""
     while True:
         try:
-            if ai_strategy.is_trading_active:
+            if ai_strategy and ai_strategy.is_trading_active:
                 # Get AI predictions
                 signals = await ai_strategy.get_trading_signals()
                 
