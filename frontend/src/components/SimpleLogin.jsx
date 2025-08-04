@@ -180,9 +180,9 @@ const SimpleLogin = ({ onLoginSuccess }) => {
               width: '100%',
               padding: '10px',
               background: '#3c3c3c',
-              border: '1px solid #f0ad4e',
+              border: '1px solid #22d3ee', // Cyan border
               borderRadius: '5px',
-              color: '#f0ad4e',
+              color: '#22d3ee', // Cyan text
               fontSize: '14px',
               textAlign: 'center',
               letterSpacing: '2px'
