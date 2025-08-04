@@ -1671,7 +1671,7 @@ async def ai_integrated_trade_decision(trade_request: dict):
             }
         
         # Step 3: Create trade signal for decision engine
-        from services.decision_engine import TradeSignal
+        from backend.services.decision_engine import TradeSignal
         
         signal = TradeSignal(
             pair=pair,
