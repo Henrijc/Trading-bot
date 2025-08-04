@@ -1,0 +1,67 @@
+name: URGENT - Test SSH Connection with Provided Key
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ for-deployment ]
+
+jobs:
+  test-ssh-connection:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Test SSH Connection with Provided Key
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: 156.155.253.224
+        username: cryptoadmin
+        key: ${{ secrets.VPS_SSH_C_BOT_KEY }}
+        timeout: 60s
+        script: |
+          echo "🔑 SSH AUTHENTICATION SUCCESSFUL!"
+          echo "=== VPS CONNECTION TEST ==="
+          echo "Current user: $(whoami)"
+          echo "Current directory: $(pwd)"
+          echo "Date: $(date)"
+          echo "System: $(uname -a)"
+          echo ""
+          
+          # Check if project directory exists
+          if [ -d "/opt/crypto-coach" ]; then
+            echo "✅ /opt/crypto-coach directory found!"
+            cd /opt/crypto-coach
+            echo "Project directory contents:"
+            ls -la | head -10
+            echo ""
+            
+            # Check Git status
+            if git status > /dev/null 2>&1; then
+              echo "✅ Git repository is accessible"
+              echo "Current branch: $(git branch --show-current)"
+              echo "Latest commit: $(git log -1 --oneline)"
+            else
+              echo "⚠️  Git repository issues detected"
+            fi
+            
+            # Check Docker
+            if docker --version > /dev/null 2>&1; then
+              echo "✅ Docker is available: $(docker --version)"
+            else
+              echo "❌ Docker not found"
+            fi
+            
+            # Check Docker Compose
+            if docker compose version > /dev/null 2>&1; then
+              echo "✅ Docker Compose is available: $(docker compose version)"
+            else
+              echo "❌ Docker Compose not found"
+            fi
+            
+          else
+            echo "❌ /opt/crypto-coach directory NOT found!"
+            echo "Available directories in /opt:"
+            ls -la /opt/ 2>/dev/null || echo "Cannot access /opt/"
+          fi
+          
+          echo ""
+          echo "🎉 SSH CONNECTION TEST COMPLETED!"
