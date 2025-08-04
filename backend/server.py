@@ -34,6 +34,7 @@ from backend.services.trading_campaign_service import TradingCampaignService
 from backend.services.ai_memory_service import AIMemoryService
 from backend.services.semi_auto_trade_service import SemiAutoTradeService
 from backend.services.security_service import SecurityService
+from backend.services.security_monitoring_service import SecurityMonitoringService
 from backend.services.authentication_service import AuthenticationService
 from backend.services.backtest_api_service import backtest_router
 from backend.services.live_trading_service import live_trading_router
@@ -43,7 +44,7 @@ from backend.services.decision_engine import DecisionEngine
 
 # Initialize services
 security_service = SecurityService()
-security_scanner = SecurityScannerService()
+security_scanner = SecurityMonitoringService()
 historical_data_service = HistoricalDataService()
 technical_analysis_service = TechnicalAnalysisService()
 luno_service = LunoService()
