@@ -193,25 +193,15 @@ function App() {
       </div>
 
       {/* Main Content */}
-      <div style={{ minHeight: 'calc(100vh - 60px)', backgroundColor: '#f8fafc', padding: '2rem 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-          
-          {/* Dashboard Header */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
-              🎯 AI Crypto Trading Dashboard
-            </h1>
-            <p style={{ color: '#6b7280' }}>
-              Real-time cryptocurrency trading with AI-powered strategies targeting R1,000 daily profit
-            </p>
-          </div>
+      <div style={{ minHeight: 'calc(100vh - 80px)', backgroundColor: '#f9fafb', padding: '1.5rem 0' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1rem' }}>
 
-          {/* Message Display - BlikSIM recommended */}
+          {/* Message Display */}
           {message && (
             <div style={{
-              padding: '1rem',
+              padding: '0.75rem 1rem',
               marginBottom: '1.5rem',
-              borderRadius: '0.5rem',
+              borderRadius: '0.375rem',
               border: `1px solid ${
                 message.type === 'success' ? '#10b981' : 
                 message.type === 'error' ? '#ef4444' : '#3b82f6'
@@ -221,13 +211,14 @@ function App() {
                 message.type === 'error' ? '#fef2f2' : '#eff6ff',
               color: 
                 message.type === 'success' ? '#059669' : 
-                message.type === 'error' ? '#dc2626' : '#1d4ed8'
+                message.type === 'error' : '#dc2626' : '#1d4ed8',
+              fontSize: '0.875rem'
             }}>
               <p style={{ margin: 0, fontWeight: '500' }}>{message.text}</p>
             </div>
           )}
 
-          {/* Loading Overlay - BlikSIM recommended */}
+          {/* Loading Overlay */}
           {loading && (
             <div style={{
               position: 'fixed',
@@ -250,14 +241,14 @@ function App() {
                 gap: '1rem'
               }}>
                 <div style={{
-                  width: '2rem',
-                  height: '2rem',
-                  border: '3px solid #e5e7eb',
-                  borderTop: '3px solid #3b82f6',
+                  width: '1.5rem',
+                  height: '1.5rem',
+                  border: '2px solid #e5e7eb',
+                  borderTop: '2px solid #3b82f6',
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite'
                 }}></div>
-                <span style={{ fontWeight: '500' }}>Processing...</span>
+                <span style={{ fontWeight: '500', fontSize: '0.875rem' }}>Processing...</span>
               </div>
             </div>
           )}
