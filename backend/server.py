@@ -805,7 +805,7 @@ async def cancel_trade(trade_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Import the new models at the top
-from models import AutoTradingSettings, AutoTradeLog, AutoTradingSettingsCreate
+from backend.models import AutoTradingSettings, AutoTradeLog, AutoTradingSettingsCreate
 
 # Target management endpoints
 @api_router.get("/targets/settings")
