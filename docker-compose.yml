@@ -48,14 +48,14 @@ services:
 
   freqtrade:
     build:
-      context: .
-      dockerfile: freqtrade/Dockerfile
+      context: ./freqtrade
+      dockerfile: Dockerfile
     container_name: crypto-coach-freqtrade
     restart: unless-stopped
     depends_on:
       - backend
     env_file:
-      - .env
+      - ../.env
     networks:
       - crypto-coach-network
     ports:
