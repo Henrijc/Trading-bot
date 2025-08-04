@@ -302,7 +302,7 @@ async def clear_chat_history(session_id: str):
                 summary_data = await ai_service.summarize_conversation(message_dicts)
                 
                 # Save summary to database
-                from models import ConversationSummary
+                from backend.models import ConversationSummary
                 conversation_summary = ConversationSummary(
                     session_id=session_id,
                     summary=summary_data.get("summary", ""),
