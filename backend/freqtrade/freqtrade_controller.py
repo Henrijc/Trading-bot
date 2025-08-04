@@ -138,11 +138,11 @@ class FreqTradeController:
             data = {"tradeid": trade_id}
             
             async with aiohttp.ClientSession() as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 async with session.post(
                     f"{self.base_url}/api/v1/forceexit",
                     json=data,
-                    auth=auth
+                    headers=headers
                 ) as response:
                     if response.status == 200:
                         return await response.json()
