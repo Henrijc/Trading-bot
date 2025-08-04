@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
-
-// Import components
-import Dashboard from "./components/Dashboard";
-import TradingView from "./components/TradingView";
-import AIConfig from "./components/AIConfig";
-import PerformanceAnalytics from "./components/PerformanceAnalytics";
-import GoalTracking from "./components/GoalTracking";
-import Navigation from "./components/Navigation";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
