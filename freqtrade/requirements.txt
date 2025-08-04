@@ -10,6 +10,8 @@ python-dotenv>=1.0.1
 # CRITICAL: Add missing aiohttp and related async dependencies
 aiohttp>=3.8.0
 asyncio
+# CRITICAL: Add missing requests-cache for luno_service.py
+requests-cache>=1.0.0
 # Pure Python technical analysis instead of TA-Lib
 ta>=0.10.2
 # Other essential freqtrade dependencies
