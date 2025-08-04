@@ -60,6 +60,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 app.include_router(backtest_router, prefix="/backtest", tags=["Backtesting"])
+app.include_router(live_trading_router, prefix="/live-trading", tags=["Live Trading"])
 
 # Define API routes - using service instances
 @app.get("/api/v1/health")
