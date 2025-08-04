@@ -52,7 +52,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
           background: 'linear-gradient(135deg, #2a2a2a 0%, #3a2520 100%)',
           padding: '30px',
           borderRadius: '15px',
-          border: '2px solid #f0ad4e',
+          border: '2px solid #22d3ee', // Cyan border
           maxWidth: '600px',
           textAlign: 'center'
         }}>
