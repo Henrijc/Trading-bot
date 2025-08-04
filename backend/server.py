@@ -60,6 +60,9 @@ trading_campaign_service = TradingCampaignService()
 # FastAPI app
 app = FastAPI(title="Crypto Trading Coach API", version="1.0.0")
 
+# Create API router
+api_router = APIRouter(prefix="/api")
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
