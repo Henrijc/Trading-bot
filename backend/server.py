@@ -169,7 +169,7 @@ async def health_check():
             "services": {
                 "luno": "connected" if luno_status else "disconnected",
                 "database": "connected",
-                "freqtrade": "running" if ft_status else "stopped"
+                "freqtrade": "running" if ft_status else "disabled"
             },
             "timestamp": datetime.utcnow()
         }
