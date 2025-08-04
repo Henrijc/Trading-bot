@@ -28,8 +28,9 @@ load_dotenv(ROOT_DIR / '.env')
 # Import our custom modules
 from luno_integration.luno_client import LunoClient
 from probability_engine.goal_calculator import GoalProbabilityCalculator
-from ai_strategies.freqai_strategy import FreqAITradingStrategy
-from freqtrade.freqtrade_controller import FreqTradeController
+# Temporarily disabled due to dependency issues
+# from ai_strategies.freqai_strategy import FreqAITradingStrategy
+# from freqtrade.freqtrade_controller import FreqTradeController
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
