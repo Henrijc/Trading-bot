@@ -56,9 +56,6 @@ services:
       - backend
     env_file:
       - .env
-    volumes:
-      - ./freqtrade/user_data:/freqtrade/user_data
-      - freqtrade_logs:/freqtrade/user_data/logs
     networks:
       - crypto-coach-network
     ports:
