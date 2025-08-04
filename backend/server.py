@@ -1519,7 +1519,7 @@ async def evaluate_trade_signal(signal_data: dict):
     }
     """
     try:
-        from services.decision_engine import TradeSignal
+        from backend.services.decision_engine import TradeSignal
         
         # Create TradeSignal object
         signal = TradeSignal(
