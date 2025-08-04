@@ -20,7 +20,7 @@ from backend.services.backtest_api_service import backtest_router
 from backend.services.decision_engine import DecisionEngine
 from backend.services.freqtrade_service import FreqtradeService
 from backend.services.historical_data_service import HistoricalDataService
-from backend.services.live_trading_service import LiveTradingService
+from backend.services.live_trading_service import live_trading_router
 from backend.services.luno_service import LunoService
 from backend.services.security_monitoring_service import SecurityMonitoringService
 from backend.services.security_service import SecurityScannerService
