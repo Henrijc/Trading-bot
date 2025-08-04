@@ -361,6 +361,9 @@ async def get_ai_strategy_status():
 async def configure_ai_strategy(config: TradingConfig, token: str = Depends(verify_token)):
     """Configure AI trading strategy parameters"""
     try:
+        if not ai_strategy:
+            return {"status": "error", "message": "AI strategy temporarily disabled due to dependency issues"}
+        
         await ai_strategy.update_config(config.dict())
         await db.config.replace_one({}, config.dict(), upsert=True)
         
