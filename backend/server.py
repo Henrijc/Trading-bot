@@ -162,7 +162,7 @@ async def health_check():
         await db.trades.find_one()
         
         # Check FreqTrade
-        ft_status = await freqtrade_controller.get_status()
+        ft_status = await freqtrade_controller.get_status() if freqtrade_controller else False
         
         return {
             "status": "healthy",
