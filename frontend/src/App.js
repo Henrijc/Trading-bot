@@ -119,7 +119,7 @@ function App() {
     }).format(amount);
   };
 
-  // Trading control functions - BlikSIM recommended
+  // Trading control functions
   const startAITrading = async () => {
     setLoading(true);
     setMessage(null);
@@ -128,9 +128,9 @@ function App() {
         headers: { 'Authorization': 'Bearer secure_token_123' }
       });
       setAiTradingActive(true);
-      setMessage({ type: 'success', text: '🚀 AI Trading Started Successfully!' });
+      setMessage({ type: 'success', text: 'AI Trading Started Successfully' });
     } catch (error) {
-      setMessage({ type: 'error', text: `❌ Failed to start AI trading: ${error.response?.data?.detail || error.message}` });
+      setMessage({ type: 'error', text: `Failed to start AI trading: ${error.response?.data?.detail || error.message}` });
     } finally {
       setLoading(false);
     }
@@ -144,20 +144,20 @@ function App() {
         headers: { 'Authorization': 'Bearer secure_token_123' }
       });
       setAiTradingActive(false);
-      setMessage({ type: 'success', text: '🛑 AI Trading Stopped Successfully!' });
+      setMessage({ type: 'success', text: 'AI Trading Stopped Successfully' });
     } catch (error) {
-      setMessage({ type: 'error', text: `❌ Failed to stop AI trading: ${error.response?.data?.detail || error.message}` });
+      setMessage({ type: 'error', text: `Failed to stop AI trading: ${error.response?.data?.detail || error.message}` });
     } finally {
       setLoading(false);
     }
   };
 
   const openManualTradeModal = () => {
-    setMessage({ type: 'info', text: '📊 Manual trading interface coming soon!' });
+    setMessage({ type: 'info', text: 'Manual trading interface coming soon' });
   };
 
   const openConfigModal = () => {
-    setMessage({ type: 'info', text: '⚙️ AI configuration panel coming soon!' });
+    setMessage({ type: 'info', text: 'AI configuration panel coming soon' });
   };
 
   return (
