@@ -37,7 +37,7 @@ from backend.services.security_service import SecurityService
 from backend.services.security_monitoring_service import SecurityMonitoringService
 from backend.services.authentication_service import AuthenticationService
 from backend.services.backtest_api_service import backtest_router
-from backend.services.live_trading_service import live_trading_router, LiveTradingService
+from backend.services.live_trading_service import live_trading_router
 from backend.services.freqtrade_service import FreqtradeService
 from backend.services.target_service import TargetService
 from backend.services.decision_engine import DecisionEngine
