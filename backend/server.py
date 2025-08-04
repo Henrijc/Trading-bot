@@ -18,21 +18,24 @@ from datetime import datetime, timedelta
 import json
 
 # Import our models and services
-from models import *
-from services.ai_service import AICoachService
-from services.luno_service import LunoService
-from services.technical_analysis_service import TechnicalAnalysisService
-from services.ai_knowledge_base import AIKnowledgeBase
-from services.trading_campaign_service import TradingCampaignService
-from services.ai_memory_service import AIMemoryService
-from services.semi_auto_trade_service import SemiAutoTradeService
-from services.security_service import SecurityService
-from services.authentication_service import AuthenticationService
-from services.backtest_api_service import backtest_router
-from services.live_trading_service import live_trading_router
-from services.freqtrade_service import FreqtradeService
-from services.target_service import TargetService
-from services.decision_engine import DecisionEngine
+import sys
+sys.path.insert(0, '/app')
+
+from backend.models import *
+from backend.services.ai_service import AICoachService
+from backend.services.luno_service import LunoService
+from backend.services.technical_analysis_service import TechnicalAnalysisService
+from backend.services.ai_knowledge_base import AIKnowledgeBase
+from backend.services.trading_campaign_service import TradingCampaignService
+from backend.services.ai_memory_service import AIMemoryService
+from backend.services.semi_auto_trade_service import SemiAutoTradeService
+from backend.services.security_service import SecurityService
+from backend.services.authentication_service import AuthenticationService
+from backend.services.backtest_api_service import backtest_router
+from backend.services.live_trading_service import live_trading_router
+from backend.services.freqtrade_service import FreqtradeService
+from backend.services.target_service import TargetService
+from backend.services.decision_engine import DecisionEngine
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
