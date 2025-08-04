@@ -17,8 +17,7 @@ class FreqTradeController:
     
     def __init__(self):
         self.base_url = "http://localhost:8080"  # FreqTrade API endpoint
-        self.username = os.environ.get('FREQTRADE_USERNAME', 'freqtrader')
-        self.password = os.environ.get('FREQTRADE_PASSWORD', 'secure_password')
+        self.jwt_secret = os.environ.get('FREQTRADE_JWT_SECRET', 'freqtrade_jwt_secret_key')
         self.is_running = False
         self.config_path = Path(__file__).parent / "config.json"
         self.strategy_path = Path(__file__).parent / "strategies"
