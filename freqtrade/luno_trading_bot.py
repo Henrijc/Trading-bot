@@ -20,7 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.services.luno_service import LunoService
 from backend.services.technical_analysis_service import TechnicalAnalysisService
 from backend.services.historical_data_service import HistoricalDataService
-from real_freqai_service import RealFreqAIService
+from freqtrade.real_freqai_service import RealFreqAIService
 
 # Configure logging
 logging.basicConfig(
