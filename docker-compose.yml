@@ -12,7 +12,6 @@ services:
       MONGO_INITDB_DATABASE: cryptobot_db
     volumes:
       - mongodb_data:/data/db
-      - ./mongodb/init.js:/docker-entrypoint-initdb.d/init.js:ro
     networks:
       - cryptobot_network
     ports:
@@ -47,14 +46,17 @@ services:
       - BINANCE_API_KEY=${BINANCE_API_KEY:-}
       - BINANCE_SECRET=${BINANCE_SECRET:-}
       - API_TOKEN=${API_TOKEN:-secure_token_123}
-      - FREQTRADE_USERNAME=${FREQTRADE_USERNAME:-freqtrader}
-      - FREQTRADE_PASSWORD=${FREQTRADE_PASSWORD:-secure_password}
-      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET:-random_secret_key}
+      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET:-freqtrade_jwt_secret_key}
+      - DAILY_TARGET_ZAR=${DAILY_TARGET_ZAR:-1000}
+      - MAX_DAILY_RISK_PERCENT=${MAX_DAILY_RISK_PERCENT:-2.0}
+      - MAX_OPEN_TRADES=${MAX_OPEN_TRADES:-5}
+      - ENABLE_AI_TRADING=${ENABLE_AI_TRADING:-true}
+      - AI_MODEL_RETRAIN_HOURS=${AI_MODEL_RETRAIN_HOURS:-24}
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.7}
     depends_on:
       - mongodb
       - redis
     volumes:
-      - ./backend:/app
       - freqtrade_data:/app/freqtrade/data
       - ai_models:/app/ai_strategies/models
     networks:
@@ -74,9 +76,6 @@ services:
       - WDS_SOCKET_PORT=443
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     networks:
       - cryptobot_network
     ports:
