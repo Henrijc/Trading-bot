@@ -35,7 +35,7 @@ from backend.services.ai_memory_service import AIMemoryService
 from backend.services.semi_auto_trade_service import SemiAutoTradeService
 from backend.services.security_service import SecurityService
 from backend.services.security_monitoring_service import SecurityMonitoringService
-from backend.services.authentication_service import AuthenticationService, auth_router
+from backend.services.authentication_service import auth_router
 from backend.services.backtest_api_service import backtest_router
 from backend.services.live_trading_service import live_trading_router
 from backend.services.freqtrade_service import FreqtradeService
