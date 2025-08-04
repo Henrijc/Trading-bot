@@ -27,6 +27,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [aiTradingActive, setAiTradingActive] = useState(false);
   const [message, setMessage] = useState(null);
+  const [performanceData, setPerformanceData] = useState(null);
+  const [trades, setTrades] = useState([]);
+  const [goals, setGoals] = useState(null);
 
   useEffect(() => {
     checkSystemHealth();
