@@ -211,7 +211,7 @@ function App() {
                 message.type === 'error' ? '#fef2f2' : '#eff6ff',
               color: 
                 message.type === 'success' ? '#059669' : 
-                message.type === 'error' : '#dc2626' : '#1d4ed8',
+                message.type === 'error' ? '#dc2626' : '#1d4ed8',
               fontSize: '0.875rem'
             }}>
               <p style={{ margin: 0, fontWeight: '500' }}>{message.text}</p>
