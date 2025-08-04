@@ -263,7 +263,7 @@ Be professional, direct, contextually aware, and use the actual data provided to
             
             if has_suggest_request:
                 try:
-                    from services.semi_auto_trade_service import SemiAutoTradeService
+                    from backend.services.semi_auto_trade_service import SemiAutoTradeService
                     trade_service = SemiAutoTradeService()
                     
                     portfolio_data = await self.luno_service.get_portfolio_data()
