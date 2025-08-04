@@ -2,9 +2,11 @@ import os
 import asyncio
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
-from services.luno_service import LunoService
-from services.ai_service import AICoachService
-from services.technical_analysis_service import TechnicalAnalysisService
+import sys
+sys.path.insert(0, '/app')
+from backend.services.luno_service import LunoService
+from backend.services.ai_service import AICoachService
+from backend.services.technical_analysis_service import TechnicalAnalysisService
 import json
 
 class TradingCampaignService:
