@@ -129,7 +129,7 @@ class LunoClient:
     async def get_orderbook(self, pair: str) -> Dict[str, Any]:
         """Get orderbook for a trading pair"""
         try:
-            response = await self._make_request("GET", "/orderbook_top", params={"pair": pair})
+            response = await self._make_request("GET", "/orderbook_top", params={"pair": pair}, auth_required=False)
             
             orderbook = {
                 "pair": pair,
