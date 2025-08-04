@@ -300,6 +300,113 @@ function App() {
             )}
           </div>
 
+          {/* Trading Controls - CRITICAL ADDITION per BlikSIM */}
+          <div style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '0.5rem', 
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', 
+            padding: '1.5rem',
+            marginBottom: '2rem' 
+          }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1f2937', marginBottom: '1rem' }}>
+              🎮 Trading Controls
+            </h3>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              <button
+                onClick={() => startAITrading()}
+                style={{
+                  padding: '1rem',
+                  backgroundColor: '#16a34a',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#15803d'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#16a34a'}
+              >
+                🚀 Start AI Trading
+              </button>
+              
+              <button
+                onClick={() => stopAITrading()}
+                style={{
+                  padding: '1rem',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+              >
+                🛑 Stop AI Trading
+              </button>
+              
+              <button
+                onClick={() => openManualTradeModal()}
+                style={{
+                  padding: '1rem',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
+              >
+                📊 Manual Trade
+              </button>
+              
+              <button
+                onClick={() => openConfigModal()}
+                style={{
+                  padding: '1rem',
+                  backgroundColor: '#8b5cf6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#7c3aed'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#8b5cf6'}
+              >
+                ⚙️ AI Config
+              </button>
+            </div>
+          </div>
+
           {/* AI Insights */}
           <div style={{ 
             backgroundColor: 'white', 
