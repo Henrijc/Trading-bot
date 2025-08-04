@@ -393,6 +393,9 @@ async def start_automated_trading(token: str = Depends(verify_token)):
 async def stop_automated_trading(token: str = Depends(verify_token)):
     """Stop automated trading"""
     try:
+        if not ai_strategy or not freqtrade_controller:
+            return {"status": "error", "message": "AI trading temporarily disabled due to dependency issues"}
+        
         await ai_strategy.stop_trading()
         await freqtrade_controller.stop()
         
