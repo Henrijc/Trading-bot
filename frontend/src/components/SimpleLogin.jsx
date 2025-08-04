@@ -146,7 +146,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         </div>
 
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', color: '#f0ad4e', marginBottom: '5px' }}>
+          <label style={{ display: 'block', color: '#22d3ee', marginBottom: '5px' }}> // Cyan color
             Password
           </label>
           <input
