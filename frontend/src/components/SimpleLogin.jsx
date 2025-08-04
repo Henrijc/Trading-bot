@@ -196,7 +196,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
           style={{
             width: '100%',
             padding: '12px',
-            background: credentials.password ? 'linear-gradient(135deg, #f0ad4e 0%, #d58512 100%)' : '#666',
+            background: credentials.password ? 'linear-gradient(135deg, #22d3ee 0%, #0891b2 100%)' : '#666', // Cyan gradient instead of amber
             color: '#000',
             border: 'none',
             borderRadius: '8px',
