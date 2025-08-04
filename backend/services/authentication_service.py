@@ -5,7 +5,9 @@ import io
 import base64
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, Tuple
-from services.security_service import SecurityService
+import sys
+sys.path.insert(0, '/app')
+from backend.services.security_service import SecurityService
 from services.luno_service import LunoService
 import json
 
