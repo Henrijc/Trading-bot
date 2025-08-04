@@ -18,25 +18,19 @@ passlib>=1.7.4
 bcrypt>=4.1.0
 typer>=0.9.0
 
-# FreqTrade dependencies
-freqtrade>=2024.1
+# CCXT for exchange integration
 ccxt>=4.2.0
-ta-lib
-technical>=1.4.0
 
 # Luno API (using requests for direct API calls)
 requests-oauthlib>=2.0.0
 
-# Machine Learning
+# Machine Learning (lightweight versions)
 lightgbm>=4.1.0
 xgboost>=2.0.0
-catboost>=1.2.0
-tensorflow>=2.15.0
 
 # Data analysis
 matplotlib>=3.7.0
 seaborn>=0.12.0
-plotly>=5.17.0
 
 # Async HTTP client
 httpx>=0.27.0
@@ -44,11 +38,10 @@ httpx>=0.27.0
 # Job scheduling
 apscheduler>=3.10.0
 
-# Logging and monitoring
-structlog>=23.2.0
+# Technical analysis (using pandas-ta instead of ta-lib)
+pandas-ta>=0.3.14b0
 
 # Development
 pytest>=8.0.0
 black>=24.1.1
 isort>=5.13.2
-flake8>=7.0.0
