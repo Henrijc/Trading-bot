@@ -202,12 +202,12 @@ class FreqTradeController:
             }
             
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=300)) as session:
-                auth = aiohttp.BasicAuth(self.username, self.password)
+                headers = {"Authorization": f"Bearer {self.jwt_secret}"}
                 
                 async with session.post(
                     f"{self.base_url}/api/v1/backtest",
                     json=data,
-                    auth=auth
+                    headers=headers
                 ) as response:
                     if response.status == 200:
                         return await response.json()
