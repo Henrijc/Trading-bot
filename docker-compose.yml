@@ -29,6 +29,19 @@ services:
     ports:
       - "8002:8001"
 
+  freqtrade:
+    build: ./freqtrade
+    container_name: crypto-coach-freqtrade
+    restart: unless-stopped
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    networks:
+      - crypto-coach-network
+    ports:
+      - "127.0.0.1:8083:8082"
+
   frontend:
     build: ./frontend
     container_name: crypto-coach-frontend
