@@ -164,28 +164,30 @@ function App() {
     <div className="App">
       {/* System Status Header */}
       <div className={`status-header ${connectionStatus}`} style={{
-        backgroundColor: connectionStatus === 'connected' ? '#059669' : '#dc2626',
+        backgroundColor: connectionStatus === 'connected' ? '#1f2937' : '#dc2626',
         color: 'white',
-        padding: '0.5rem 0'
+        padding: '0.75rem 0',
+        borderBottom: '1px solid #374151'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>🤖 AI Crypto Trading Bot</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0, letterSpacing: '-0.025em' }}>AI Trading Portfolio</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' }}>
               <span style={{ 
-                width: '8px', 
-                height: '8px', 
+                width: '6px', 
+                height: '6px', 
                 backgroundColor: connectionStatus === 'connected' ? '#10b981' : '#ef4444',
                 borderRadius: '50%',
                 display: 'inline-block'
               }}></span>
-              <span style={{ fontSize: '0.875rem', textTransform: 'capitalize' }}>{connectionStatus}</span>
+              <span style={{ textTransform: 'capitalize' }}>{connectionStatus}</span>
             </div>
           </div>
-          <div style={{ fontSize: '0.875rem', display: 'flex', gap: '1rem' }}>
-            <span>Luno: {systemHealth?.services?.luno || 'unknown'}</span>
-            <span>DB: {systemHealth?.services?.database || 'unknown'}</span>
-            <span>AI: {aiTradingActive ? 'active' : 'ready'}</span>
+          <div style={{ fontSize: '0.875rem', display: 'flex', gap: '2rem', opacity: 0.9 }}>
+            <span>Exchange: {systemHealth?.services?.luno || 'Unknown'}</span>
+            <span>Database: {systemHealth?.services?.database || 'Unknown'}</span>
+            <span>AI Status: {aiTradingActive ? 'Active' : 'Standby'}</span>
+            <span>{new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</span>
           </div>
         </div>
       </div>
