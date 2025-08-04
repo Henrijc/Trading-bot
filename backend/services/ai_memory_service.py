@@ -2,8 +2,8 @@ import os
 import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
-from services.luno_service import LunoService
-from services.ai_service import AICoachService
+from backend.services.luno_service import LunoService
+from backend.services.ai_service import AICoachService
 import json
 
 class AIMemoryService:
