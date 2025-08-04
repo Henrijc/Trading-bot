@@ -1,6 +1,6 @@
 FROM python:3.11-bullseye
 
-WORKDIR /app # Set WORKDIR to the root of the copied application
+WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && \
@@ -9,15 +9,13 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend requirements.txt and install dependencies
-# Note: This copies only backend/requirements.txt relative to the build context
 COPY backend/requirements.txt ./backend/requirements.txt
 RUN pip install --no-cache-dir -r ./backend/requirements.txt
 
 # Copy the entire project repository into /app
-# This is the key change to ensure all files are present
 COPY . /app
 
-# Ensure directories are explicitly created for writing, if not using external volumes for them
+# Ensure directories are explicitly created for writing
 # These paths are relative to /app
 RUN mkdir -p /app/backend/logs
 RUN mkdir -p /app/backend/historical_data
