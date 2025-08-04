@@ -45,7 +45,7 @@ const SimpleLogin = ({ onLoginSuccess }) => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        color: '#f0ad4e',
+        color: '#22d3ee', // Cyan instead of amber
         fontFamily: 'Arial, sans-serif'
       }}>
         <div style={{
