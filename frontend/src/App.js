@@ -587,9 +587,9 @@ function App() {
                       <span style={{ color: '#f59e0b' }}>● NEUTRAL Market</span>
                       <span style={{ color: '#6b7280' }}>AI Confidence: 65%</span>
                     </div>
-                    {balance?.HBAR_staked && (
-                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
-                        ★ Staked: {balance.HBAR_staked.toFixed(0)}
+                    {balance?.HBAR_staked > 0 && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.5rem 0 0 0', backgroundColor: '#ecfdf5', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>
+                        ★ Staked: {balance.HBAR_staked.toFixed(0)} HBAR (APY: 6.8%)
                       </p>
                     )}
                   </div>
