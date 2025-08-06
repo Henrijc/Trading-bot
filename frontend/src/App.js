@@ -1351,7 +1351,7 @@ function App() {
                   <div>
                     <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0 0 0.25rem 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>24h Volume</p>
                     <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
-                      {(marketData.ticker.rolling_24_hour_volume || 0).toFixed(2)} BTC
+                      {Number(marketData.ticker.rolling_24_hour_volume || 0).toFixed(2)} BTC
                     </p>
                   </div>
                   
