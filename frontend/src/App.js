@@ -1341,7 +1341,7 @@ function App() {
 
               {/* Right Column - Strategy & AI */}
               <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#3b82f6' }}>🤖 AI Strategy Configuration</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#3b82f6' }}>AI Strategy Configuration</h3>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
                     Trading Strategy
