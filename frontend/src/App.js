@@ -712,41 +712,90 @@ function App() {
                   </div>
                 )}
 
-                {/* Staking Holdings Summary */}
-                {(balance?.ETH_staked > 0 || balance?.ADA_staked > 0 || balance?.DOT_staked > 0 || balance?.HBAR_staked > 0) && (
-                  <div style={{ padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '0.375rem', border: '1px solid #10b981', gridColumn: 'span 2' }}>
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <h4 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#059669', margin: 0 }}>
-                        ★ STAKING REWARDS ACTIVE
-                      </h4>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', fontSize: '0.75rem' }}>
-                      {balance?.ETH_staked > 0 && (
-                        <div>
-                          <div style={{ color: '#059669', fontWeight: '600' }}>ETH Staked</div>
-                          <div style={{ color: '#14532d' }}>{balance.ETH_staked.toFixed(4)}</div>
-                          <div style={{ color: '#6b7280' }}>APY: 4.2%</div>
-                        </div>
-                      )}
-                      {balance?.ADA_staked > 0 && (
-                        <div>
-                          <div style={{ color: '#059669', fontWeight: '600' }}>ADA Staked</div>
-                          <div style={{ color: '#14532d' }}>{balance.ADA_staked.toFixed(2)}</div>
-                          <div style={{ color: '#6b7280' }}>APY: 5.1%</div>
-                        </div>
-                      )}
-                      {balance?.DOT_staked > 0 && (
-                        <div>
-                          <div style={{ color: '#059669', fontWeight: '600' }}>DOT Staked</div>
-                          <div style={{ color: '#14532d' }}>{balance.DOT_staked.toFixed(2)}</div>
-                          <div style={{ color: '#6b7280' }}>APY: 12.5%</div>
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ marginTop: '0.75rem', padding: '0.5rem', backgroundColor: '#d1fae5', borderRadius: '0.25rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#14532d' }}>
-                        <strong>Monthly Staking Income:</strong> ~R{((balance?.ETH_staked || 0) * 2400 * 0.042/12 + (balance?.ADA_staked || 0) * 0.45 * 0.051/12 + (balance?.DOT_staked || 0) * 5.2 * 0.125/12).toFixed(2)}
+                {/* Add any other holdings that might not be in the main list */}
+                {balance?.DOT_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>DOT</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Polkadot</span>
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
                       </div>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.DOT_balance || 0).toFixed(2)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.DOT_balance || 0) * (cryptoPrices?.DOT || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.DOT_balance || 0) * (cryptoPrices?.DOT || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#059669' }}>● BULL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 77%</span>
+                    </div>
+                    {balance?.DOT_staked && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.5rem 0 0 0', backgroundColor: '#ecfdf5', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>
+                        ★ Staked: {balance.DOT_staked.toFixed(2)} DOT (APY: 12.5%)
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* SOL, DOGE, NEAR, BERA - Add if they exist in balance */}
+                {balance?.SOL_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>SOL</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Solana</span>
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.SOL_balance || 0).toFixed(4)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.SOL_balance || 0) * (cryptoPrices?.SOL || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.SOL_balance || 0) * (cryptoPrices?.SOL || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#059669' }}>● BULL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 82%</span>
+                    </div>
+                  </div>
+                )}
+
+                {balance?.DOGE_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>DOGE</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Dogecoin</span>
+                        <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: '600' }}>→ HOLD</span>
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.DOGE_balance || 0).toFixed(0)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.DOGE_balance || 0) * (cryptoPrices?.DOGE || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.DOGE_balance || 0) * (cryptoPrices?.DOGE || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#f59e0b' }}>● NEUTRAL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 64%</span>
                     </div>
                   </div>
                 )}
