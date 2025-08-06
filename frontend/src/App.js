@@ -35,6 +35,7 @@ function App() {
   const [trades, setTrades] = useState([]);
   const [goals, setGoals] = useState(null);
   const [cryptoPrices, setCryptoPrices] = useState(null);
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   useEffect(() => {
     loadAllData();
