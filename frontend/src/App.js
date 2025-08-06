@@ -76,8 +76,13 @@ function App() {
     try {
       const response = await axios.get(`${API}/balance`);
       setBalance(response.data.data);
+      setConnectionStatus('connected');
     } catch (error) {
       console.error('Balance fetch failed:', error);
+      setBalance(null);
+      if (error.response?.status === 500) {
+        setConnectionStatus('disconnected');
+      }
     }
   };
 
