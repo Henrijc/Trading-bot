@@ -55,19 +55,22 @@ class LunoClient:
         headers = self._get_auth_headers(method, endpoint)
         
         # Add authentication for private endpoints
-        auth = None
         if auth_required:
-            auth = httpx.BasicAuth(self.api_key, self.api_secret)
+            import base64
+            credentials = f"{self.api_key}:{self.api_secret}"
+            encoded_credentials = base64.b64encode(credentials.encode()).decode()
+            headers["Authorization"] = f"Basic {encoded_credentials}"
             logger.info(f"Making authenticated request to: {url}")
             logger.info(f"API Key being used: {self.api_key}")
-            logger.info(f"API Secret length: {len(self.api_secret)}")
-            logger.info(f"Headers: {headers}")
+            logger.info(f"Credentials string: {credentials}")
+            logger.info(f"Encoded credentials: {encoded_credentials}")
+            logger.info(f"Authorization header: {headers['Authorization']}")
         
         try:
             if method.upper() == "GET":
-                response = await self.client.get(url, params=query_params, headers=headers, auth=auth)
+                response = await self.client.get(url, params=query_params, headers=headers)
             elif method.upper() == "POST":
-                response = await self.client.post(url, json=data, params=query_params, headers=headers, auth=auth)
+                response = await self.client.post(url, json=data, params=query_params, headers=headers)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
             
@@ -81,7 +84,6 @@ class LunoClient:
             logger.error(f"Luno API error {e.response.status_code}: {e.response.text}")
             logger.error(f"Request URL: {url}")
             logger.error(f"Request headers: {headers}")
-            logger.error(f"Auth used: {auth is not None}")
             raise Exception(f"Luno API error: {e.response.status_code} - {e.response.text}")
         except Exception as e:
             logger.error(f"Luno API request failed: {e}")
