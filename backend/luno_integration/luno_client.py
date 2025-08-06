@@ -220,13 +220,12 @@ class LunoClient:
                 logger.info(f"{symbol}: balance={amount}, staked={staked_amount}, total={total_amount}")
                 
                 if total_amount > 0 and symbol in price_data:
-                    # Get USD price from our crypto price service
-                    usd_price = price_data[symbol]
-                    zar_price = usd_price * usd_to_zar
+                    # Get ZAR price directly from Luno
+                    zar_price = price_data[symbol]
                     value = total_amount * zar_price
                     total_value += value
                     
-                    logger.info(f"{symbol}: USD price={usd_price}, ZAR price={zar_price}, value={value}")
+                    logger.info(f"{symbol}: ZAR price={zar_price}, value={value}")
                     
                     # Add regular holdings
                     if amount > 0:
