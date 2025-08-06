@@ -159,25 +159,34 @@ class LunoClient:
             balance_data = await self.get_balance()
             logger.info(f"Balance data retrieved: crypto count = {len([k for k in balance_data.keys() if 'balance' in k and balance_data[k] > 0])}")
             
-            # Use the working crypto prices API endpoint instead of importing modules
+            # Get REAL Luno prices for all trading pairs
             async with aiohttp.ClientSession() as session:
                 try:
-                    # Call our own crypto prices API
-                    async with session.get('https://2dc1c750-84a9-4542-9a13-11d2dbd8d7fe.preview.emergentagent.com/api/crypto-prices') as response:
+                    # Get all Luno ZAR trading pairs for real prices
+                    async with session.get('https://api.luno.com/api/1/tickers') as response:
                         if response.status == 200:
-                            api_response = await response.json()
-                            if api_response.get('status') == 'success':
-                                price_data = api_response.get('data', {})
-                                logger.info(f"Price data retrieved from API: {list(price_data.keys())}")
-                            else:
-                                raise Exception("API returned error status")
+                            tickers = await response.json()
+                            price_data = {}
+                            
+                            # Extract ZAR prices from Luno tickers
+                            for ticker in tickers.get('tickers', []):
+                                pair = ticker['pair']
+                                if pair.endswith('ZAR'):
+                                    symbol = pair.replace('ZAR', '').replace('XBT', 'BTC')
+                                    price_zar = float(ticker['last_trade'])
+                                    price_data[symbol] = price_zar
+                                    
+                            logger.info(f"Luno ZAR prices retrieved: {price_data}")
+                            
                         else:
-                            raise Exception(f"HTTP {response.status}")
+                            raise Exception(f"Luno API returned {response.status}")
+                            
                 except Exception as e:
-                    logger.error(f"Failed to get crypto prices from API: {e}")
-                    raise Exception("Price data unavailable")
+                    logger.error(f"Failed to get Luno prices: {e}")
+                    raise Exception("Luno price data unavailable")
             
-            usd_to_zar = price_data.get('USD_TO_ZAR', 18.5)
+            # Since we now have ZAR prices directly, we don't need USD conversion
+            usd_to_zar = 1.0  # Not used anymore since prices are already in ZAR
             logger.info(f"USD to ZAR rate: {usd_to_zar}")
             
             # Calculate total portfolio value
