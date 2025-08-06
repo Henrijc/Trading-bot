@@ -179,6 +179,18 @@ function App() {
               }}></span>
               <span style={{ textTransform: 'capitalize' }}>{connectionStatus}</span>
             </div>
+            {/* Latest Update Indicator */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#10b981' }}>
+              <span style={{ 
+                width: '8px', 
+                height: '8px', 
+                backgroundColor: '#10b981',
+                borderRadius: '50%',
+                display: 'inline-block',
+                animation: 'pulse 2s infinite'
+              }}></span>
+              <span>LATEST UPDATE ACTIVE</span>
+            </div>
           </div>
           <div style={{ fontSize: '0.875rem', display: 'flex', gap: '2rem', opacity: 0.9 }}>
             <span>Exchange: {systemHealth?.services?.luno || 'Unknown'}</span>
