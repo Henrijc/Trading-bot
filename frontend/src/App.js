@@ -32,6 +32,7 @@ function App() {
   const [systemHealth, setSystemHealth] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [balance, setBalance] = useState(null);
+  const [portfolio, setPortfolio] = useState(null);
   const [marketData, setMarketData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [aiTradingActive, setAiTradingActive] = useState(false);
