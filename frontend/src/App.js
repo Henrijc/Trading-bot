@@ -1088,7 +1088,7 @@ function App() {
                       justifyContent: 'center',
                       fontSize: '1rem'
                     }}>
-                      👤
+                      USER
                     </div>
                   )}
                 </div>
