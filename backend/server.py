@@ -120,7 +120,7 @@ logger.info(f"Parent .env file exists: {parent_env_path.exists()}")
 
 # Global instances
 luno_api_key = os.environ.get('LUNO_API_KEY', '').strip().strip('"').strip("'")
-luno_api_secret = os.environ.get('LUNO_API_SECRET', '').strip().strip('"').strip("'")
+luno_api_secret = os.environ.get('LUNO_SECRET', '').strip().strip('"').strip("'")
 
 logger.info(f"Final API Key loaded: '{luno_api_key}'")
 logger.info(f"Final API Secret loaded: '{luno_api_secret}'")
