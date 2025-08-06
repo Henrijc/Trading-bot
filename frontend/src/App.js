@@ -145,12 +145,12 @@ function App() {
     }
   };
 
-  const loadCryptoPrices = async () => {
+  const loadTradingSignals = async () => {
     try {
-      const response = await axios.get(`${API}/crypto-prices`);
-      setCryptoPrices(response.data.data);
+      const response = await axios.get(`${API}/trading-signals`);
+      setTradingSignals(response.data.data);
     } catch (error) {
-      console.error('Crypto prices fetch failed:', error);
+      console.error('Trading signals fetch failed:', error);
     }
   };
 
