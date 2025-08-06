@@ -216,27 +216,53 @@ function App() {
 
   // Calculate total portfolio value
   const calculateTotalPortfolioValue = () => {
-    if (!balance || !cryptoPrices) return 0;
+    if (!balance || !cryptoPrices) {
+      console.log('calculateTotalPortfolioValue: Missing balance or cryptoPrices', { balance, cryptoPrices });
+      return 0;
+    }
     
     let total = 0;
+    const usdToZar = Number(cryptoPrices.USD_TO_ZAR || 18.5);
+    
+    console.log('Portfolio calculation starting with balance:', balance);
+    console.log('Crypto prices:', cryptoPrices);
     
     // Add all crypto holdings
-    total += (balance.BTC_balance || 0) * (cryptoPrices.BTC || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.ETH_balance || 0) * (cryptoPrices.ETH || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.HBAR_balance || 0) * (cryptoPrices.HBAR || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.XRP_balance || 0) * (cryptoPrices.XRP || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.ADA_balance || 0) * (cryptoPrices.ADA || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.TRX_balance || 0) * (cryptoPrices.TRX || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.XLM_balance || 0) * (cryptoPrices.XLM || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
+    const cryptoBalances = [
+      { symbol: 'BTC', balance: Number(balance.BTC_balance || 0), price: Number(cryptoPrices.BTC || 0) },
+      { symbol: 'ETH', balance: Number(balance.ETH_balance || 0), price: Number(cryptoPrices.ETH || 0) },
+      { symbol: 'HBAR', balance: Number(balance.HBAR_balance || 0), price: Number(cryptoPrices.HBAR || 0) },
+      { symbol: 'XRP', balance: Number(balance.XRP_balance || 0), price: Number(cryptoPrices.XRP || 0) },
+      { symbol: 'ADA', balance: Number(balance.ADA_balance || 0), price: Number(cryptoPrices.ADA || 0) },
+      { symbol: 'TRX', balance: Number(balance.TRX_balance || 0), price: Number(cryptoPrices.TRX || 0) },
+      { symbol: 'XLM', balance: Number(balance.XLM_balance || 0), price: Number(cryptoPrices.XLM || 0) }
+    ];
+    
+    cryptoBalances.forEach(({ symbol, balance: bal, price }) => {
+      const value = bal * price * usdToZar;
+      console.log(`${symbol}: ${bal} * ${price} * ${usdToZar} = ${value}`);
+      total += value;
+    });
     
     // Add staked assets
-    total += (balance.ETH_staked || 0) * (cryptoPrices.ETH || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.ADA_staked || 0) * (cryptoPrices.ADA || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
-    total += (balance.HBAR_staked || 0) * (cryptoPrices.HBAR || 0) * (cryptoPrices.USD_TO_ZAR || 18.5);
+    const stakedBalances = [
+      { symbol: 'ETH_staked', balance: Number(balance.ETH_staked || 0), price: Number(cryptoPrices.ETH || 0) },
+      { symbol: 'ADA_staked', balance: Number(balance.ADA_staked || 0), price: Number(cryptoPrices.ADA || 0) },
+      { symbol: 'HBAR_staked', balance: Number(balance.HBAR_staked || 0), price: Number(cryptoPrices.HBAR || 0) }
+    ];
+    
+    stakedBalances.forEach(({ symbol, balance: bal, price }) => {
+      const value = bal * price * usdToZar;
+      console.log(`${symbol}: ${bal} * ${price} * ${usdToZar} = ${value}`);
+      total += value;
+    });
     
     // Add ZAR balance
-    total += balance.ZAR_balance || 0;
+    const zarBalance = Number(balance.ZAR_balance || 0);
+    console.log(`ZAR_balance: ${zarBalance}`);
+    total += zarBalance;
     
+    console.log('Total portfolio value:', total);
     return total;
   };
 
