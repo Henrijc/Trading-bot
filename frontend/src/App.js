@@ -79,7 +79,8 @@ function App() {
       loadPerformanceData(),
       loadTrades(),
       loadGoals(),
-      loadCryptoPrices()
+      loadCryptoPrices(),
+      loadTradingSignals()
     ]);
   };
 
