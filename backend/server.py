@@ -385,6 +385,7 @@ async def get_crypto_prices():
             "TRX": 0.15,        # USD
             "XLM": 0.25,        # USD
             "DOGE": 0.18,       # USD
+            "SOL": 210.00,      # USD - Solana current price
             "USD_TO_ZAR": 18.5  # ZAR per USD
         }
         
