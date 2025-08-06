@@ -285,3 +285,5 @@ agent_communication:
       message: "Completed comprehensive UI/UX testing. Found that many user-reported issues are actually resolved (market data working, system status correct). However, identified critical missing interactive controls and minor UX improvements needed. Backend APIs are ready to support interactive features."
     - agent: "testing"
       message: "✅ PHASE 3 BACKEND TESTING COMPLETE: All critical API endpoints now working perfectly. NEW /api/crypto-prices endpoint verified working with proper USD prices and ZAR conversion. FIXED /api/market-data/XBTZAR and /api/trading-signals endpoints. All 13 backend tests passing (100% success rate). Backend is fully ready to support Phase 3 frontend components."
+    - agent: "main"
+      message: "📋 USER FEEDBACK RECEIVED: Portfolio balance displays R0.00 vs actual Luno data, staked holdings not showing, need to remove unwanted metrics (AI activity level, trading volume, cumulative P&L chart, BTC/ZAR price movement). Referenced GitHub repo shows proper structure. Need to fix frontend data processing and remove emojis while keeping plain icons."
