@@ -234,7 +234,75 @@ async def get_balance():
         logger.error(f"Balance fetch failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/crypto-prices")
+@app.get("/api/trading-signals")
+async def get_trading_signals():
+    """Get real-time trading signals from FreqTrade AI"""
+    try:
+        # Get AI trading signals for all pairs
+        signals = {}
+        
+        # Connect to FreqTrade AI engine for real analysis
+        from backend.freqtrade.freqtrade_controller import FreqTradeController
+        
+        try:
+            freqtrade = FreqTradeController()
+            
+            # Get AI signals for each trading pair
+            trading_pairs = ['XBTZAR', 'ETHZAR', 'XRPZAR', 'ADAZAR', 'TRXZAR', 'XLMZAR']
+            
+            for pair in trading_pairs:
+                try:
+                    # Get FreqTrade AI analysis
+                    analysis = await freqtrade.get_ai_signal(pair)
+                    
+                    if analysis:
+                        crypto = pair.replace('ZAR', '').replace('XBT', 'BTC')
+                        signals[crypto] = {
+                            'action': analysis.get('action', 'HOLD'),  # BUY, SELL, HOLD
+                            'confidence': analysis.get('confidence', 0),
+                            'market_trend': analysis.get('trend', 'NEUTRAL'),  # BULL, BEAR, NEUTRAL
+                            'price_prediction': analysis.get('price_prediction', 0),
+                            'reasoning': analysis.get('reasoning', 'AI analysis unavailable')
+                        }
+                    else:
+                        # Fallback if AI analysis fails
+                        crypto = pair.replace('ZAR', '').replace('XBT', 'BTC')
+                        signals[crypto] = {
+                            'action': 'HOLD',
+                            'confidence': 0,
+                            'market_trend': 'NEUTRAL',
+                            'price_prediction': 0,
+                            'reasoning': 'AI analysis temporarily unavailable'
+                        }
+                        
+                except Exception as e:
+                    logger.warning(f"Failed to get AI signal for {pair}: {e}")
+                    crypto = pair.replace('ZAR', '').replace('XBT', 'BTC')
+                    signals[crypto] = {
+                        'action': 'HOLD',
+                        'confidence': 0,
+                        'market_trend': 'NEUTRAL', 
+                        'price_prediction': 0,
+                        'reasoning': f'AI analysis error: {str(e)}'
+                    }
+                    
+        except Exception as e:
+            logger.error(f"FreqTrade AI controller error: {e}")
+            # Return safe defaults if FreqTrade is unavailable
+            for crypto in ['BTC', 'ETH', 'XRP', 'ADA', 'TRX', 'XLM']:
+                signals[crypto] = {
+                    'action': 'HOLD',
+                    'confidence': 0,
+                    'market_trend': 'NEUTRAL',
+                    'price_prediction': 0,
+                    'reasoning': 'FreqTrade AI engine not available'
+                }
+        
+        return {"status": "success", "data": signals}
+        
+    except Exception as e:
+        logger.error(f"Trading signals fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 async def get_crypto_prices():
     """Get USD prices for cryptocurrencies that don't have ZAR pairs"""
     try:
