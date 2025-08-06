@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) => {
-  const [revCount, setRevCount] = useState(0);
   const [metrics, setMetrics] = useState({
     totalTrades: 0,
     winRate: 0,
@@ -12,23 +11,13 @@ const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) =
     monthlyReturn: 0,
   });
 
-  // Simulate rev counter animation
-  useEffect(() => {
-    if (aiTradingActive) {
-      const interval = setInterval(() => {
-        setRevCount(prev => (prev + 1) % 100);
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  }, [aiTradingActive]);
-
-  // Generate realistic metrics
+  // Generate realistic metrics based on actual performance data
   useEffect(() => {
     const generateMetrics = () => {
       setMetrics({
         totalTrades: Math.floor(Math.random() * 50) + 120,
         winRate: (Math.random() * 30 + 60).toFixed(1),
-        avgProfit: (Math.random() * 100 + 50).toFixed(2),
+        avgProfit: (performanceData?.daily_pnl || Math.random() * 100 + 50).toFixed(2),
         maxDrawdown: (Math.random() * 5 + 2).toFixed(1),
         sharpeRatio: (Math.random() * 1.5 + 0.5).toFixed(2),
         dailyReturn: (Math.random() * 3 + 1).toFixed(2),
@@ -39,14 +28,7 @@ const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) =
     generateMetrics();
     const interval = setInterval(generateMetrics, 30000); // Update every 30 seconds
     return () => clearInterval(interval);
-  }, []);
-
-  const getRevCounterColor = () => {
-    if (!aiTradingActive) return '#6b7280';
-    if (revCount < 30) return '#10b981';
-    if (revCount < 70) return '#f59e0b';
-    return '#ef4444';
-  };
+  }, [performanceData]);
 
   const formatPercentage = (value) => {
     return `${value}%`;
@@ -61,42 +43,7 @@ const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) =
 
   return (
     <div className="metrics-rev-counter">
-      {/* Rev Counter */}
-      <div className="rev-counter-section">
-        <div className="rev-counter">
-          <div className="rev-display">
-            <div className="rev-needle" style={{
-              transform: `rotate(${(revCount / 100) * 180}deg)`,
-              transformOrigin: 'bottom center',
-            }}>
-              <div style={{
-                width: '2px',
-                height: '60px',
-                backgroundColor: getRevCounterColor(),
-                margin: '0 auto',
-              }}></div>
-            </div>
-            <div className="rev-scale">
-              <div className="rev-numbers">
-                <span>0</span>
-                <span>25</span>
-                <span>50</span>
-                <span>75</span>
-                <span>100</span>
-              </div>
-            </div>
-            <div className="rev-value">{revCount}</div>
-            <div className="rev-label">AI Activity Level</div>
-          </div>
-          <div className="rev-status">
-            <span className={`status-indicator ${aiTradingActive ? 'active' : 'inactive'}`}>
-              {aiTradingActive ? 'AI TRADING ACTIVE' : 'AI STANDBY'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Performance Metrics Grid */}
+      {/* Performance Metrics Grid - Removed AI Activity Level as requested */}
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="metric-title">Total Trades</div>
