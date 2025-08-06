@@ -1181,7 +1181,181 @@ function App() {
         </div>
       </div>
 
-      {/* AI Chat Modal */}
+      {/* Manual Trading Modal */}
+      {showManualTradeModal && (
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          zIndex: 50
+        }}>
+          <div style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '0.5rem', 
+            padding: '2rem', 
+            maxWidth: '500px', 
+            width: '90%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
+                Manual Trade Execution
+              </h2>
+              <button 
+                onClick={() => setShowManualTradeModal(false)}
+                style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                Trading Pair
+              </label>
+              <select 
+                value={manualTrade.pair}
+                onChange={(e) => setManualTrade({...manualTrade, pair: e.target.value})}
+                style={{ 
+                  width: '100%', 
+                  padding: '0.5rem', 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: '0.375rem',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {tradingConfig.tradingPairs.map(pair => (
+                  <option key={pair} value={pair}>{pair}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Action
+                </label>
+                <select 
+                  value={manualTrade.action}
+                  onChange={(e) => setManualTrade({...manualTrade, action: e.target.value})}
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  <option value="buy">BUY</option>
+                  <option value="sell">SELL</option>
+                </select>
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Order Type
+                </label>
+                <select 
+                  value={manualTrade.orderType}
+                  onChange={(e) => setManualTrade({...manualTrade, orderType: e.target.value})}
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  <option value="market">Market Order</option>
+                  <option value="limit">Limit Order</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                Amount (ZAR)
+              </label>
+              <input 
+                type="number" 
+                value={manualTrade.amount}
+                onChange={(e) => setManualTrade({...manualTrade, amount: e.target.value})}
+                placeholder="Enter amount in ZAR"
+                style={{ 
+                  width: '100%', 
+                  padding: '0.5rem', 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: '0.375rem',
+                  fontSize: '0.875rem'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                Available: R{balance?.ZAR_balance?.toFixed(2) || '0.00'}
+              </p>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '0.375rem', marginBottom: '1rem' }}>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#92400e' }}>
+                Trade Summary
+              </h4>
+              <div style={{ fontSize: '0.75rem', color: '#92400e' }}>
+                <p style={{ margin: '0 0 0.25rem 0' }}>
+                  Action: <strong>{manualTrade.action.toUpperCase()}</strong> {manualTrade.pair}
+                </p>
+                <p style={{ margin: '0 0 0.25rem 0' }}>
+                  Amount: <strong>R{manualTrade.amount || '0.00'}</strong>
+                </p>
+                <p style={{ margin: 0 }}>
+                  Type: <strong>{manualTrade.orderType.toUpperCase()}</strong>
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setShowManualTradeModal(false)}
+                style={{ 
+                  backgroundColor: '#f3f4f6', 
+                  color: '#374151',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  // Execute manual trade logic
+                  alert(`Manual trade executed: ${manualTrade.action.toUpperCase()} ${manualTrade.pair} for R${manualTrade.amount}`);
+                  setShowManualTradeModal(false);
+                }}
+                disabled={!manualTrade.amount || manualTrade.amount <= 0}
+                style={{ 
+                  backgroundColor: !manualTrade.amount || manualTrade.amount <= 0 ? '#d1d5db' : '#059669',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.875rem',
+                  cursor: !manualTrade.amount || manualTrade.amount <= 0 ? 'not-allowed' : 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                Execute Trade
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showChatModal && (
         <div style={{ 
           position: 'fixed', 
