@@ -197,6 +197,25 @@ async def get_balance():
         logger.error(f"Balance fetch failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/crypto-prices")
+async def get_crypto_prices():
+    """Get USD prices for cryptocurrencies that don't have ZAR pairs"""
+    try:
+        # For now, return mock USD prices - in production you'd use CoinGecko or similar
+        usd_prices = {
+            "HBAR": 0.062,  # $0.062 per HBAR
+            "ETH": 2400.0,  # $2400 per ETH
+            "XRP": 0.58,    # $0.58 per XRP
+            "ADA": 0.45,    # $0.45 per ADA
+            "DOT": 5.20,    # $5.20 per DOT
+            "USD_TO_ZAR": 18.50  # Exchange rate
+        }
+        
+        return {"status": "success", "data": usd_prices}
+    except Exception as e:
+        logger.error(f"Crypto prices fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/market-data/{pair}")
 async def get_market_data(pair: str):
     """Get current market data for a trading pair"""
