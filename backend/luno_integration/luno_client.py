@@ -275,7 +275,8 @@ class LunoClient:
             'XRP': 'Ripple',
             'XLM': 'Stellar',
             'TRX': 'Tron',
-            'HBAR': 'Hedera'
+            'HBAR': 'Hedera',
+            'SOL': 'Solana'
         }
         return names.get(symbol, symbol)
     
