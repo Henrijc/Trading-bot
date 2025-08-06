@@ -120,6 +120,24 @@ class LunoClient:
             # But return empty dict to indicate failure
             return {}
     
+    async def get_ticker(self, pair: str) -> Dict[str, Any]:
+        """Get ticker data for a specific trading pair"""
+        try:
+            response = await self._make_request("ticker", {"pair": pair})
+            return response
+        except Exception as e:
+            logger.error(f"Failed to get ticker for {pair}: {e}")
+            return {}
+    
+    async def get_orderbook(self, pair: str) -> Dict[str, Any]:
+        """Get orderbook data for a specific trading pair"""
+        try:
+            response = await self._make_request("orderbook", {"pair": pair})
+            return response
+        except Exception as e:
+            logger.error(f"Failed to get orderbook for {pair}: {e}")
+            return {}
+    
     async def close(self):
         """Close the HTTP session"""
         if self.session:
