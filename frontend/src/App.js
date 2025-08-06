@@ -423,11 +423,6 @@ function App() {
                         Reserved: {balance.ETH_reserved.toFixed(4)}
                       </p>
                     )}
-                    {balance?.ETH_staked > 0 && (
-                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
-                        Staked: {balance.ETH_staked.toFixed(4)}
-                      </p>
-                    )}
                   </div>
                 )}
 
@@ -468,6 +463,69 @@ function App() {
                       </p>
                       <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
                         {formatCurrency((balance?.XRP_balance || 0) * (cryptoPrices?.XRP || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ADA Holdings */}
+                {balance?.ADA_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>ADA</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Cardano</span>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.ADA_balance || 0).toFixed(2)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.ADA_balance || 0) * (cryptoPrices?.ADA || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.ADA_balance || 0) * (cryptoPrices?.ADA || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* TRX Holdings */}
+                {balance?.TRX_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>TRX</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Tron</span>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.TRX_balance || 0).toFixed(2)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.TRX_balance || 0) * (cryptoPrices?.TRX || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.TRX_balance || 0) * (cryptoPrices?.TRX || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* XLM Holdings */}
+                {balance?.XLM_balance > 0 && (
+                  <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>XLM</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Stellar</span>
+                    </div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+                        {(balance?.XLM_balance || 0).toFixed(2)}
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
+                        ${((balance?.XLM_balance || 0) * (cryptoPrices?.XLM || 0)).toFixed(2)} USD
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                        {formatCurrency((balance?.XLM_balance || 0) * (cryptoPrices?.XLM || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
                   </div>
