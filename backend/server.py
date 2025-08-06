@@ -337,8 +337,11 @@ async def get_trading_signals():
             
             for pair in trading_pairs:
                 try:
-                    # Get FreqTrade AI analysis
-                    analysis = await freqtrade.get_ai_signal(pair)
+                    # Get FreqTrade AI analysis using ai_strategy
+                    if ai_strategy:
+                        analysis = await ai_strategy.get_signal(pair)
+                    else:
+                        analysis = None
                     
                     if analysis:
                         crypto = pair.replace('ZAR', '').replace('XBT', 'BTC')
