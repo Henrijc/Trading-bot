@@ -75,6 +75,7 @@ function App() {
     await Promise.all([
       checkSystemHealth(),
       loadBalance(),
+      loadPortfolio(),
       loadMarketData(),
       loadPerformanceData(),
       loadTrades(),
