@@ -322,3 +322,61 @@ class FreqTradeController:
         except Exception as e:
             logger.error(f"Failed to reload config: {e}")
             return {"status": "error", "message": str(e)}
+            
+    async def get_ai_signal(self, pair: str) -> Dict[str, Any]:
+        """Get AI trading signal for a specific pair"""
+        try:
+            # Call FreqTrade AI analysis endpoint
+            endpoint = f"/api/v1/freqai/signal/{pair}"
+            
+            headers = self._get_auth_headers()
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}{endpoint}",
+                    headers=headers,
+                    timeout=30.0
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Parse FreqAI signal data
+                    signal_data = data.get('signal', {})
+                    
+                    # Extract AI recommendation
+                    prediction = signal_data.get('prediction', 0)
+                    confidence = signal_data.get('confidence', 0)
+                    
+                    # Convert prediction to action
+                    if prediction > 0.7 and confidence > 0.65:
+                        action = 'BUY'
+                        trend = 'BULL'
+                    elif prediction < 0.3 and confidence > 0.65:
+                        action = 'SELL' 
+                        trend = 'BEAR'
+                    else:
+                        action = 'HOLD'
+                        trend = 'NEUTRAL'
+                    
+                    return {
+                        'action': action,
+                        'confidence': int(confidence * 100),
+                        'trend': trend,
+                        'price_prediction': prediction,
+                        'reasoning': signal_data.get('reasoning', f'AI prediction: {prediction:.3f}')
+                    }
+                else:
+                    logger.warning(f"FreqTrade AI signal failed for {pair}: {response.status_code}")
+                    return None
+                    
+        except Exception as e:
+            logger.error(f"FreqTrade AI signal error for {pair}: {e}")
+            return None
+    
+    def _get_auth_headers(self) -> Dict[str, str]:
+        """Get authentication headers for FreqTrade API"""
+        return {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.jwt_secret}"
+        }
