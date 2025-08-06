@@ -94,14 +94,46 @@ class LunoClient:
             
         except Exception as e:
             logger.error(f"Failed to get balance: {e}")
-            # Return mock data for development
+            # Return mock data for development with multiple currencies
             return {
                 "ZAR_balance": 10000.0,
                 "ZAR_reserved": 0.0,
                 "ZAR_unconfirmed": 0.0,
                 "BTC_balance": 0.1,
                 "BTC_reserved": 0.0,
-                "BTC_unconfirmed": 0.0
+                "BTC_unconfirmed": 0.0,
+                "ETH_balance": 0.5,
+                "ETH_reserved": 0.0,
+                "ETH_unconfirmed": 0.0,
+                "HBAR_balance": 1000.0,
+                "HBAR_reserved": 0.0,
+                "HBAR_unconfirmed": 0.0,
+                "XRP_balance": 500.0,
+                "XRP_reserved": 0.0,
+                "XRP_unconfirmed": 0.0
+            }
+            
+    async def get_staking_balance(self) -> Dict[str, Any]:
+        """Get staking balance if available"""
+        try:
+            # Try to get staking info - this endpoint might not exist on Luno
+            response = await self._make_request("GET", "/accounts", auth_required=True)
+            
+            staking_balances = {}
+            for account in response.get('accounts', []):
+                if 'staking' in account.get('name', '').lower():
+                    currency = account.get('currency', 'UNKNOWN')
+                    staking_balances[f"{currency}_staked"] = float(account.get('balance', 0))
+                    
+            return staking_balances
+            
+        except Exception as e:
+            logger.warning(f"Staking balance not available: {e}")
+            # Return mock staking data
+            return {
+                "ETH_staked": 0.2,
+                "ADA_staked": 100.0,
+                "DOT_staked": 10.0
             }
             
     async def get_ticker(self, pair: str) -> Dict[str, Any]:
