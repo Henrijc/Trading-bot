@@ -1533,33 +1533,13 @@ function App() {
                   </p>
                 </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                    Trading Hours
-                  </label>
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <input 
-                      type="time" 
-                      value={tradingConfig.tradingHours.start}
-                      onChange={(e) => setTradingConfig({
-                        ...tradingConfig, 
-                        tradingHours: {...tradingConfig.tradingHours, start: e.target.value}
-                      })}
-                      style={{ padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '0.375rem' }}
-                    />
-                    <span>to</span>
-                    <input 
-                      type="time" 
-                      value={tradingConfig.tradingHours.end}
-                      onChange={(e) => setTradingConfig({
-                        ...tradingConfig, 
-                        tradingHours: {...tradingConfig.tradingHours, end: e.target.value}
-                      })}
-                      style={{ padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '0.375rem' }}
-                    />
-                  </div>
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
-                    AI will only trade during these hours (SAST timezone)
+                <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '0.375rem', border: '1px solid #10b981' }}>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#059669' }}>
+                    24/7 Autonomous Trading
+                  </h4>
+                  <p style={{ fontSize: '0.75rem', color: '#14532d', margin: 0, lineHeight: '1.5' }}>
+                    AI will monitor markets and execute trades continuously, 24 hours a day, 7 days a week. 
+                    No trading hour restrictions - the bot works around the clock to capture all profitable opportunities.
                   </p>
                 </div>
               </div>
