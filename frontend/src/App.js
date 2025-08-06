@@ -518,8 +518,8 @@ function App() {
                       </p>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
-                      <span style={{ color: '#059669' }}>● BULL Market</span>
-                      <span style={{ color: '#6b7280' }}>AI Confidence: 85%</span>
+                      <span style={{ color: tradingSignals?.BTC?.trend === 'BULL' ? '#059669' : tradingSignals?.BTC?.trend === 'BEAR' ? '#dc2626' : '#f59e0b' }}>● {tradingSignals?.BTC?.trend || 'NEUTRAL'} Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: {tradingSignals?.BTC?.confidence || 0}%</span>
                     </div>
                     {balance?.BTC_reserved > 0 && (
                       <p style={{ fontSize: '0.75rem', color: '#f59e0b', margin: 0 }}>
