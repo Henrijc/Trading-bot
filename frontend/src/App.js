@@ -984,7 +984,7 @@ function App() {
             }}>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-                  💬 Chat with AI Trading Assistant
+                  Chat with AI Trading Assistant
                 </h2>
                 <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
                   Ask questions, give instructions, or get trading insights
