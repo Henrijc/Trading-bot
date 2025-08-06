@@ -325,7 +325,7 @@ function App() {
             </div>
             <div>
               <p style={{ fontSize: '2rem', fontWeight: '700', color: '#1f2937', margin: 0, lineHeight: '1' }}>
-                {formatCurrency(calculateTotalPortfolioValue())}
+                {portfolio ? formatCurrency(portfolio.total_value) : 'Loading...'}
               </p>
               <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
                 Total Portfolio Value
