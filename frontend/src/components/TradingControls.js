@@ -78,10 +78,7 @@ const TradingControls = ({
                   Starting...
                 </>
               ) : (
-                <>
-                  START
-                  Start AI Trading
-                </>
+                'START AI TRADING'
               )}
             </button>
 
@@ -96,10 +93,7 @@ const TradingControls = ({
                   Stopping...
                 </>
               ) : (
-                <>
-                  STOP
-                  Stop AI Trading
-                </>
+                'STOP AI TRADING'
               )}
             </button>
           </div>
@@ -142,19 +136,19 @@ const TradingControls = ({
 
         {/* Quick Stats */}
         <div className="control-section stats-section">
-          <h4>Quick Overview</h4>
+          <h4>Trading Overview</h4>
           <div className="quick-stats">
             <div className="stat-item">
-              <span className="stat-label">Active Trades</span>
-              <span className="stat-value">3</span>
+              <span className="stat-label">Status</span>
+              <span className="stat-value">{aiTradingActive ? 'Active' : 'Inactive'}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Today's P&L</span>
-              <span className="stat-value positive">+R 127.50</span>
+              <span className="stat-label">Mode</span>
+              <span className="stat-value">AI Automated</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Win Rate</span>
-              <span className="stat-value">73.5%</span>
+              <span className="stat-label">Risk Level</span>
+              <span className="stat-value">Conservative</span>
             </div>
           </div>
         </div>
