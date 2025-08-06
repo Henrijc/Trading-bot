@@ -837,7 +837,7 @@ function App() {
               
               <div style={{ padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '0.375rem', border: '1px solid #f59e0b', marginBottom: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '1rem', fontWeight: '600', color: '#92400e' }}>● DO NOT WITHDRAW YET</span>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', color: '#92400e' }}>DO NOT WITHDRAW YET</span>
                   <span style={{ fontSize: '0.75rem', color: '#92400e', backgroundColor: '#fcd34d', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>HOLD</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#92400e', lineHeight: '1.5' }}>
