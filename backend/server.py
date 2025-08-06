@@ -242,10 +242,11 @@ async def get_trading_signals():
         signals = {}
         
         # Connect to FreqTrade AI engine for real analysis
-        from backend.freqtrade.freqtrade_controller import FreqTradeController
+        # from backend.freqtrade.freqtrade_controller import FreqTradeController
         
         try:
-            freqtrade = FreqTradeController()
+            # freqtrade = FreqTradeController()
+            freqtrade = None  # Temporarily disabled
             
             # Get AI signals for each trading pair
             trading_pairs = ['XBTZAR', 'ETHZAR', 'XRPZAR', 'ADAZAR', 'TRXZAR', 'XLMZAR']
