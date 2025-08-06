@@ -97,6 +97,21 @@ function App() {
     }
   };
 
+  const loadPortfolio = async () => {
+    try {
+      console.log('Loading portfolio data...');
+      const response = await axios.get(`${API}/portfolio`);
+      console.log('Portfolio response:', response.data);
+      
+      if (response.data.status === 'success') {
+        setPortfolio(response.data.data);
+        console.log('Portfolio data loaded:', response.data.data);
+      }
+    } catch (error) {
+      console.error('Failed to load portfolio:', error);
+    }
+  };
+
   const loadBalance = async () => {
     try {
       console.log('Loading balance from:', `${API}/balance`);
