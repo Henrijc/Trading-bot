@@ -183,6 +183,15 @@ async def get_balance():
     """Get current account balance from Luno"""
     try:
         balance = await luno_client.get_balance()
+        
+        # Add staking information if available
+        try:
+            staking_balance = await luno_client.get_staking_balance()
+            if staking_balance:
+                balance.update(staking_balance)
+        except Exception as e:
+            logger.warning(f"Staking balance fetch failed: {e}")
+        
         return {"status": "success", "data": balance}
     except Exception as e:
         logger.error(f"Balance fetch failed: {e}")
