@@ -94,24 +94,8 @@ class LunoClient:
             
         except Exception as e:
             logger.error(f"Failed to get balance: {e}")
-            # Return mock data for development with multiple currencies
-            return {
-                "ZAR_balance": 10000.0,
-                "ZAR_reserved": 0.0,
-                "ZAR_unconfirmed": 0.0,
-                "BTC_balance": 0.1,
-                "BTC_reserved": 0.0,
-                "BTC_unconfirmed": 0.0,
-                "ETH_balance": 0.5,
-                "ETH_reserved": 0.0,
-                "ETH_unconfirmed": 0.0,
-                "HBAR_balance": 1000.0,
-                "HBAR_reserved": 0.0,
-                "HBAR_unconfirmed": 0.0,
-                "XRP_balance": 500.0,
-                "XRP_reserved": 0.0,
-                "XRP_unconfirmed": 0.0
-            }
+            # Return error instead of mock data to show real status
+            raise Exception(f"Luno API authentication failed: {e}")
             
     async def get_staking_balance(self) -> Dict[str, Any]:
         """Get staking balance if available"""
