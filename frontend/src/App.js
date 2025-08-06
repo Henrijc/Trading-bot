@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
+// Import new Phase 3 components
+import TradingCharts from "./components/TradingCharts";
+import MetricsRevCounter from "./components/MetricsRevCounter";
+import TradingControls from "./components/TradingControls";
+
 // Add CSS animation for spinner
 const spinKeyframes = `
   @keyframes spin {
