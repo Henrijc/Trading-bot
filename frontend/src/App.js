@@ -752,7 +752,7 @@ function App() {
                     cursor: 'pointer'
                   }}
                 >
-                  ⚙️ Advanced Config
+                  Advanced Config
                 </button>
                 <button 
                   onClick={() => alert('Manual trade interface coming soon!')}
@@ -767,7 +767,7 @@ function App() {
                     cursor: 'pointer'
                   }}
                 >
-                  📊 Manual Trade
+                  Manual Trade
                 </button>
               </div>
             </div>
