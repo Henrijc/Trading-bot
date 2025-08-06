@@ -33,7 +33,7 @@ services:
       - MONGO_URL=mongodb://cryptobot:${MONGO_PASSWORD:-cryptobot_secure_pass}@mongodb:27017/cryptobot_db?authSource=admin
       - REDIS_URL=redis://${REDIS_PASSWORD:+:$REDIS_PASSWORD@}redis:6379
       - LUNO_API_KEY=${LUNO_API_KEY}
-      - LUNO_API_SECRET=${LUNO_API_SECRET}
+      - LUNO_SECRET=${LUNO_SECRET}
       - API_TOKEN=${API_TOKEN:-secure_token_123}
       - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET:-freqtrade_default_secret}
     depends_on:
