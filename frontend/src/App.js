@@ -45,10 +45,9 @@ function App() {
     maxOpenTrades: 5,
     strategy: 'freqai',
     confidence: 70,
-    tradingPairs: ['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR'],
+    tradingPairs: ['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR', 'TRX/ZAR', 'XLM/ZAR', 'HBAR/USD'],
     stopLoss: 3,
     takeProfit: 8,
-    tradingHours: { start: '08:00', end: '17:00' },
     emergencyStop: false
   });
 
