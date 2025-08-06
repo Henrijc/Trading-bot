@@ -36,6 +36,21 @@ function App() {
   const [goals, setGoals] = useState(null);
   const [cryptoPrices, setCryptoPrices] = useState(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [tradingConfig, setTradingConfig] = useState({
+    dailyTarget: 1000,
+    maxRisk: 2,
+    maxOpenTrades: 5,
+    strategy: 'freqai',
+    confidence: 70,
+    tradingPairs: ['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR'],
+    stopLoss: 3,
+    takeProfit: 8,
+    tradingHours: { start: '08:00', end: '17:00' },
+    emergencyStop: false
+  });
 
   useEffect(() => {
     loadAllData();
