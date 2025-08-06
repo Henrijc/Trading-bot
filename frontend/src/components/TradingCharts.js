@@ -21,7 +21,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  BarElement
+  BarElement,
+  Filler
 );
 
 const TradingCharts = ({ performanceData, marketData, trades }) => {
