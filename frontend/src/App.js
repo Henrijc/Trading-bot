@@ -55,7 +55,8 @@ function App() {
       loadMarketData(),
       loadPerformanceData(),
       loadTrades(),
-      loadGoals()
+      loadGoals(),
+      loadCryptoPrices()
     ]);
   };
 
