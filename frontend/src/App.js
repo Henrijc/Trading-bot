@@ -510,8 +510,8 @@ function App() {
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                {/* BTC Holdings - Debug */}
-                {console.log('Balance data:', balance) || balance?.BTC_balance > 0 && (
+                {/* BTC Holdings - Always show for debug */}
+                {true && (
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>BTC</span>
