@@ -200,7 +200,7 @@ class LunoClient:
                 logger.info(f"ZAR balance: {zar_amount}")
             
             # Process crypto holdings
-            for symbol in ['BTC', 'ETH', 'ADA', 'XRP', 'XLM', 'TRX', 'HBAR']:
+            for symbol in ['BTC', 'ETH', 'ADA', 'XRP', 'XLM', 'TRX', 'HBAR', 'SOL']:
                 balance_key = f'{symbol}_balance'
                 staked_key = f'{symbol}_staked'
                 
