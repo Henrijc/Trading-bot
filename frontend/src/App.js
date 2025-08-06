@@ -986,7 +986,7 @@ function App() {
                   Advanced Config
                 </button>
                 <button 
-                  onClick={() => alert('Manual trade interface coming soon!')}
+                  onClick={() => setShowManualTradeModal(true)}
                   style={{ 
                     backgroundColor: '#8b5cf6', 
                     color: 'white',
