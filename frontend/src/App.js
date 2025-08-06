@@ -33,6 +33,7 @@ function App() {
   const [message, setMessage] = useState(null);
   const [performanceData, setPerformanceData] = useState(null);
   const [trades, setTrades] = useState([]);
+  const [goals, setGoals] = useState(null);
   const [cryptoPrices, setCryptoPrices] = useState(null);
 
   useEffect(() => {
