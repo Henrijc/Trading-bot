@@ -1628,10 +1628,13 @@ function App() {
 
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                    Active Trading Pairs
+                    Active Trading Pairs (All Your Holdings)
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                    {['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR', 'TRX/ZAR', 'XLM/ZAR'].map(pair => (
+                    {[
+                      'BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR', 'TRX/ZAR', 'XLM/ZAR',
+                      'HBAR/USD', 'SOL/USD', 'DOGE/USD', 'NEAR/USD', 'BERA/USD', 'DOT/USD'
+                    ].map(pair => (
                       <label key={pair} style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
                         <input 
                           type="checkbox" 
@@ -1644,12 +1647,15 @@ function App() {
                           }}
                           style={{ marginRight: '0.5rem' }} 
                         />
-                        {pair}
+                        <span>{pair}</span>
+                        {pair.includes('USD') && (
+                          <span style={{ fontSize: '0.75rem', color: '#6b7280', marginLeft: '0.25rem' }}>(USD)</span>
+                        )}
                       </label>
                     ))}
                   </div>
                   <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.5rem 0 0 0' }}>
-                    Selected: {tradingConfig.tradingPairs.length} pairs
+                    Selected: {tradingConfig.tradingPairs.length} pairs | ZAR pairs trade directly, USD pairs calculated via exchange rates
                   </p>
                 </div>
 
