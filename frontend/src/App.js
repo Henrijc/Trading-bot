@@ -550,13 +550,13 @@ function App() {
                       <span style={{ color: '#6b7280' }}>AI Confidence: 72%</span>
                     </div>
                     {balance?.ETH_reserved > 0 && (
-                      <p style={{ fontSize: '0.75rem', color: '#f59e0b', margin: 0 }}>
+                      <p style={{ fontSize: '0.75rem', color: '#f59e0b', margin: '0.5rem 0 0 0' }}>
                         Reserved: {balance.ETH_reserved.toFixed(4)}
                       </p>
                     )}
-                    {balance?.ETH_staked && (
-                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
-                        ★ Staked: {balance.ETH_staked.toFixed(4)}
+                    {balance?.ETH_staked > 0 && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.5rem 0 0 0', backgroundColor: '#ecfdf5', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>
+                        ★ Staked: {balance.ETH_staked.toFixed(4)} ETH (APY: 4.2%)
                       </p>
                     )}
                   </div>
