@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: cryptobot
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-cryptobot_secure_pass}
       MONGO_INITDB_DATABASE: cryptobot_db
     volumes:
       - mongodb_data:/data/db
