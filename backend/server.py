@@ -154,11 +154,21 @@ luno_client = LunoClient(
     api_secret=luno_api_secret
 )
 goal_calculator = GoalProbabilityCalculator()
-# Temporarily disabled due to dependency issues
-# freqtrade_controller = FreqTradeController()
-# ai_strategy = FreqAITradingStrategy()
-freqtrade_controller = None
-ai_strategy = None
+
+# Initialize AI components if available
+if AI_DEPENDENCIES_AVAILABLE:
+    try:
+        freqtrade_controller = FreqTradeController()
+        ai_strategy = FreqAITradingStrategy()
+        logger.info("AI components initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize AI components: {e}")
+        freqtrade_controller = None
+        ai_strategy = None
+else:
+    freqtrade_controller = None
+    ai_strategy = None
+    logger.info("AI components disabled - dependencies not available")
 
 # WebSocket connection manager
 class ConnectionManager:
