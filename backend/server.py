@@ -346,6 +346,32 @@ async def get_market_data(pair: str):
         logger.error(f"Market data fetch failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/crypto-prices")
+async def get_crypto_prices():
+    """Get cryptocurrency prices in USD and conversion rates"""
+    try:
+        # Mock data for now - in production this would fetch from price APIs
+        crypto_prices = {
+            "BTC": 43500.00,    # USD
+            "ETH": 2650.00,     # USD  
+            "HBAR": 0.12,       # USD
+            "XRP": 0.65,        # USD
+            "ADA": 0.58,        # USD
+            "TRX": 0.15,        # USD
+            "XLM": 0.25,        # USD
+            "DOGE": 0.18,       # USD
+            "USD_TO_ZAR": 18.5  # ZAR per USD
+        }
+        
+        return {
+            "status": "success",
+            "data": crypto_prices,
+            "timestamp": datetime.utcnow()
+        }
+    except Exception as e:
+        logger.error(f"Crypto prices fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/trade")
 async def execute_trade(trade_request: TradeRequest, token: str = Depends(verify_token)):
     """Execute a manual trade"""
