@@ -1449,7 +1449,7 @@ function App() {
                 </div>
 
                 <div style={{ backgroundColor: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '0.375rem', padding: '1rem' }}>
-                  <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#92400e' }}>⚠️ Emergency Controls</h4>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#92400e' }}>Emergency Controls</h4>
                   <label style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
                     <input 
                       type="checkbox" 
