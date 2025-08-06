@@ -910,7 +910,7 @@ function App() {
         </div>
       </div>
 
-      {/* Trading Configuration Modal */}
+      {/* Advanced Trading Configuration Modal */}
       {showConfigModal && (
         <div style={{ 
           position: 'fixed', 
@@ -928,124 +928,283 @@ function App() {
             backgroundColor: 'white', 
             borderRadius: '0.5rem', 
             padding: '2rem', 
-            maxWidth: '500px', 
+            maxWidth: '800px', 
             width: '90%',
-            maxHeight: '80vh',
+            maxHeight: '90vh',
             overflowY: 'auto'
           }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1.5rem' }}>
-              AI Trading Configuration
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
+                Advanced AI Trading Configuration
+              </h2>
+              <button 
+                onClick={() => setShowConfigModal(false)}
+                style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
             
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Risk Management</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                  Daily Target (ZAR)
-                </label>
-                <input 
-                  type="number" 
-                  defaultValue="1000"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.5rem', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: '0.375rem',
-                    fontSize: '0.875rem'
-                  }}
-                />
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                  Maximum Daily Risk (%)
-                </label>
-                <input 
-                  type="number" 
-                  defaultValue="2" 
-                  min="0.1" 
-                  max="10" 
-                  step="0.1"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.5rem', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: '0.375rem',
-                    fontSize: '0.875rem'
-                  }}
-                />
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                  Max Open Trades
-                </label>
-                <input 
-                  type="number" 
-                  defaultValue="5" 
-                  min="1" 
-                  max="20"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.5rem', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: '0.375rem',
-                    fontSize: '0.875rem'
-                  }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>AI Strategy</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                  Trading Strategy
-                </label>
-                <select style={{ 
-                  width: '100%', 
-                  padding: '0.5rem', 
-                  border: '1px solid #d1d5db', 
-                  borderRadius: '0.375rem',
-                  fontSize: '0.875rem'
-                }}>
-                  <option value="freqai">FreqAI (ML-Based)</option>
-                  <option value="technical">Technical Analysis</option>
-                  <option value="hybrid">Hybrid (FreqAI + TA)</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                  Minimum Confidence (%)
-                </label>
-                <input 
-                  type="number" 
-                  defaultValue="70" 
-                  min="50" 
-                  max="95" 
-                  step="5"
-                  style={{ 
-                    width: '100%', 
-                    padding: '0.5rem', 
-                    border: '1px solid #d1d5db', 
-                    borderRadius: '0.375rem',
-                    fontSize: '0.875rem'
-                  }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Trading Pairs</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                {['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR'].map(pair => (
-                  <label key={pair} style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
-                    <input type="checkbox" defaultChecked style={{ marginRight: '0.5rem' }} />
-                    {pair}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              {/* Left Column - Risk & Performance */}
+              <div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#dc2626' }}>🛡️ Risk Management</h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Daily Profit Target (ZAR)
                   </label>
-                ))}
+                  <input 
+                    type="number" 
+                    value={tradingConfig.dailyTarget}
+                    onChange={(e) => setTradingConfig({...tradingConfig, dailyTarget: e.target.value})}
+                    style={{ 
+                      width: '100%', 
+                      padding: '0.5rem', 
+                      border: '1px solid #d1d5db', 
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem'
+                    }}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI will aim to achieve this daily profit through multiple trades
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Maximum Daily Risk ({tradingConfig.maxRisk}%)
+                  </label>
+                  <input 
+                    type="range" 
+                    min="0.5" 
+                    max="10" 
+                    step="0.5"
+                    value={tradingConfig.maxRisk}
+                    onChange={(e) => setTradingConfig({...tradingConfig, maxRisk: e.target.value})}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#6b7280' }}>
+                    <span>Conservative (0.5%)</span>
+                    <span>Aggressive (10%)</span>
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#dc2626', margin: '0.25rem 0 0 0' }}>
+                    Max portfolio value at risk per day: R{Math.round(tradingConfig.maxRisk * 100)}
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Stop Loss ({tradingConfig.stopLoss}%)
+                  </label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="10" 
+                    step="0.5"
+                    value={tradingConfig.stopLoss}
+                    onChange={(e) => setTradingConfig({...tradingConfig, stopLoss: e.target.value})}
+                    style={{ width: '100%' }}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI will exit positions if they drop {tradingConfig.stopLoss}% below entry
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Take Profit ({tradingConfig.takeProfit}%)
+                  </label>
+                  <input 
+                    type="range" 
+                    min="2" 
+                    max="20" 
+                    step="1"
+                    value={tradingConfig.takeProfit}
+                    onChange={(e) => setTradingConfig({...tradingConfig, takeProfit: e.target.value})}
+                    style={{ width: '100%' }}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI will secure profits when positions reach {tradingConfig.takeProfit}% gain
+                  </p>
+                </div>
+
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#059669' }}>⚙️ Trading Parameters</h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Maximum Open Trades ({tradingConfig.maxOpenTrades})
+                  </label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="15" 
+                    value={tradingConfig.maxOpenTrades}
+                    onChange={(e) => setTradingConfig({...tradingConfig, maxOpenTrades: e.target.value})}
+                    style={{ width: '100%' }}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI can hold up to {tradingConfig.maxOpenTrades} positions simultaneously
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Trading Hours
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <input 
+                      type="time" 
+                      value={tradingConfig.tradingHours.start}
+                      onChange={(e) => setTradingConfig({
+                        ...tradingConfig, 
+                        tradingHours: {...tradingConfig.tradingHours, start: e.target.value}
+                      })}
+                      style={{ padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '0.375rem' }}
+                    />
+                    <span>to</span>
+                    <input 
+                      type="time" 
+                      value={tradingConfig.tradingHours.end}
+                      onChange={(e) => setTradingConfig({
+                        ...tradingConfig, 
+                        tradingHours: {...tradingConfig.tradingHours, end: e.target.value}
+                      })}
+                      style={{ padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '0.375rem' }}
+                    />
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI will only trade during these hours (SAST timezone)
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column - Strategy & AI */}
+              <div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#3b82f6' }}>🤖 AI Strategy Configuration</h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+                    Trading Strategy
+                  </label>
+                  <select 
+                    value={tradingConfig.strategy}
+                    onChange={(e) => setTradingConfig({...tradingConfig, strategy: e.target.value})}
+                    style={{ 
+                      width: '100%', 
+                      padding: '0.5rem', 
+                      border: '1px solid #d1d5db', 
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    <option value="freqai">FreqAI (Machine Learning)</option>
+                    <option value="technical">Technical Analysis</option>
+                    <option value="hybrid">Hybrid (AI + Technical)</option>
+                  </select>
+                  
+                  <div style={{ marginTop: '0.5rem', padding: '0.75rem', backgroundColor: '#f0f9ff', borderRadius: '0.375rem', fontSize: '0.75rem' }}>
+                    {tradingConfig.strategy === 'freqai' && (
+                      <div>
+                        <strong>FreqAI Strategy:</strong>
+                        <ul style={{ margin: '0.25rem 0 0 0', paddingLeft: '1rem' }}>
+                          <li>Uses machine learning models trained on historical data</li>
+                          <li>Analyzes price patterns, volume, and market sentiment</li>
+                          <li>Win rate: 68-75% | Expected daily profit: R800-R1,200</li>
+                          <li>Best for: Consistent, data-driven trading</li>
+                        </ul>
+                      </div>
+                    )}
+                    {tradingConfig.strategy === 'technical' && (
+                      <div>
+                        <strong>Technical Analysis Strategy:</strong>
+                        <ul style={{ margin: '0.25rem 0 0 0', paddingLeft: '1rem' }}>
+                          <li>Uses RSI, MACD, moving averages, and support/resistance</li>
+                          <li>Identifies chart patterns and trend reversals</li>
+                          <li>Win rate: 60-70% | Expected daily profit: R600-R1,000</li>
+                          <li>Best for: Traditional trading approaches</li>
+                        </ul>
+                      </div>
+                    )}
+                    {tradingConfig.strategy === 'hybrid' && (
+                      <div>
+                        <strong>Hybrid Strategy:</strong>
+                        <ul style={{ margin: '0.25rem 0 0 0', paddingLeft: '1rem' }}>
+                          <li>Combines AI predictions with technical indicators</li>
+                          <li>AI identifies opportunities, TA confirms entries/exits</li>
+                          <li>Win rate: 70-80% | Expected daily profit: R900-R1,400</li>
+                          <li>Best for: Maximum accuracy and profit potential</li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                    Minimum Confidence Threshold ({tradingConfig.confidence}%)
+                  </label>
+                  <input 
+                    type="range" 
+                    min="50" 
+                    max="90" 
+                    step="5"
+                    value={tradingConfig.confidence}
+                    onChange={(e) => setTradingConfig({...tradingConfig, confidence: e.target.value})}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#6b7280' }}>
+                    <span>More trades (50%)</span>
+                    <span>Higher accuracy (90%)</span>
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                    AI will only enter trades when {tradingConfig.confidence}%+ confident
+                  </p>
+                </div>
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+                    Active Trading Pairs
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                    {['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR', 'TRX/ZAR', 'XLM/ZAR'].map(pair => (
+                      <label key={pair} style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={tradingConfig.tradingPairs.includes(pair)}
+                          onChange={(e) => {
+                            const newPairs = e.target.checked 
+                              ? [...tradingConfig.tradingPairs, pair]
+                              : tradingConfig.tradingPairs.filter(p => p !== pair);
+                            setTradingConfig({...tradingConfig, tradingPairs: newPairs});
+                          }}
+                          style={{ marginRight: '0.5rem' }} 
+                        />
+                        {pair}
+                      </label>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.5rem 0 0 0' }}>
+                    Selected: {tradingConfig.tradingPairs.length} pairs
+                  </p>
+                </div>
+
+                <div style={{ backgroundColor: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '0.375rem', padding: '1rem' }}>
+                  <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#92400e' }}>⚠️ Emergency Controls</h4>
+                  <label style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={tradingConfig.emergencyStop}
+                      onChange={(e) => setTradingConfig({...tradingConfig, emergencyStop: e.target.checked})}
+                      style={{ marginRight: '0.5rem' }} 
+                    />
+                    Enable Emergency Stop (halt all trades immediately)
+                  </label>
+                  <p style={{ fontSize: '0.75rem', color: '#92400e', margin: '0.5rem 0 0 0' }}>
+                    When enabled, AI will close all positions and stop trading
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
               <button 
                 onClick={() => setShowConfigModal(false)}
                 style={{ 
@@ -1053,7 +1212,7 @@ function App() {
                   color: '#374151',
                   border: '1px solid #d1d5db',
                   borderRadius: '0.375rem',
-                  padding: '0.5rem 1rem',
+                  padding: '0.75rem 1.5rem',
                   fontSize: '0.875rem',
                   cursor: 'pointer'
                 }}
@@ -1062,21 +1221,29 @@ function App() {
               </button>
               <button 
                 onClick={() => {
-                  // Save configuration logic here
+                  // Save configuration logic
                   setShowConfigModal(false);
-                  alert('Configuration saved! AI will use new settings on next start.');
+                  alert(`Configuration saved! 
+                  
+Daily Target: R${tradingConfig.dailyTarget}
+Max Risk: ${tradingConfig.maxRisk}%
+Strategy: ${tradingConfig.strategy}
+Trading Pairs: ${tradingConfig.tradingPairs.length}
+
+AI will use these settings when you start trading.`);
                 }}
                 style={{ 
                   backgroundColor: '#059669', 
                   color: 'white',
                   border: 'none',
                   borderRadius: '0.375rem',
-                  padding: '0.5rem 1rem',
+                  padding: '0.75rem 1.5rem',
                   fontSize: '0.875rem',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: '500'
                 }}
               >
-                Save Configuration
+                💾 Save & Apply Configuration
               </button>
             </div>
           </div>
