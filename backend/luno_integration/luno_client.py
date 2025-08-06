@@ -146,7 +146,7 @@ class LunoClient:
             logger.info(f"Balance data retrieved: crypto count = {len([k for k in balance_data.keys() if 'balance' in k and balance_data[k] > 0])}")
             
             # Use the existing crypto prices service instead of calling CoinGecko directly
-            from services.crypto_price_service import CryptoPriceService
+            from ..services.crypto_price_service import CryptoPriceService
             crypto_price_service = CryptoPriceService()
             price_data = await crypto_price_service.get_crypto_prices()
             
