@@ -103,9 +103,18 @@ class PerformanceMetrics(BaseModel):
     current_balance: float
 
 # Global instances
+luno_api_key = os.environ.get('LUNO_API_KEY', '')
+luno_api_secret = os.environ.get('LUNO_API_SECRET', '')
+
+logger.info(f"Loading Luno credentials - API Key: {'*' * (len(luno_api_key) - 4) + luno_api_key[-4:] if luno_api_key else 'NOT SET'}")
+logger.info(f"Loading Luno credentials - API Secret: {'*' * (len(luno_api_secret) - 4) + luno_api_secret[-4:] if luno_api_secret else 'NOT SET'}")
+
+if not luno_api_key or not luno_api_secret:
+    logger.error("CRITICAL: Luno API credentials not set in environment variables!")
+
 luno_client = LunoClient(
-    api_key=os.environ['LUNO_API_KEY'],
-    api_secret=os.environ['LUNO_API_SECRET']
+    api_key=luno_api_key,
+    api_secret=luno_api_secret
 )
 goal_calculator = GoalProbabilityCalculator()
 # Temporarily disabled due to dependency issues
