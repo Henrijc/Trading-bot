@@ -648,9 +648,9 @@ function App() {
                       <span style={{ color: '#f59e0b' }}>● NEUTRAL Market</span>
                       <span style={{ color: '#6b7280' }}>AI Confidence: 68%</span>
                     </div>
-                    {balance?.ADA_staked && (
-                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
-                        ★ Staked: {balance.ADA_staked.toFixed(2)}
+                    {balance?.ADA_staked > 0 && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.5rem 0 0 0', backgroundColor: '#ecfdf5', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>
+                        ★ Staked: {balance.ADA_staked.toFixed(2)} ADA (APY: 5.1%)
                       </p>
                     )}
                   </div>
