@@ -852,7 +852,258 @@ function App() {
               </button>
             </div>
 
-            {/* Performance Metrics Chart */}
+            {/* Performance Analytics Dashboard */}
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '0.5rem', 
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', 
+              padding: '1.5rem',
+              border: '1px solid #e5e7eb',
+              gridColumn: '1 / -1'
+            }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Trading Performance Analytics
+                </h3>
+              </div>
+              
+              {/* Rev-Counter Style Gauges */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+                {/* Daily Target Progress */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    position: 'relative', 
+                    width: '120px', 
+                    height: '120px', 
+                    margin: '0 auto',
+                    borderRadius: '50%',
+                    background: 'conic-gradient(from 0deg, #22c55e 0%, #22c55e 0%, #e5e7eb 0%, #e5e7eb 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <div style={{ 
+                      width: '90px', 
+                      height: '90px', 
+                      borderRadius: '50%', 
+                      backgroundColor: 'white',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#1f2937'
+                    }}>
+                      R0
+                      <div style={{ fontSize: '0.75rem', fontWeight: '400', color: '#6b7280' }}>/ R1000</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>Daily Target</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>0% Complete</div>
+                </div>
+
+                {/* Success Rate Gauge */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    position: 'relative', 
+                    width: '120px', 
+                    height: '120px', 
+                    margin: '0 auto',
+                    borderRadius: '50%',
+                    background: 'conic-gradient(from 0deg, #3b82f6 0%, #3b82f6 0%, #e5e7eb 0%, #e5e7eb 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <div style={{ 
+                      width: '90px', 
+                      height: '90px', 
+                      borderRadius: '50%', 
+                      backgroundColor: 'white',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#1f2937'
+                    }}>
+                      --%
+                      <div style={{ fontSize: '0.75rem', fontWeight: '400', color: '#6b7280' }}>Win Rate</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>Success Rate</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>No trades yet</div>
+                </div>
+
+                {/* Risk Level Indicator */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    position: 'relative', 
+                    width: '120px', 
+                    height: '120px', 
+                    margin: '0 auto',
+                    borderRadius: '50%',
+                    background: `conic-gradient(from 0deg, #f59e0b ${(tradingConfig.maxRisk / 10) * 360}deg, #e5e7eb ${(tradingConfig.maxRisk / 10) * 360}deg, #e5e7eb 100%)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <div style={{ 
+                      width: '90px', 
+                      height: '90px', 
+                      borderRadius: '50%', 
+                      backgroundColor: 'white',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: '#1f2937'
+                    }}>
+                      {tradingConfig.maxRisk}%
+                      <div style={{ fontSize: '0.75rem', fontWeight: '400', color: '#6b7280' }}>Risk</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>Risk Level</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    {tradingConfig.maxRisk <= 2 ? 'Conservative' : tradingConfig.maxRisk <= 5 ? 'Moderate' : 'Aggressive'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Trading Statistics Bar Charts */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '1rem' }}>
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '0.25rem' }}>0</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>Total Trades</div>
+                  <div style={{ height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#3b82f6', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f0fdf4', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#059669', marginBottom: '0.25rem' }}>0</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>Wins</div>
+                  <div style={{ height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#059669', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#fef2f2', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#dc2626', marginBottom: '0.25rem' }}>0</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>Losses</div>
+                  <div style={{ height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#dc2626', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#fffbeb', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b', marginBottom: '0.25rem' }}>R0</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>Net P&L</div>
+                  <div style={{ height: '4px', backgroundColor: '#e5e7eb', borderRadius: '2px' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#f59e0b', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Trade History & Monitoring */}
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '0.5rem', 
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', 
+              padding: '1.5rem',
+              border: '1px solid #e5e7eb',
+              gridColumn: '1 / -1'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Trade History & Monitoring
+                </h3>
+                
+                {/* Timeline Selector */}
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                  {['1D', '7D', '30D', '90D', '1Y'].map((period, index) => (
+                    <button 
+                      key={period}
+                      style={{ 
+                        backgroundColor: index === 0 ? '#3b82f6' : '#f3f4f6',
+                        color: index === 0 ? 'white' : '#6b7280',
+                        border: 'none',
+                        borderRadius: '0.25rem',
+                        padding: '0.25rem 0.75rem',
+                        fontSize: '0.75rem',
+                        cursor: 'pointer',
+                        fontWeight: index === 0 ? '600' : '400'
+                      }}
+                    >
+                      {period}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* P&L Chart Area */}
+              <div style={{ 
+                height: '200px', 
+                backgroundColor: '#f8fafc', 
+                borderRadius: '0.375rem', 
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative'
+              }}>
+                <div style={{ textAlign: 'center', color: '#6b7280' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem' }}>No Trading Data Yet</div>
+                  <div style={{ fontSize: '0.75rem' }}>Charts will appear once AI trading begins</div>
+                </div>
+                
+                {/* Mock Chart Grid */}
+                <svg style={{ position: 'absolute', width: '100%', height: '100%', opacity: '0.1' }}>
+                  {Array.from({length: 10}).map((_, i) => (
+                    <line key={i} x1="0" y1={i * 20} x2="100%" y2={i * 20} stroke="#6b7280" strokeWidth="1" />
+                  ))}
+                  {Array.from({length: 8}).map((_, i) => (
+                    <line key={i} x1={i * 12.5 + '%'} y1="0" x2={i * 12.5 + '%'} y2="100%" stroke="#6b7280" strokeWidth="1" />
+                  ))}
+                </svg>
+              </div>
+
+              {/* Trade Table */}
+              <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.375rem', overflow: 'hidden' }}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr', 
+                  backgroundColor: '#f8fafc', 
+                  padding: '0.75rem 1rem',
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: '#6b7280',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
+                }}>
+                  <div>Time</div>
+                  <div>Pair</div>
+                  <div>Action</div>
+                  <div>Amount</div>
+                  <div>Price</div>
+                  <div>P&L</div>
+                </div>
+                
+                <div style={{ 
+                  padding: '2rem 1rem', 
+                  textAlign: 'center', 
+                  color: '#6b7280',
+                  fontSize: '0.875rem'
+                }}>
+                  No trades executed yet. Start AI trading to see live trade monitoring.
+                </div>
+              </div>
+            </div>
             <div style={{ 
               backgroundColor: 'white', 
               borderRadius: '0.5rem', 
