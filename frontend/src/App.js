@@ -575,7 +575,7 @@ function App() {
                     )}
                     {balance?.ETH_staked > 0 && (
                       <p style={{ fontSize: '0.75rem', color: '#059669', margin: '0.5rem 0 0 0', backgroundColor: '#ecfdf5', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>
-                        ★ Staked: {balance.ETH_staked.toFixed(4)} ETH (APY: 4.2%)
+                        Staked: {Number(balance.ETH_staked || 0).toFixed(4)} ETH (APY: 4.2%)
                       </p>
                     )}
                   </div>
