@@ -543,8 +543,8 @@ function App() {
                   </div>
                 )}
 
-                {/* ETH Holdings */}
-                {balance?.ETH_balance > 0 && (
+                {/* ETH Holdings - Always show */}
+                {true && (
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>ETH</span>
