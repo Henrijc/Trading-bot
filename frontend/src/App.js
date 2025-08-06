@@ -747,7 +747,99 @@ function App() {
               </div>
             </div>
 
-            {/* AI Trading Controls */}
+            {/* Withdrawal Recommendation */}
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '0.5rem', 
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', 
+              padding: '1.5rem',
+              border: '1px solid #e5e7eb'
+            }}>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  AI Withdrawal Recommendation
+                </h3>
+              </div>
+              
+              <div style={{ padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '0.375rem', border: '1px solid #f59e0b', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: '600', color: '#92400e' }}>● DO NOT WITHDRAW YET</span>
+                  <span style={{ fontSize: '0.75rem', color: '#92400e', backgroundColor: '#fcd34d', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' }}>HOLD</span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#92400e', lineHeight: '1.5' }}>
+                  <p style={{ margin: '0 0 0.5rem 0' }}><strong>Reason:</strong> Current daily P&L is R0.00 (below R1,000 target)</p>
+                  <p style={{ margin: '0 0 0.5rem 0' }}><strong>Recommendation:</strong> Wait for 3+ profitable days before withdrawal</p>
+                  <p style={{ margin: 0 }}><strong>Next review:</strong> After achieving R1,000+ daily profit consistently</p>
+                </div>
+              </div>
+
+              <button 
+                style={{ 
+                  backgroundColor: '#dc2626', 
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  cursor: 'not-allowed',
+                  width: '100%',
+                  opacity: 0.6
+                }}
+                disabled={true}
+              >
+                Withdrawal Not Recommended (R0 profit today)
+              </button>
+            </div>
+
+            {/* Performance Metrics Chart */}
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '0.5rem', 
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', 
+              padding: '1.5rem',
+              border: '1px solid #e5e7eb'
+            }}>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Performance Metrics
+                </h3>
+              </div>
+              
+              {/* Rev Counter Style Metrics */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: '700', color: '#0ea5e9', marginBottom: '0.25rem' }}>0%</div>
+                  <div style={{ fontSize: '0.75rem', color: '#0c4a6e', fontWeight: '600' }}>SUCCESS RATE</div>
+                  <div style={{ width: '100%', height: '4px', backgroundColor: '#e0e7ff', borderRadius: '2px', marginTop: '0.5rem' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#0ea5e9', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+                
+                <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f0fdf4', borderRadius: '0.375rem' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: '700', color: '#22c55e', marginBottom: '0.25rem' }}>R0</div>
+                  <div style={{ fontSize: '0.75rem', color: '#14532d', fontWeight: '600' }}>DAILY PROFIT</div>
+                  <div style={{ width: '100%', height: '4px', backgroundColor: '#dcfce7', borderRadius: '2px', marginTop: '0.5rem' }}>
+                    <div style={{ width: '0%', height: '100%', backgroundColor: '#22c55e', borderRadius: '2px' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', fontSize: '0.75rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#6b7280' }}>Total Trades</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937' }}>0</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#6b7280' }}>Win Rate</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#059669' }}>--%</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#6b7280' }}>Avg Profit</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937' }}>R0</div>
+                </div>
+              </div>
+            </div>
             <div style={{ 
               backgroundColor: 'white', 
               borderRadius: '0.5rem', 
