@@ -138,6 +138,142 @@ class LunoClient:
             logger.error(f"Failed to get orderbook for {pair}: {e}")
             return {}
     
+    async def get_portfolio_data(self) -> Dict:
+        """Get complete portfolio data with proper ZAR calculation"""
+        try:
+            # Get balance and crypto prices
+            balance_data = await self.get_balance()
+            
+            # Get USD prices and ZAR conversion rate
+            import aiohttp
+            async with aiohttp.ClientSession() as session:
+                # Get crypto prices in USD from CoinGecko
+                async with session.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,ripple,stellar,tron,hedera-hashgraph&vs_currencies=usd') as response:
+                    if response.status == 200:
+                        crypto_usd_data = await response.json()
+                    else:
+                        crypto_usd_data = {}
+                
+                # Get USD to ZAR rate
+                async with session.get('https://api.exchangerate-api.com/v4/latest/USD') as response:
+                    if response.status == 200:
+                        fx_data = await response.json()
+                        usd_to_zar = fx_data['rates']['ZAR']
+                    else:
+                        usd_to_zar = 18.5  # Fallback rate
+            
+            # Map crypto symbols to CoinGecko IDs
+            symbol_mapping = {
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum', 
+                'ADA': 'cardano',
+                'XRP': 'ripple',
+                'XLM': 'stellar',
+                'TRX': 'tron',
+                'HBAR': 'hedera-hashgraph'
+            }
+            
+            # Calculate total portfolio value
+            total_value = 0.0
+            holdings = []
+            
+            # Add ZAR balance first
+            if 'ZAR_balance' in balance_data:
+                zar_amount = float(balance_data.get('ZAR_balance', 0))
+                total_value += zar_amount
+                if zar_amount > 0:
+                    holdings.append({
+                        'symbol': 'ZAR',
+                        'name': 'South African Rand',
+                        'amount': zar_amount,
+                        'current_price': 1.0,
+                        'value': zar_amount,
+                        'is_staked': False
+                    })
+            
+            # Process crypto holdings
+            for symbol in ['BTC', 'ETH', 'ADA', 'XRP', 'XLM', 'TRX', 'HBAR']:
+                balance_key = f'{symbol}_balance'
+                staked_key = f'{symbol}_staked'
+                
+                amount = float(balance_data.get(balance_key, 0))
+                staked_amount = float(balance_data.get(staked_key, 0))
+                total_amount = amount + staked_amount
+                
+                if total_amount > 0:
+                    # Get USD price
+                    coingecko_id = symbol_mapping.get(symbol)
+                    if coingecko_id and coingecko_id in crypto_usd_data:
+                        usd_price = crypto_usd_data[coingecko_id]['usd']
+                        zar_price = usd_price * usd_to_zar
+                        value = total_amount * zar_price
+                        total_value += value
+                        
+                        # Add regular holdings
+                        if amount > 0:
+                            holdings.append({
+                                'symbol': symbol,
+                                'name': self._get_asset_name(symbol),
+                                'amount': amount,
+                                'current_price': zar_price,
+                                'value': amount * zar_price,
+                                'is_staked': False
+                            })
+                        
+                        # Add staked holdings separately
+                        if staked_amount > 0:
+                            holdings.append({
+                                'symbol': f'{symbol}_STAKED',
+                                'name': f'{self._get_asset_name(symbol)} (Staked)',
+                                'amount': staked_amount,
+                                'current_price': zar_price,
+                                'value': staked_amount * zar_price,
+                                'is_staked': True,
+                                'apy': self._get_staking_apy(symbol)
+                            })
+                    else:
+                        logger.warning(f"Could not get price for {symbol}")
+            
+            return {
+                'total_value': total_value,
+                'currency': 'ZAR',
+                'holdings': holdings,
+                'usd_to_zar_rate': usd_to_zar,
+                'last_updated': datetime.utcnow().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting portfolio data: {e}")
+            return {
+                'total_value': 0,
+                'currency': 'ZAR',
+                'holdings': [],
+                'last_updated': datetime.utcnow().isoformat()
+            }
+    
+    def _get_asset_name(self, symbol: str) -> str:
+        """Get full asset name"""
+        names = {
+            'BTC': 'Bitcoin',
+            'ETH': 'Ethereum',
+            'ADA': 'Cardano',
+            'XRP': 'Ripple',
+            'XLM': 'Stellar',
+            'TRX': 'Tron',
+            'HBAR': 'Hedera'
+        }
+        return names.get(symbol, symbol)
+    
+    def _get_staking_apy(self, symbol: str) -> float:
+        """Get estimated staking APY"""
+        apys = {
+            'ETH': 4.2,
+            'ADA': 5.1,
+            'HBAR': 6.8,
+            'DOT': 8.5
+        }
+        return apys.get(symbol, 5.0)
+
     async def close(self):
         """Close the HTTP session"""
         if self.session:
