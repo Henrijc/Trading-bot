@@ -17,7 +17,7 @@ class LunoClient:
     
     def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
-        self.api_secret = api_secret
+        self.api_secret = api_secret  # This should be LUNO_SECRET, not LUNO_API_SECRET
         self.base_url = "https://api.luno.com/api/1"
         self.client = httpx.AsyncClient(timeout=30.0)
         
