@@ -143,24 +143,28 @@ class LunoClient:
         try:
             # Get balance and crypto prices
             balance_data = await self.get_balance()
+            logger.info(f"Balance data retrieved: {balance_data}")
             
             # Get USD prices and ZAR conversion rate
-            import aiohttp
             async with aiohttp.ClientSession() as session:
                 # Get crypto prices in USD from CoinGecko
                 async with session.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,ripple,stellar,tron,hedera-hashgraph&vs_currencies=usd') as response:
                     if response.status == 200:
                         crypto_usd_data = await response.json()
+                        logger.info(f"Crypto USD prices: {crypto_usd_data}")
                     else:
                         crypto_usd_data = {}
+                        logger.warning(f"Failed to get crypto prices: {response.status}")
                 
                 # Get USD to ZAR rate
                 async with session.get('https://api.exchangerate-api.com/v4/latest/USD') as response:
                     if response.status == 200:
                         fx_data = await response.json()
                         usd_to_zar = fx_data['rates']['ZAR']
+                        logger.info(f"USD to ZAR rate: {usd_to_zar}")
                     else:
                         usd_to_zar = 18.5  # Fallback rate
+                        logger.warning(f"Failed to get FX rate, using fallback: {usd_to_zar}")
             
             # Map crypto symbols to CoinGecko IDs
             symbol_mapping = {
@@ -190,6 +194,7 @@ class LunoClient:
                         'value': zar_amount,
                         'is_staked': False
                     })
+                logger.info(f"ZAR balance: {zar_amount}")
             
             # Process crypto holdings
             for symbol in ['BTC', 'ETH', 'ADA', 'XRP', 'XLM', 'TRX', 'HBAR']:
@@ -200,6 +205,8 @@ class LunoClient:
                 staked_amount = float(balance_data.get(staked_key, 0))
                 total_amount = amount + staked_amount
                 
+                logger.info(f"{symbol}: balance={amount}, staked={staked_amount}, total={total_amount}")
+                
                 if total_amount > 0:
                     # Get USD price
                     coingecko_id = symbol_mapping.get(symbol)
@@ -208,6 +215,8 @@ class LunoClient:
                         zar_price = usd_price * usd_to_zar
                         value = total_amount * zar_price
                         total_value += value
+                        
+                        logger.info(f"{symbol}: USD price={usd_price}, ZAR price={zar_price}, value={value}")
                         
                         # Add regular holdings
                         if amount > 0:
@@ -232,7 +241,10 @@ class LunoClient:
                                 'apy': self._get_staking_apy(symbol)
                             })
                     else:
-                        logger.warning(f"Could not get price for {symbol}")
+                        logger.warning(f"Could not get price for {symbol}, coingecko_id: {coingecko_id}")
+            
+            logger.info(f"Total portfolio value calculated: {total_value}")
+            logger.info(f"Holdings count: {len(holdings)}")
             
             return {
                 'total_value': total_value,
@@ -244,6 +256,8 @@ class LunoClient:
             
         except Exception as e:
             logger.error(f"Error getting portfolio data: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return {
                 'total_value': 0,
                 'currency': 'ZAR',
