@@ -205,6 +205,8 @@ class CryptoTradingBotTester:
         self.test_health_check()
         self.test_balance()
         self.test_market_data()
+        self.test_crypto_prices()  # NEW: Test crypto prices endpoint
+        self.test_trading_signals()  # Test trading signals endpoint
         self.test_performance_metrics()
         self.test_goals_probability()
         self.test_ai_strategy_status()
