@@ -445,7 +445,10 @@ function App() {
                     {Number(balance?.BTC_balance || 0).toFixed(6)}
                   </p>
                   <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
-                    {formatCurrency((balance?.BTC_balance || 0) * (marketData?.ticker?.last_trade || 0))}
+                    ${Number((balance?.BTC_balance || 0) * (cryptoPrices?.BTC || 0)).toFixed(2)} USD
+                  </p>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                    {formatCurrency((balance?.BTC_balance || 0) * (cryptoPrices?.BTC || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                   </p>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
