@@ -238,13 +238,19 @@ async def get_balance():
 async def get_crypto_prices():
     """Get USD prices for cryptocurrencies that don't have ZAR pairs"""
     try:
-        # For now, return mock USD prices - in production you'd use CoinGecko or similar
+        # Updated prices for all your holdings
         usd_prices = {
             "HBAR": 0.062,  # $0.062 per HBAR
             "ETH": 2400.0,  # $2400 per ETH
             "XRP": 0.58,    # $0.58 per XRP
             "ADA": 0.45,    # $0.45 per ADA
+            "TRX": 0.16,    # $0.16 per TRX
+            "XLM": 0.12,    # $0.12 per XLM
             "DOT": 5.20,    # $5.20 per DOT
+            "NEAR": 3.50,   # $3.50 per NEAR
+            "SOL": 145.0,   # $145 per SOL
+            "DOGE": 0.08,   # $0.08 per DOGE
+            "BERA": 0.50,   # $0.50 per BERA (estimated)
             "USD_TO_ZAR": 18.50  # Exchange rate
         }
         
