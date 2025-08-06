@@ -1019,7 +1019,7 @@ function App() {
                   justifyContent: 'center',
                   fontSize: '1rem'
                 }}>
-                  🤖
+                  AI
                 </div>
                 <div style={{ 
                   backgroundColor: '#f0f9ff', 
