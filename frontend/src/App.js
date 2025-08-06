@@ -558,7 +558,7 @@ function App() {
               </div>
             </div>
 
-            {/* AI Trading Status */}
+            {/* AI Trading Controls */}
             <div style={{ 
               backgroundColor: 'white', 
               borderRadius: '0.5rem', 
@@ -574,7 +574,7 @@ function App() {
               <div style={{ marginBottom: '1rem' }}>
                 <p style={{ 
                   fontSize: '1.5rem', 
-                  fontWeight: '600', 
+                  fontWeight: '700', 
                   color: aiTradingActive ? '#059669' : '#6b7280',
                   margin: 0,
                   lineHeight: '1'
@@ -585,16 +585,16 @@ function App() {
                   {aiTradingActive ? 'AI is actively trading' : 'Ready to start trading'}
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                 <button
                   onClick={startAITrading}
                   disabled={aiTradingActive || loading}
                   style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: aiTradingActive ? '#9ca3af' : '#059669',
+                    backgroundColor: aiTradingActive ? '#d1d5db' : '#059669',
                     color: 'white',
                     border: 'none',
                     borderRadius: '0.375rem',
+                    padding: '0.5rem 1rem',
                     fontSize: '0.875rem',
                     fontWeight: '500',
                     cursor: aiTradingActive || loading ? 'not-allowed' : 'pointer',
@@ -607,11 +607,11 @@ function App() {
                   onClick={stopAITrading}
                   disabled={!aiTradingActive || loading}
                   style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: !aiTradingActive ? '#9ca3af' : '#dc2626',
+                    backgroundColor: !aiTradingActive ? '#d1d5db' : '#dc2626',
                     color: 'white',
                     border: 'none',
                     borderRadius: '0.375rem',
+                    padding: '0.5rem 1rem',
                     fontSize: '0.875rem',
                     fontWeight: '500',
                     cursor: !aiTradingActive || loading ? 'not-allowed' : 'pointer',
@@ -619,6 +619,46 @@ function App() {
                   }}
                 >
                   Stop AI
+                </button>
+              </div>
+              
+              {/* Quick Config Panel */}
+              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem' }}>
+                  <div>
+                    <span style={{ color: '#6b7280' }}>Daily Target:</span>
+                    <span style={{ fontWeight: '600', marginLeft: '0.25rem' }}>R1,000</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#6b7280' }}>Max Risk:</span>
+                    <span style={{ fontWeight: '600', marginLeft: '0.25rem' }}>2%</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#6b7280' }}>Strategy:</span>
+                    <span style={{ fontWeight: '600', marginLeft: '0.25rem' }}>FreqAI</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#6b7280' }}>Confidence:</span>
+                    <span style={{ fontWeight: '600', marginLeft: '0.25rem' }}>70%</span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => setShowConfigModal(true)}
+                  style={{ 
+                    backgroundColor: '#f3f4f6', 
+                    color: '#374151',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    padding: '0.375rem 0.75rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    marginTop: '0.5rem',
+                    width: '100%'
+                  }}
+                >
+                  Configure Strategy
                 </button>
               </div>
             </div>
