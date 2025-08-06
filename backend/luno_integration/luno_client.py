@@ -99,22 +99,9 @@ class LunoClient:
                 
                 logger.info(f"Asset {currency}: balance={asset['balance']}, total now={balances[balance_key]}")
             
-            # Add staked holdings data (mock data based on typical staking amounts)
-            # In production, this would come from staking API endpoints
-            if 'ETH_balance' in balances and balances['ETH_balance'] > 0:
-                balances['ETH_staked'] = min(balances['ETH_balance'] * 0.15, 2.0)  # Up to 15% staked
-            
-            if 'ADA_balance' in balances and balances['ADA_balance'] > 0:
-                balances['ADA_staked'] = min(balances['ADA_balance'] * 0.5, 50.0)  # Up to 50% staked
-                
-            if 'DOT_balance' in balances:
-                balances['DOT_balance'] = 15.5  # Add DOT holdings
-                balances['DOT_reserved'] = 0.0
-                balances['DOT_unconfirmed'] = 0.0
-                balances['DOT_staked'] = 8.2  # Staked DOT
-                
-            if 'HBAR_balance' in balances and balances['HBAR_balance'] > 0:
-                balances['HBAR_staked'] = min(balances['HBAR_balance'] * 0.2, 200.0)  # Up to 20% staked
+            # Add staked holdings data from ACTUAL Luno API if available
+            # Note: In production, this would query specific staking endpoints
+            # For now, we don't add mock staking data - only real balance data
                 
             logger.info(f"Balance with staking retrieved: {balances}")
             return balances
