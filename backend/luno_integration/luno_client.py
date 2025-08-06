@@ -186,8 +186,7 @@ class LunoClient:
                     raise Exception("Luno price data unavailable")
             
             # Since we now have ZAR prices directly, we don't need USD conversion
-            usd_to_zar = 1.0  # Not used anymore since prices are already in ZAR
-            logger.info(f"USD to ZAR rate: {usd_to_zar}")
+            logger.info(f"Luno ZAR prices count: {len(price_data)}")
             
             # Calculate total portfolio value
             total_value = 0.0
@@ -208,7 +207,7 @@ class LunoClient:
                     })
                 logger.info(f"ZAR balance: {zar_amount}")
             
-            # Process crypto holdings
+            # Process crypto holdings using LUNO ZAR prices
             for symbol in ['BTC', 'ETH', 'ADA', 'XRP', 'XLM', 'TRX', 'HBAR', 'SOL']:
                 balance_key = f'{symbol}_balance'
                 staked_key = f'{symbol}_staked'
@@ -250,7 +249,7 @@ class LunoClient:
                             'apy': self._get_staking_apy(symbol)
                         })
                 elif total_amount > 0:
-                    logger.warning(f"No price data for {symbol} (amount: {total_amount})")
+                    logger.warning(f"No Luno price data for {symbol} (amount: {total_amount})")
             
             logger.info(f"Total portfolio value calculated: {total_value}")
             logger.info(f"Holdings count: {len(holdings)}")
@@ -259,7 +258,7 @@ class LunoClient:
                 'total_value': total_value,
                 'currency': 'ZAR',
                 'holdings': holdings,
-                'usd_to_zar_rate': usd_to_zar,
+                'usd_to_zar_rate': 1.0,  # Not applicable with direct ZAR prices
                 'last_updated': datetime.utcnow().isoformat()
             }
             
