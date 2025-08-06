@@ -950,6 +950,228 @@ function App() {
         </div>
       </div>
 
+      {/* AI Chat Modal */}
+      {showChatModal && (
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          zIndex: 50
+        }}>
+          <div style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '0.5rem', 
+            width: '600px', 
+            height: '700px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Chat Header */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '1rem', 
+              borderBottom: '1px solid #e5e7eb',
+              backgroundColor: '#f9fafb',
+              borderRadius: '0.5rem 0.5rem 0 0'
+            }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
+                  💬 Chat with AI Trading Assistant
+                </h2>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
+                  Ask questions, give instructions, or get trading insights
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowChatModal(false)}
+                style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Chat Messages */}
+            <div style={{ 
+              flex: 1, 
+              padding: '1rem', 
+              overflowY: 'auto', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1rem' 
+            }}>
+              {/* Initial AI Message */}
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  backgroundColor: '#3b82f6', 
+                  borderRadius: '50%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  fontSize: '1rem'
+                }}>
+                  🤖
+                </div>
+                <div style={{ 
+                  backgroundColor: '#f0f9ff', 
+                  padding: '0.75rem 1rem', 
+                  borderRadius: '0.5rem', 
+                  maxWidth: '80%',
+                  fontSize: '0.875rem',
+                  lineHeight: '1.5'
+                }}>
+                  <p style={{ margin: 0 }}>
+                    Hello! I'm your AI trading assistant. I can help you with:
+                  </p>
+                  <ul style={{ margin: '0.5rem 0 0 0', paddingLeft: '1rem' }}>
+                    <li>Setting up trading strategies</li>
+                    <li>Analyzing your portfolio performance</li>
+                    <li>Explaining market conditions</li>
+                    <li>Adjusting risk parameters</li>
+                    <li>Answering any trading questions</li>
+                  </ul>
+                  <p style={{ margin: '0.5rem 0 0 0', fontStyle: 'italic', color: '#6b7280' }}>
+                    Try asking: "What's the best strategy for today?" or "Show me my risk level"
+                  </p>
+                </div>
+              </div>
+
+              {/* Chat Messages */}
+              {chatMessages.map((message, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  gap: '0.75rem', 
+                  justifyContent: message.type === 'user' ? 'flex-end' : 'flex-start' 
+                }}>
+                  {message.type === 'ai' && (
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      backgroundColor: '#3b82f6', 
+                      borderRadius: '50%', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      fontSize: '1rem'
+                    }}>
+                      🤖
+                    </div>
+                  )}
+                  <div style={{ 
+                    backgroundColor: message.type === 'user' ? '#3b82f6' : '#f0f9ff',
+                    color: message.type === 'user' ? 'white' : '#1f2937',
+                    padding: '0.75rem 1rem', 
+                    borderRadius: '0.5rem', 
+                    maxWidth: '80%',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.5'
+                  }}>
+                    {message.text}
+                  </div>
+                  {message.type === 'user' && (
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      backgroundColor: '#059669', 
+                      borderRadius: '50%', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      fontSize: '1rem'
+                    }}>
+                      👤
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Chat Input */}
+            <div style={{ 
+              padding: '1rem', 
+              borderTop: '1px solid #e5e7eb',
+              backgroundColor: '#f9fafb'
+            }}>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input 
+                  type="text" 
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Ask me anything about trading or give me instructions..."
+                  style={{ 
+                    flex: 1, 
+                    padding: '0.75rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim()}
+                  style={{ 
+                    backgroundColor: newMessage.trim() ? '#3b82f6' : '#d1d5db', 
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    padding: '0.75rem 1rem',
+                    fontSize: '0.875rem',
+                    cursor: newMessage.trim() ? 'pointer' : 'not-allowed',
+                    fontWeight: '500'
+                  }}
+                >
+                  Send
+                </button>
+              </div>
+              
+              {/* Quick Actions */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                {[
+                  "What's my current risk level?",
+                  "Should I trade today?",
+                  "Explain FreqAI strategy",
+                  "Start conservative trading",
+                  "Show market analysis"
+                ].map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setNewMessage(suggestion);
+                      handleSendMessage(suggestion);
+                    }}
+                    style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '1rem',
+                      padding: '0.25rem 0.75rem',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                      color: '#6b7280'
+                    }}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Advanced Trading Configuration Modal */}
       {showConfigModal && (
         <div style={{ 
