@@ -472,7 +472,6 @@
 .status-indicator.connected .status-dot {
   background-color: #10b981;
 }
-}
 
 .status-indicator.connecting .status-dot {
   background-color: #f59e0b;
