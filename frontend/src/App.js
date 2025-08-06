@@ -697,7 +697,7 @@ function App() {
                       </p>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
-                      <span style={{ color: '#dc2626' }}>● BEAR Market</span>
+                      <span style={{ color: '#dc2626' }}>BEAR Market</span>
                       <span style={{ color: '#6b7280' }}>AI Confidence: 73%</span>
                     </div>
                   </div>
