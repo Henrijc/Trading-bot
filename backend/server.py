@@ -127,6 +127,16 @@ logger.info(f"Final API Secret loaded: '{luno_api_secret}'")
 logger.info(f"API Key length: {len(luno_api_key)}")
 logger.info(f"API Secret length: {len(luno_api_secret)}")
 
+# Check for invisible characters
+logger.info(f"API Key bytes: {luno_api_key.encode('utf-8')}")
+logger.info(f"API Secret bytes: {luno_api_secret.encode('utf-8')}")
+
+# Check if there are any whitespace issues
+logger.info(f"API Key stripped: '{luno_api_key.strip()}'")
+logger.info(f"API Secret stripped: '{luno_api_secret.strip()}'")
+logger.info(f"API Key == stripped: {luno_api_key == luno_api_key.strip()}")
+logger.info(f"API Secret == stripped: {luno_api_secret == luno_api_secret.strip()}")
+
 if not luno_api_key or not luno_api_secret:
     logger.error("CRITICAL: Luno API credentials not set in environment variables!")
 
