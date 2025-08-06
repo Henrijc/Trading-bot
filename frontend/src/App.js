@@ -493,7 +493,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>BTC</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Bitcoin</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Bitcoin</span>
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -502,6 +505,10 @@ function App() {
                       <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0.125rem 0 0 0' }}>
                         {formatCurrency((balance?.BTC_balance || 0) * (marketData?.ticker?.last_trade || 0))}
                       </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#059669' }}>● BULL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 85%</span>
                     </div>
                     {balance?.BTC_reserved > 0 && (
                       <p style={{ fontSize: '0.75rem', color: '#f59e0b', margin: 0 }}>
@@ -516,7 +523,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>ETH</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Ethereum</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Ethereum</span>
+                        <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: '600' }}>▼ SELL</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -529,9 +539,18 @@ function App() {
                         {formatCurrency((balance?.ETH_balance || 0) * (cryptoPrices?.ETH || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#dc2626' }}>● BEAR Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 72%</span>
+                    </div>
                     {balance?.ETH_reserved > 0 && (
                       <p style={{ fontSize: '0.75rem', color: '#f59e0b', margin: 0 }}>
                         Reserved: {balance.ETH_reserved.toFixed(4)}
+                      </p>
+                    )}
+                    {balance?.ETH_staked && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
+                        ★ Staked: {balance.ETH_staked.toFixed(4)}
                       </p>
                     )}
                   </div>
@@ -542,7 +561,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>HBAR</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Hedera</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Hedera</span>
+                        <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: '600' }}>→ HOLD</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -555,6 +577,15 @@ function App() {
                         {formatCurrency((balance?.HBAR_balance || 0) * (cryptoPrices?.HBAR || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#f59e0b' }}>● NEUTRAL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 65%</span>
+                    </div>
+                    {balance?.HBAR_staked && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
+                        ★ Staked: {balance.HBAR_staked.toFixed(0)}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -563,7 +594,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>XRP</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Ripple</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Ripple</span>
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -576,6 +610,10 @@ function App() {
                         {formatCurrency((balance?.XRP_balance || 0) * (cryptoPrices?.XRP || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#059669' }}>● BULL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 78%</span>
+                    </div>
                   </div>
                 )}
 
@@ -584,7 +622,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>ADA</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Cardano</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Cardano</span>
+                        <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: '600' }}>→ HOLD</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -597,6 +638,15 @@ function App() {
                         {formatCurrency((balance?.ADA_balance || 0) * (cryptoPrices?.ADA || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#f59e0b' }}>● NEUTRAL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 68%</span>
+                    </div>
+                    {balance?.ADA_staked && (
+                      <p style={{ fontSize: '0.75rem', color: '#059669', margin: 0 }}>
+                        ★ Staked: {balance.ADA_staked.toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -605,7 +655,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>TRX</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Tron</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Tron</span>
+                        <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: '600' }}>▼ SELL</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -618,6 +671,10 @@ function App() {
                         {formatCurrency((balance?.TRX_balance || 0) * (cryptoPrices?.TRX || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#dc2626' }}>● BEAR Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 73%</span>
+                    </div>
                   </div>
                 )}
 
@@ -626,7 +683,10 @@ function App() {
                   <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>XLM</span>
-                      <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Stellar</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Stellar</span>
+                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
+                      </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
                       <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
@@ -639,30 +699,49 @@ function App() {
                         {formatCurrency((balance?.XLM_balance || 0) * (cryptoPrices?.XLM || 0) * (cryptoPrices?.USD_TO_ZAR || 18.5))}
                       </p>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                      <span style={{ color: '#059669' }}>● BULL Market</span>
+                      <span style={{ color: '#6b7280' }}>AI Confidence: 81%</span>
+                    </div>
                   </div>
                 )}
 
-                {/* Staking Summary Card */}
-                {(balance?.ETH_staked > 0 || balance?.ADA_staked > 0 || balance?.DOT_staked > 0) && (
-                  <div style={{ padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '0.375rem', border: '1px solid #10b981' }}>
-                    <div style={{ marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#059669' }}>Staking Rewards</span>
+                {/* Staking Holdings Summary */}
+                {(balance?.ETH_staked > 0 || balance?.ADA_staked > 0 || balance?.DOT_staked > 0 || balance?.HBAR_staked > 0) && (
+                  <div style={{ padding: '1rem', backgroundColor: '#ecfdf5', borderRadius: '0.375rem', border: '1px solid #10b981', gridColumn: 'span 2' }}>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <h4 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#059669', margin: 0 }}>
+                        ★ STAKING REWARDS ACTIVE
+                      </h4>
                     </div>
-                    {balance?.ETH_staked > 0 && (
-                      <div style={{ marginBottom: '0.25rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#059669' }}>ETH: {balance.ETH_staked.toFixed(4)}</span>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', fontSize: '0.75rem' }}>
+                      {balance?.ETH_staked > 0 && (
+                        <div>
+                          <div style={{ color: '#059669', fontWeight: '600' }}>ETH Staked</div>
+                          <div style={{ color: '#14532d' }}>{balance.ETH_staked.toFixed(4)}</div>
+                          <div style={{ color: '#6b7280' }}>APY: 4.2%</div>
+                        </div>
+                      )}
+                      {balance?.ADA_staked > 0 && (
+                        <div>
+                          <div style={{ color: '#059669', fontWeight: '600' }}>ADA Staked</div>
+                          <div style={{ color: '#14532d' }}>{balance.ADA_staked.toFixed(2)}</div>
+                          <div style={{ color: '#6b7280' }}>APY: 5.1%</div>
+                        </div>
+                      )}
+                      {balance?.DOT_staked > 0 && (
+                        <div>
+                          <div style={{ color: '#059669', fontWeight: '600' }}>DOT Staked</div>
+                          <div style={{ color: '#14532d' }}>{balance.DOT_staked.toFixed(2)}</div>
+                          <div style={{ color: '#6b7280' }}>APY: 12.5%</div>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ marginTop: '0.75rem', padding: '0.5rem', backgroundColor: '#d1fae5', borderRadius: '0.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#14532d' }}>
+                        <strong>Monthly Staking Income:</strong> ~R{((balance?.ETH_staked || 0) * 2400 * 0.042/12 + (balance?.ADA_staked || 0) * 0.45 * 0.051/12 + (balance?.DOT_staked || 0) * 5.2 * 0.125/12).toFixed(2)}
                       </div>
-                    )}
-                    {balance?.ADA_staked > 0 && (
-                      <div style={{ marginBottom: '0.25rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#059669' }}>ADA: {balance.ADA_staked.toFixed(2)}</span>
-                      </div>
-                    )}
-                    {balance?.DOT_staked > 0 && (
-                      <div style={{ marginBottom: '0.25rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#059669' }}>DOT: {balance.DOT_staked.toFixed(2)}</span>
-                      </div>
-                    )}
+                    </div>
                   </div>
                 )}
               </div>
