@@ -503,7 +503,10 @@ function App() {
                       <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>BTC</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{ fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#e5e7eb', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>Bitcoin</span>
-                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ BUY</span>
+                        <span style={{ fontSize: '0.75rem', color: tradingSignals?.BTC?.action === 'BUY' ? '#059669' : tradingSignals?.BTC?.action === 'SELL' ? '#dc2626' : '#f59e0b', fontWeight: '600' }}>
+                          {tradingSignals?.BTC?.action === 'BUY' ? '▲ BUY' : 
+                           tradingSignals?.BTC?.action === 'SELL' ? '▼ SELL' : '→ HOLD'}
+                        </span>
                       </div>
                     </div>
                     <div style={{ marginBottom: '0.5rem' }}>
