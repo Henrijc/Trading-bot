@@ -70,6 +70,8 @@ class LunoClient:
         try:
             response = await self._make_request("balance")
             
+            logger.info(f"Raw balance response: {response}")
+            
             # Parse balance data like the working implementation
             balances = {}
             for asset in response.get('balance', []):
@@ -80,7 +82,8 @@ class LunoClient:
                     
                 balances[f"{currency}_balance"] = float(asset['balance'])
                 balances[f"{currency}_reserved"] = float(asset['reserved'])
-                balances[f"{currency}_unconfirmed"] = float(asset['unconfirmed_balance'])
+                # Handle unconfirmed_balance field that might be missing
+                balances[f"{currency}_unconfirmed"] = float(asset.get('unconfirmed_balance', 0))
                 
             logger.info(f"Balance retrieved: {balances}")
             return balances
