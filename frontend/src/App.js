@@ -1290,7 +1290,7 @@ function App() {
                   </p>
                 </div>
 
-                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#059669' }}>⚙️ Trading Parameters</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#059669' }}>Trading Parameters</h3>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
                     Maximum Open Trades ({tradingConfig.maxOpenTrades})
