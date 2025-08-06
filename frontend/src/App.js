@@ -840,6 +840,179 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Trading Configuration Modal */}
+      {showConfigModal && (
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          zIndex: 50
+        }}>
+          <div style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '0.5rem', 
+            padding: '2rem', 
+            maxWidth: '500px', 
+            width: '90%',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1.5rem' }}>
+              AI Trading Configuration
+            </h2>
+            
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Risk Management</h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Daily Target (ZAR)
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue="1000"
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Maximum Daily Risk (%)
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue="2" 
+                  min="0.1" 
+                  max="10" 
+                  step="0.1"
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Max Open Trades
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue="5" 
+                  min="1" 
+                  max="20"
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>AI Strategy</h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Trading Strategy
+                </label>
+                <select style={{ 
+                  width: '100%', 
+                  padding: '0.5rem', 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: '0.375rem',
+                  fontSize: '0.875rem'
+                }}>
+                  <option value="freqai">FreqAI (ML-Based)</option>
+                  <option value="technical">Technical Analysis</option>
+                  <option value="hybrid">Hybrid (FreqAI + TA)</option>
+                </select>
+              </div>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                  Minimum Confidence (%)
+                </label>
+                <input 
+                  type="number" 
+                  defaultValue="70" 
+                  min="50" 
+                  max="95" 
+                  step="5"
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Trading Pairs</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                {['BTC/ZAR', 'ETH/ZAR', 'XRP/ZAR', 'ADA/ZAR'].map(pair => (
+                  <label key={pair} style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                    <input type="checkbox" defaultChecked style={{ marginRight: '0.5rem' }} />
+                    {pair}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setShowConfigModal(false)}
+                style={{ 
+                  backgroundColor: '#f3f4f6', 
+                  color: '#374151',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  // Save configuration logic here
+                  setShowConfigModal(false);
+                  alert('Configuration saved! AI will use new settings on next start.');
+                }}
+                style={{ 
+                  backgroundColor: '#059669', 
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Save Configuration
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
