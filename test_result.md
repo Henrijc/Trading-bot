@@ -177,7 +177,17 @@ frontend:
           agent: "testing"
           comment: "✅ Responsive design works well. Grid layout adapts properly to mobile (390px) and tablet (768px) viewports. All sections remain visible and properly arranged across different screen sizes."
 
-  - task: "Phase 3 Charts & Metrics Implementation"
+  - task: "Frontend Data Display and Portfolio Balance Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "❌ CRITICAL USER ISSUE: Frontend shows R0.00 for portfolio balance and total holdings despite backend returning real Luno data. Staked holdings (ETH_staked, ADA_staked, HBAR_staked) not displaying. Need to debug frontend data processing logic."
     implemented: true
     working: false
     file: "/app/frontend/src/App.js, /app/frontend/src/components/"
