@@ -1,85 +1,60 @@
 version: '3.8'
 
 services:
-  # MongoDB Database
   mongodb:
     image: mongo:7-jammy
     container_name: cryptobot_mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: cryptobot
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-cryptobot_secure_pass}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: cryptobot_db
     volumes:
       - mongodb_data:/data/db
     networks:
       - cryptobot_network
-    ports:
-      - "27017:27017"
 
-  # Redis for caching and real-time data
   redis:
     image: redis:7-alpine
     container_name: cryptobot_redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_secure_pass}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/data
     networks:
       - cryptobot_network
-    ports:
-      - "6379:6379"
 
-  # Backend API
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: cryptobot_backend
     restart: unless-stopped
     environment:
-      - MONGO_URL=mongodb://cryptobot:${MONGO_PASSWORD:-cryptobot_secure_pass}@mongodb:27017/cryptobot_db?authSource=admin
-      - DB_NAME=cryptobot_db
-      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis_secure_pass}@redis:6379
+      - MONGO_URL=mongodb://cryptobot:${MONGO_PASSWORD}@mongodb:27017/cryptobot_db?authSource=admin
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
       - LUNO_API_KEY=${LUNO_API_KEY}
       - LUNO_API_SECRET=${LUNO_API_SECRET}
-      - BINANCE_API_KEY=${BINANCE_API_KEY:-}
-      - BINANCE_SECRET=${BINANCE_SECRET:-}
-      - API_TOKEN=${API_TOKEN:-secure_token_123}
-      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET:-freqtrade_jwt_secret_key}
-      - DAILY_TARGET_ZAR=${DAILY_TARGET_ZAR:-1000}
-      - MAX_DAILY_RISK_PERCENT=${MAX_DAILY_RISK_PERCENT:-2.0}
-      - MAX_OPEN_TRADES=${MAX_OPEN_TRADES:-5}
-      - ENABLE_AI_TRADING=${ENABLE_AI_TRADING:-true}
-      - AI_MODEL_RETRAIN_HOURS=${AI_MODEL_RETRAIN_HOURS:-24}
-      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.7}
+      - API_TOKEN=${API_TOKEN}
+      - FREQTRADE_JWT_SECRET=${FREQTRADE_JWT_SECRET}
     depends_on:
       - mongodb
       - redis
-    volumes:
-      - freqtrade_data:/app/freqtrade/data
-      - ai_models:/app/ai_strategies/models
     networks:
       - cryptobot_network
     ports:
-      - "8004:8004"  # Using port 8004 as per deployment framework
+      - "8004:8004"
 
-  # Frontend React App
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: cryptobot_frontend
     restart: unless-stopped
-    environment:
-      - REACT_APP_BACKEND_URL=https://cryptobot.zikhethele.properties
-      - WDS_SOCKET_PORT=443
     depends_on:
       - backend
     networks:
       - cryptobot_network
     ports:
-      - "3003:3000"  # Using port 3003 as per deployment framework
+      - "3003:3000"
 
 networks:
   cryptobot_network:
@@ -87,10 +62,4 @@ networks:
 
 volumes:
   mongodb_data:
-    driver: local
   redis_data:
-    driver: local
-  freqtrade_data:
-    driver: local
-  ai_models:
-    driver: local
