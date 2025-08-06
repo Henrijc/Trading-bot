@@ -215,6 +215,23 @@ async def health_check():
         logger.error(f"Health check failed: {e}")
         raise HTTPException(status_code=500, detail="Service unhealthy")
 
+@app.get("/api/portfolio")
+async def get_portfolio():
+    """Get complete portfolio data with accurate ZAR calculations"""
+    try:
+        luno_client = LunoClient()
+        portfolio_data = await luno_client.get_portfolio_data()
+        await luno_client.close()
+        
+        return {
+            "status": "success",
+            "data": portfolio_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Portfolio data failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/balance")
 async def get_balance():
     """Get current account balance from Luno"""
