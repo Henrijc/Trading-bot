@@ -435,7 +435,7 @@ function App() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
                 <div style={{ padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '0.375rem', border: '1px solid #0ea5e9' }}>
                   <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#0ea5e9' }}>
-                    📈 Trading Method
+                    Trading Method
                   </h4>
                   <ul style={{ fontSize: '0.75rem', color: '#0c4a6e', margin: 0, paddingLeft: '1rem', lineHeight: '1.5' }}>
                     <li>Buys crypto when AI predicts price increase</li>
@@ -448,7 +448,7 @@ function App() {
 
                 <div style={{ padding: '1rem', backgroundColor: '#f0fdf4', borderRadius: '0.375rem', border: '1px solid #22c55e' }}>
                   <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#22c55e' }}>
-                    💰 Profit Generation
+                    Profit Generation
                   </h4>
                   <ul style={{ fontSize: '0.75rem', color: '#14532d', margin: 0, paddingLeft: '1rem', lineHeight: '1.5' }}>
                     <li>Target: 1-3% profit per successful trade</li>
@@ -461,7 +461,7 @@ function App() {
 
                 <div style={{ padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '0.375rem', border: '1px solid #f59e0b' }}>
                   <h4 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 0.5rem 0', color: '#f59e0b' }}>
-                    ⚖️ Risk Management
+                    Risk Management
                   </h4>
                   <ul style={{ fontSize: '0.75rem', color: '#92400e', margin: 0, paddingLeft: '1rem', lineHeight: '1.5' }}>
                     <li>Stop-loss prevents major losses (3% max)</li>
