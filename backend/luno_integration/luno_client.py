@@ -141,41 +141,23 @@ class LunoClient:
     async def get_portfolio_data(self) -> Dict:
         """Get complete portfolio data with proper ZAR calculation"""
         try:
-            # Get balance and crypto prices
+            # Get balance data
             balance_data = await self.get_balance()
-            logger.info(f"Balance data retrieved: {balance_data}")
+            logger.info(f"Balance data retrieved: crypto count = {len([k for k in balance_data.keys() if 'balance' in k and balance_data[k] > 0])}")
             
-            # Get USD prices and ZAR conversion rate
-            async with aiohttp.ClientSession() as session:
-                # Get crypto prices in USD from CoinGecko
-                async with session.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,ripple,stellar,tron,hedera-hashgraph&vs_currencies=usd') as response:
-                    if response.status == 200:
-                        crypto_usd_data = await response.json()
-                        logger.info(f"Crypto USD prices: {crypto_usd_data}")
-                    else:
-                        crypto_usd_data = {}
-                        logger.warning(f"Failed to get crypto prices: {response.status}")
-                
-                # Get USD to ZAR rate
-                async with session.get('https://api.exchangerate-api.com/v4/latest/USD') as response:
-                    if response.status == 200:
-                        fx_data = await response.json()
-                        usd_to_zar = fx_data['rates']['ZAR']
-                        logger.info(f"USD to ZAR rate: {usd_to_zar}")
-                    else:
-                        usd_to_zar = 18.5  # Fallback rate
-                        logger.warning(f"Failed to get FX rate, using fallback: {usd_to_zar}")
+            # Use the existing crypto prices service instead of calling CoinGecko directly
+            from services.crypto_price_service import CryptoPriceService
+            crypto_price_service = CryptoPriceService()
+            price_data = await crypto_price_service.get_crypto_prices()
             
-            # Map crypto symbols to CoinGecko IDs
-            symbol_mapping = {
-                'BTC': 'bitcoin',
-                'ETH': 'ethereum', 
-                'ADA': 'cardano',
-                'XRP': 'ripple',
-                'XLM': 'stellar',
-                'TRX': 'tron',
-                'HBAR': 'hedera-hashgraph'
-            }
+            logger.info(f"Price data retrieved: {price_data}")
+            
+            if not price_data:
+                logger.error("Failed to get crypto prices from service")
+                raise Exception("Price data unavailable")
+            
+            usd_to_zar = price_data.get('USD_TO_ZAR', 18.5)
+            logger.info(f"USD to ZAR rate: {usd_to_zar}")
             
             # Calculate total portfolio value
             total_value = 0.0
@@ -207,41 +189,39 @@ class LunoClient:
                 
                 logger.info(f"{symbol}: balance={amount}, staked={staked_amount}, total={total_amount}")
                 
-                if total_amount > 0:
-                    # Get USD price
-                    coingecko_id = symbol_mapping.get(symbol)
-                    if coingecko_id and coingecko_id in crypto_usd_data:
-                        usd_price = crypto_usd_data[coingecko_id]['usd']
-                        zar_price = usd_price * usd_to_zar
-                        value = total_amount * zar_price
-                        total_value += value
-                        
-                        logger.info(f"{symbol}: USD price={usd_price}, ZAR price={zar_price}, value={value}")
-                        
-                        # Add regular holdings
-                        if amount > 0:
-                            holdings.append({
-                                'symbol': symbol,
-                                'name': self._get_asset_name(symbol),
-                                'amount': amount,
-                                'current_price': zar_price,
-                                'value': amount * zar_price,
-                                'is_staked': False
-                            })
-                        
-                        # Add staked holdings separately
-                        if staked_amount > 0:
-                            holdings.append({
-                                'symbol': f'{symbol}_STAKED',
-                                'name': f'{self._get_asset_name(symbol)} (Staked)',
-                                'amount': staked_amount,
-                                'current_price': zar_price,
-                                'value': staked_amount * zar_price,
-                                'is_staked': True,
-                                'apy': self._get_staking_apy(symbol)
-                            })
-                    else:
-                        logger.warning(f"Could not get price for {symbol}, coingecko_id: {coingecko_id}")
+                if total_amount > 0 and symbol in price_data:
+                    # Get USD price from our crypto price service
+                    usd_price = price_data[symbol]
+                    zar_price = usd_price * usd_to_zar
+                    value = total_amount * zar_price
+                    total_value += value
+                    
+                    logger.info(f"{symbol}: USD price={usd_price}, ZAR price={zar_price}, value={value}")
+                    
+                    # Add regular holdings
+                    if amount > 0:
+                        holdings.append({
+                            'symbol': symbol,
+                            'name': self._get_asset_name(symbol),
+                            'amount': amount,
+                            'current_price': zar_price,
+                            'value': amount * zar_price,
+                            'is_staked': False
+                        })
+                    
+                    # Add staked holdings separately
+                    if staked_amount > 0:
+                        holdings.append({
+                            'symbol': f'{symbol}_STAKED',
+                            'name': f'{self._get_asset_name(symbol)} (Staked)',
+                            'amount': staked_amount,
+                            'current_price': zar_price,
+                            'value': staked_amount * zar_price,
+                            'is_staked': True,
+                            'apy': self._get_staking_apy(symbol)
+                        })
+                elif total_amount > 0:
+                    logger.warning(f"No price data for {symbol} (amount: {total_amount})")
             
             logger.info(f"Total portfolio value calculated: {total_value}")
             logger.info(f"Holdings count: {len(holdings)}")
