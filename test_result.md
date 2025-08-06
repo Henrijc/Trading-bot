@@ -225,6 +225,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ Market data API (/api/market-data/{pair}) is working correctly and providing real-time data. Integration with Luno API is functional."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Market data API now working perfectly. Fixed missing get_ticker() and get_orderbook() methods in LunoClient. Returns real market data for XBTZAR pair with bid/ask/last_trade prices."
 
   - task: "Health Check and System Status"
     implemented: true
@@ -237,6 +240,30 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ Health check endpoint (/api/health) is working and providing accurate service status information."
+
+  - task: "NEW Crypto Prices API Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ NEW: /api/crypto-prices endpoint working perfectly. Returns USD prices for BTC, ETH, HBAR, XRP, ADA, TRX, XLM, DOGE plus USD_TO_ZAR conversion rate. Proper JSON format with status, data, and timestamp fields as requested."
+
+  - task: "Trading Signals API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Trading signals API now working. Fixed import error for FreqTrade controller. Returns proper response with HOLD signals for all cryptos (BTC, ETH, XRP, ADA, TRX, XLM) with confidence=0 and reasoning that FreqTrade AI engine is not available (expected behavior)."
 
 metadata:
   created_by: "testing_agent"
