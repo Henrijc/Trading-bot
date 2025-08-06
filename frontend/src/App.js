@@ -1505,7 +1505,7 @@ AI will use these settings when you start trading.`);
                   fontWeight: '500'
                 }}
               >
-                💾 Save & Apply Configuration
+                Save & Apply Configuration
               </button>
             </div>
           </div>
