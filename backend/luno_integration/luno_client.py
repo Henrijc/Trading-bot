@@ -68,7 +68,7 @@ class LunoClient:
     async def get_balance(self) -> Dict[str, Any]:
         """Get account balance - using working implementation pattern"""
         try:
-            response = await self._make_request("balance", auth_required=True)
+            response = await self._make_request("balance")
             
             # Parse balance data like the working implementation
             balances = {}
