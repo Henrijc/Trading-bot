@@ -36,15 +36,16 @@ function App() {
   const [goals, setGoals] = useState(null);
   const [cryptoPrices, setCryptoPrices] = useState(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
   const [showManualTradeModal, setShowManualTradeModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
   const [manualTrade, setManualTrade] = useState({
     pair: 'BTC/ZAR',
     action: 'buy',
     amount: '',
     orderType: 'market'
   });
-  const [chatMessages, setChatMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
   const [tradingConfig, setTradingConfig] = useState({
     dailyTarget: 1000,
     maxRisk: 2,
