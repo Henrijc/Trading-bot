@@ -72,7 +72,7 @@ class LunoClient:
             
             logger.info(f"Raw balance response: {response}")
             
-            # Parse balance data like the working implementation
+            # Parse balance data and SUM multiple accounts for the same asset
             balances = {}
             for asset in response.get('balance', []):
                 currency = asset['asset']
@@ -80,15 +80,29 @@ class LunoClient:
                 if currency == 'XBT':
                     currency = 'BTC'
                     
-                balances[f"{currency}_balance"] = float(asset['balance'])
-                balances[f"{currency}_reserved"] = float(asset['reserved'])
-                # Handle unconfirmed_balance field that might be missing
-                balances[f"{currency}_unconfirmed"] = float(asset.get('unconfirmed_balance', 0))
+                # Initialize if not exists, then ADD (don't override!)
+                balance_key = f"{currency}_balance"
+                reserved_key = f"{currency}_reserved"
+                unconfirmed_key = f"{currency}_unconfirmed"
+                
+                if balance_key not in balances:
+                    balances[balance_key] = 0.0
+                if reserved_key not in balances:
+                    balances[reserved_key] = 0.0
+                if unconfirmed_key not in balances:
+                    balances[unconfirmed_key] = 0.0
+                
+                # ADD to existing amounts (for multiple accounts)
+                balances[balance_key] += float(asset['balance'])
+                balances[reserved_key] += float(asset['reserved'])
+                balances[unconfirmed_key] += float(asset.get('unconfirmed_balance', 0))
+                
+                logger.info(f"Asset {currency}: balance={asset['balance']}, total now={balances[balance_key]}")
             
             # Add staked holdings data (mock data based on typical staking amounts)
             # In production, this would come from staking API endpoints
             if 'ETH_balance' in balances and balances['ETH_balance'] > 0:
-                balances['ETH_staked'] = min(balances['ETH_balance'] * 0.3, 2.0)  # Up to 30% staked
+                balances['ETH_staked'] = min(balances['ETH_balance'] * 0.15, 2.0)  # Up to 15% staked
             
             if 'ADA_balance' in balances and balances['ADA_balance'] > 0:
                 balances['ADA_staked'] = min(balances['ADA_balance'] * 0.5, 50.0)  # Up to 50% staked
