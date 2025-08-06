@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 class CryptoTradingBotTester:
-    def __init__(self, base_url="https://c4f8c171-e749-4803-818b-d36ffd3514cb.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://2dc1c750-84a9-4542-9a13-11d2dbd8d7fe.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = "secure_token_123"  # From backend .env
         self.tests_run = 0
