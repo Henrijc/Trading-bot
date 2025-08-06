@@ -654,7 +654,7 @@ function App() {
                     gap: '0.25rem'
                   }}
                 >
-                  💬 Chat with AI
+                  Chat with AI
                 </button>
                 
                 <button 
@@ -671,7 +671,7 @@ function App() {
                     cursor: aiTradingActive || loading ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  🚀 Start Trading
+                  Start Trading
                 </button>
                 
                 <button 
@@ -688,7 +688,7 @@ function App() {
                     cursor: !aiTradingActive || loading ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  ⛔ Emergency Stop
+                  Emergency Stop
                 </button>
               </div>
               
