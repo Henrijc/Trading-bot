@@ -1,103 +1,83 @@
 import asyncio
-import httpx
-import hashlib
-import hmac
-import time
+import aiohttp
+from typing import Dict, List, Any, Optional
+from datetime import datetime
 import json
 import logging
-from typing import Dict, Any, Optional, List
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 class LunoClient:
     """
-    Async Luno API client for cryptocurrency trading
+    Luno API client for cryptocurrency trading
+    Uses the exact same pattern as the working implementation
     """
     
     def __init__(self, api_key: str, api_secret: str):
+        """Initialize Luno API client"""
         self.api_key = api_key
-        self.api_secret = api_secret  # This should be LUNO_SECRET, not LUNO_API_SECRET
+        self.api_secret = api_secret  # This should be LUNO_SECRET
         self.base_url = "https://api.luno.com/api/1"
-        self.client = httpx.AsyncClient(timeout=30.0)
+        self.session = None
         
-    async def __aenter__(self):
-        return self
-        
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.client.aclose()
-        
-    def _generate_signature(self, method: str, path: str, params: str = "", timestamp: int = None) -> str:
-        """Generate HMAC signature for Luno API authentication"""
-        if timestamp is None:
-            timestamp = int(time.time() * 1000)
-            
-        # For Luno API, we need to use Basic Auth instead of custom signature
-        # Luno uses HTTP Basic Authentication with API key and secret
-        return None, timestamp
-        
-    def _get_auth_headers(self, method: str, path: str, params: str = "") -> Dict[str, str]:
-        """Get authentication headers for API requests"""
-        # Luno uses HTTP Basic Authentication
-        return {
-            "Content-Type": "application/json",
-            "User-Agent": "HenJenTradingBot/1.0"
-        }
-        
-    async def _make_request(self, method: str, endpoint: str, params: Dict = None, data: Dict = None, auth_required: bool = True) -> Dict[str, Any]:
-        """Make authenticated API request"""
-        url = f"{self.base_url}{endpoint}"
-        
-        # Prepare request parameters
-        query_params = params or {}
-        
-        # Generate auth headers
-        headers = self._get_auth_headers(method, endpoint)
-        
-        # Add authentication for private endpoints
-        if auth_required:
-            import base64
-            credentials = f"{self.api_key}:{self.api_secret}"
-            encoded_credentials = base64.b64encode(credentials.encode()).decode()
-            headers["Authorization"] = f"Basic {encoded_credentials}"
-            logger.info(f"Making authenticated request to: {url}")
-            logger.info(f"API Key being used: {self.api_key}")
-            logger.info(f"Credentials string: {credentials}")
-            logger.info(f"Encoded credentials: {encoded_credentials}")
-            logger.info(f"Authorization header: {headers['Authorization']}")
-        
+        logger.info(f"LunoClient initialized with API key: {self.api_key[:10]}..." if self.api_key else "No API key found")
+    
+    async def _get_session(self):
+        """Get or create aiohttp session"""
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
+        return self.session
+    
+    async def _make_request(self, endpoint: str, params: Dict = None, method: str = 'GET', data: Dict = None) -> Dict:
+        """Make authenticated request to Luno API - using working implementation"""
         try:
-            if method.upper() == "GET":
-                response = await self.client.get(url, params=query_params, headers=headers)
-            elif method.upper() == "POST":
-                response = await self.client.post(url, json=data, params=query_params, headers=headers)
-            else:
-                raise ValueError(f"Unsupported HTTP method: {method}")
+            session = await self._get_session()
+            url = f"{self.base_url}/{endpoint}"
             
-            logger.info(f"Response status: {response.status_code}")
-            logger.info(f"Response headers: {dict(response.headers)}")
+            if not self.api_key or not self.api_secret:
+                raise Exception("No Luno API credentials available")
             
-            response.raise_for_status()
-            return response.json()
+            auth = aiohttp.BasicAuth(self.api_key, self.api_secret)
             
-        except httpx.HTTPStatusError as e:
-            logger.error(f"Luno API error {e.response.status_code}: {e.response.text}")
-            logger.error(f"Request URL: {url}")
-            logger.error(f"Request headers: {headers}")
-            raise Exception(f"Luno API error: {e.response.status_code} - {e.response.text}")
+            logger.info(f"Making request to: {url}")
+            logger.info(f"Using API key: {self.api_key}")
+            logger.info(f"Using API secret length: {len(self.api_secret)}")
+            
+            if method == 'GET':
+                async with session.get(url, params=params, auth=auth) as response:
+                    return await self._handle_response(response, endpoint)
+            elif method == 'POST':
+                async with session.post(url, data=data, auth=auth) as response:
+                    return await self._handle_response(response, endpoint)
+                    
         except Exception as e:
-            logger.error(f"Luno API request failed: {e}")
-            raise
-            
+            logger.error(f"Error calling Luno API: {e}")
+            raise e
+    
+    async def _handle_response(self, response, endpoint):
+        """Handle API response - using working implementation"""
+        if response.status == 200:
+            data = await response.json()
+            logger.info(f"Luno API success: {endpoint}")
+            return data
+        else:
+            error_text = await response.text()
+            logger.error(f"Luno API error: {response.status} - {error_text}")
+            raise Exception(f"Luno API error: {response.status} - {error_text}")
+    
     async def get_balance(self) -> Dict[str, Any]:
-        """Get account balance"""
+        """Get account balance - using working implementation pattern"""
         try:
-            response = await self._make_request("GET", "/balance", auth_required=True)
+            response = await self._make_request("balance", auth_required=True)
             
-            # Parse balance data
+            # Parse balance data like the working implementation
             balances = {}
             for asset in response.get('balance', []):
                 currency = asset['asset']
+                # Map XBT to BTC for consistency  
+                if currency == 'XBT':
+                    currency = 'BTC'
+                    
                 balances[f"{currency}_balance"] = float(asset['balance'])
                 balances[f"{currency}_reserved"] = float(asset['reserved'])
                 balances[f"{currency}_unconfirmed"] = float(asset['unconfirmed_balance'])
@@ -107,288 +87,21 @@ class LunoClient:
             
         except Exception as e:
             logger.error(f"Failed to get balance: {e}")
-            # Return error instead of mock data to show real status
             raise Exception(f"Luno API authentication failed: {e}")
-            
-    async def get_staking_balance(self) -> Dict[str, Any]:
-        """Get staking balance if available"""
+    
+    async def get_market_data(self, pair: str) -> Dict[str, Any]:
+        """Get market data for a specific trading pair"""
         try:
-            # Try to get staking info - this endpoint might not exist on Luno
-            response = await self._make_request("GET", "/accounts", auth_required=True)
-            
-            staking_balances = {}
-            for account in response.get('accounts', []):
-                if 'staking' in account.get('name', '').lower():
-                    currency = account.get('currency', 'UNKNOWN')
-                    staking_balances[f"{currency}_staked"] = float(account.get('balance', 0))
-                    
-            return staking_balances
-            
+            response = await self._make_request("ticker", {"pair": pair})
+            return response
         except Exception as e:
-            logger.warning(f"Staking balance not available: {e}")
-            # Return mock staking data
-            return {
-                "ETH_staked": 0.2,
-                "ADA_staked": 100.0,
-                "DOT_staked": 10.0
-            }
-            
-    async def get_ticker(self, pair: str) -> Dict[str, Any]:
-        """Get ticker information for a trading pair"""
-        try:
-            response = await self._make_request("GET", "/ticker", params={"pair": pair}, auth_required=False)
-            
-            ticker_data = {
-                "pair": pair,
-                "ask": float(response.get('ask', 0)),
-                "bid": float(response.get('bid', 0)),
-                "last_trade": float(response.get('last_trade', 0)),
-                "rolling_24_hour_volume": float(response.get('rolling_24_hour_volume', 0)),
-                "status": response.get('status', ''),
-                "timestamp": datetime.utcnow()
-            }
-            
-            logger.info(f"Ticker for {pair}: {ticker_data}")
-            return ticker_data
-            
-        except Exception as e:
-            logger.error(f"Failed to get ticker for {pair}: {e}")
-            raise
-            
-    async def get_orderbook(self, pair: str) -> Dict[str, Any]:
-        """Get orderbook for a trading pair"""
-        try:
-            response = await self._make_request("GET", "/orderbook_top", params={"pair": pair}, auth_required=False)
-            
-            orderbook = {
-                "pair": pair,
-                "asks": [{"price": float(ask['price']), "volume": float(ask['volume'])} 
-                        for ask in response.get('asks', [])],
-                "bids": [{"price": float(bid['price']), "volume": float(bid['volume'])} 
-                        for bid in response.get('bids', [])],
-                "timestamp": datetime.utcnow()
-            }
-            
-            return orderbook
-            
-        except Exception as e:
-            logger.error(f"Failed to get orderbook for {pair}: {e}")
-            raise
-            
-    async def place_order(self, pair: str, order_type: str, side: str, volume: float, price: float = None) -> Dict[str, Any]:
-        """
-        Place a trading order
-        
-        Args:
-            pair: Trading pair (e.g., "XBTZAR", "ETHZAR")
-            order_type: "market" or "limit"
-            side: "buy" or "sell"
-            volume: Amount to trade
-            price: Price for limit orders
-        """
-        try:
-            if order_type.lower() == "market":
-                return await self._place_market_order(pair, side, volume)
-            elif order_type.lower() == "limit":
-                if price is None:
-                    raise ValueError("Price is required for limit orders")
-                return await self._place_limit_order(pair, side, volume, price)
-            else:
-                raise ValueError(f"Invalid order type: {order_type}")
-                
-        except Exception as e:
-            logger.error(f"Failed to place {order_type} {side} order for {pair}: {e}")
-            raise
-            
-    async def _place_market_order(self, pair: str, side: str, volume: float) -> Dict[str, Any]:
-        """Place market order (instant buy/sell)"""
-        try:
-            if side.lower() == "buy":
-                endpoint = "/marketorder"
-                data = {
-                    "pair": pair,
-                    "type": "BUY",
-                    "counter_volume": str(volume)  # ZAR amount for buying
-                }
-            else:  # sell
-                endpoint = "/marketorder"
-                data = {
-                    "pair": pair,
-                    "type": "SELL",
-                    "base_volume": str(volume)  # Crypto amount for selling
-                }
-                
-            response = await self._make_request("POST", endpoint, data=data)
-            
-            order_result = {
-                "order_id": response.get('order_id'),
-                "order_type": "market",
-                "side": side,
-                "pair": pair,
-                "volume": volume,
-                "price": float(response.get('base', 0)) / float(response.get('counter', 1)) if response.get('counter') and float(response.get('counter')) != 0 else 0,
-                "fee": float(response.get('fee_base', 0)),
-                "timestamp": datetime.utcnow(),
-                "status": "completed"
-            }
-            
-            logger.info(f"Market order executed: {order_result}")
-            return order_result
-            
-        except Exception as e:
-            logger.error(f"Market order failed: {e}")
-            raise
-            
-    async def _place_limit_order(self, pair: str, side: str, volume: float, price: float) -> Dict[str, Any]:
-        """Place limit order"""
-        try:
-            data = {
-                "pair": pair,
-                "type": "BID" if side.lower() == "buy" else "ASK",
-                "volume": str(volume),
-                "price": str(price)
-            }
-            
-            response = await self._make_request("POST", "/postorder", data=data)
-            
-            order_result = {
-                "order_id": response.get('order_id'),
-                "order_type": "limit",
-                "side": side,
-                "pair": pair,
-                "volume": volume,
-                "price": price,
-                "timestamp": datetime.utcnow(),
-                "status": "pending"
-            }
-            
-            logger.info(f"Limit order placed: {order_result}")
-            return order_result
-            
-        except Exception as e:
-            logger.error(f"Limit order failed: {e}")
-            raise
-            
-    async def get_order_status(self, order_id: str) -> Dict[str, Any]:
-        """Get status of a specific order"""
-        try:
-            response = await self._make_request("GET", f"/orders/{order_id}")
-            
-            order_status = {
-                "order_id": order_id,
-                "status": response.get('state', '').lower(),
-                "pair": response.get('pair', ''),
-                "type": response.get('type', ''),
-                "volume": float(response.get('volume', 0)),
-                "price": float(response.get('price', 0)),
-                "filled_volume": float(response.get('base', 0)),
-                "remaining_volume": float(response.get('volume', 0)) - float(response.get('base', 0)),
-                "fee": float(response.get('fee_base', 0)),
-                "creation_timestamp": response.get('creation_timestamp'),
-                "expiration_timestamp": response.get('expiration_timestamp')
-            }
-            
-            return order_status
-            
-        except Exception as e:
-            logger.error(f"Failed to get order status for {order_id}: {e}")
-            raise
-            
-    async def cancel_order(self, order_id: str) -> Dict[str, Any]:
-        """Cancel a pending order"""
-        try:
-            response = await self._make_request("POST", "/stoporder", data={"order_id": order_id})
-            
-            result = {
-                "order_id": order_id,
-                "status": "cancelled",
-                "success": response.get('success', False),
-                "timestamp": datetime.utcnow()
-            }
-            
-            logger.info(f"Order cancelled: {result}")
-            return result
-            
-        except Exception as e:
-            logger.error(f"Failed to cancel order {order_id}: {e}")
-            raise
-            
-    async def get_trades_history(self, pair: str = None, limit: int = 100) -> List[Dict[str, Any]]:
-        """Get trading history"""
-        try:
-            params = {"limit": limit}
-            if pair:
-                params["pair"] = pair
-                
-            response = await self._make_request("GET", "/listtrades", params=params)
-            
-            trades = []
-            for trade in response.get('trades', []):
-                trade_data = {
-                    "trade_id": trade.get('sequence'),
-                    "order_id": trade.get('order_id'),
-                    "pair": trade.get('pair'),
-                    "price": float(trade.get('price', 0)),
-                    "volume": float(trade.get('volume', 0)),
-                    "value": float(trade.get('counter', 0)),
-                    "fee": float(trade.get('fee_base', 0)),
-                    "is_buy": trade.get('is_buy', False),
-                    "timestamp": trade.get('timestamp')
-                }
-                trades.append(trade_data)
-                
-            logger.info(f"Retrieved {len(trades)} trades")
-            return trades
-            
-        except Exception as e:
-            logger.error(f"Failed to get trades history: {e}")
-            raise
-            
-    async def get_account_transactions(self, min_row: int = 1, max_row: int = 100) -> List[Dict[str, Any]]:
-        """Get account transactions"""
-        try:
-            params = {
-                "min_row": min_row,
-                "max_row": max_row
-            }
-            
-            response = await self._make_request("GET", "/accounts", params=params)
-            
-            transactions = []
-            for account in response.get('accounts', []):
-                for transaction in account.get('transactions', []):
-                    transaction_data = {
-                        "transaction_id": transaction.get('row_index'),
-                        "timestamp": transaction.get('timestamp'),
-                        "balance": float(transaction.get('balance', 0)),
-                        "available": float(transaction.get('available', 0)),
-                        "balance_delta": float(transaction.get('balance_delta', 0)),
-                        "available_delta": float(transaction.get('available_delta', 0)),
-                        "currency": transaction.get('currency'),
-                        "description": transaction.get('description')
-                    }
-                    transactions.append(transaction_data)
-                    
-            return transactions
-            
-        except Exception as e:
-            logger.error(f"Failed to get account transactions: {e}")
-            raise
-            
-    async def get_supported_pairs(self) -> List[str]:
-        """Get list of supported trading pairs"""
-        try:
-            response = await self._make_request("GET", "/tickers")
-            
-            pairs = [ticker.get('pair') for ticker in response.get('tickers', [])]
-            
-            logger.info(f"Supported pairs: {pairs}")
-            return pairs
-            
-        except Exception as e:
-            logger.error(f"Failed to get supported pairs: {e}")
-            raise
-            
+            logger.error(f"Failed to get market data for {pair}: {e}")
+            # For market data, we can fallback to public data
+            # But return empty dict to indicate failure
+            return {}
+    
     async def close(self):
-        """Close the HTTP client"""
-        await self.client.aclose()
+        """Close the HTTP session"""
+        if self.session:
+            await self.session.close()
+            self.session = None
