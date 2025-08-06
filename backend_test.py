@@ -117,6 +117,39 @@ class CryptoTradingBotTester:
         """Test trade history endpoint"""
         return self.run_test("Trade History", "GET", "trades/history")
 
+    def test_crypto_prices(self):
+        """Test crypto prices endpoint (NEW in Phase 3)"""
+        success, response_data = self.run_test("Crypto Prices", "GET", "crypto-prices")
+        
+        # Additional validation for crypto prices response format
+        if success and response_data:
+            expected_cryptos = ["BTC", "ETH", "HBAR", "XRP", "ADA", "TRX", "XLM", "DOGE"]
+            data = response_data.get('data', {})
+            
+            missing_cryptos = [crypto for crypto in expected_cryptos if crypto not in data]
+            if missing_cryptos:
+                print(f"   ⚠️  Missing crypto prices: {missing_cryptos}")
+            
+            if 'USD_TO_ZAR' not in data:
+                print(f"   ⚠️  Missing USD_TO_ZAR conversion rate")
+            
+            if 'timestamp' not in response_data:
+                print(f"   ⚠️  Missing timestamp in response")
+                
+            print(f"   📊 Found prices for: {list(data.keys())}")
+        
+        return success, response_data
+
+    def test_trading_signals(self):
+        """Test trading signals endpoint"""
+        success, response_data = self.run_test("Trading Signals", "GET", "trading-signals", expected_status=200)
+        
+        # Note: This endpoint may return 500 due to FreqTrade being disabled - this is expected
+        if not success and response_data:
+            print(f"   ℹ️  Trading signals may be unavailable due to FreqTrade being disabled (expected)")
+        
+        return success, response_data
+
     def test_ai_strategy_configure(self):
         """Test AI strategy configuration (requires auth)"""
         headers = {'Authorization': f'Bearer {self.token}'}
