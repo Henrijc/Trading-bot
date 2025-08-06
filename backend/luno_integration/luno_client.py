@@ -40,7 +40,8 @@ class LunoClient:
         """Get authentication headers for API requests"""
         # Luno uses HTTP Basic Authentication
         return {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Agent": "HenJenTradingBot/1.0"
         }
         
     async def _make_request(self, method: str, endpoint: str, params: Dict = None, data: Dict = None, auth_required: bool = True) -> Dict[str, Any]:
