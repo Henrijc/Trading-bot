@@ -57,6 +57,10 @@ class LunoClient:
         auth = None
         if auth_required:
             auth = httpx.BasicAuth(self.api_key, self.api_secret)
+            logger.info(f"Making authenticated request to: {url}")
+            logger.info(f"API Key being used: {self.api_key}")
+            logger.info(f"API Secret length: {len(self.api_secret)}")
+            logger.info(f"Headers: {headers}")
         
         try:
             if method.upper() == "GET":
@@ -65,12 +69,18 @@ class LunoClient:
                 response = await self.client.post(url, json=data, params=query_params, headers=headers, auth=auth)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
-                
+            
+            logger.info(f"Response status: {response.status_code}")
+            logger.info(f"Response headers: {dict(response.headers)}")
+            
             response.raise_for_status()
             return response.json()
             
         except httpx.HTTPStatusError as e:
             logger.error(f"Luno API error {e.response.status_code}: {e.response.text}")
+            logger.error(f"Request URL: {url}")
+            logger.error(f"Request headers: {headers}")
+            logger.error(f"Auth used: {auth is not None}")
             raise Exception(f"Luno API error: {e.response.status_code} - {e.response.text}")
         except Exception as e:
             logger.error(f"Luno API request failed: {e}")
