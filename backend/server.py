@@ -219,7 +219,14 @@ async def health_check():
 async def get_portfolio():
     """Get complete portfolio data with accurate ZAR calculations"""
     try:
-        luno_client = LunoClient()
+        # Get environment variables
+        luno_api_key = os.environ.get('LUNO_API_KEY')
+        luno_secret = os.environ.get('LUNO_SECRET')
+        
+        if not luno_api_key or not luno_secret:
+            raise HTTPException(status_code=500, detail="Luno API credentials not configured")
+        
+        luno_client = LunoClient(luno_api_key, luno_secret)
         portfolio_data = await luno_client.get_portfolio_data()
         await luno_client.close()
         
