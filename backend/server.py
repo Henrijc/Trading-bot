@@ -102,12 +102,30 @@ class PerformanceMetrics(BaseModel):
     max_drawdown: float
     current_balance: float
 
+# Debug: Print ALL environment variables related to Luno
+logger.info("=== DEBUGGING ENVIRONMENT VARIABLES ===")
+for key, value in os.environ.items():
+    if 'LUNO' in key:
+        logger.info(f"ENV {key}: {'*' * (len(value) - 4) + value[-4:] if value else 'EMPTY'}")
+    elif key in ['MONGO_URL', 'API_TOKEN', 'REDIS_URL']:
+        logger.info(f"ENV {key}: {'SET' if value else 'EMPTY'}")
+
+# Check if .env file exists and what it contains
+env_file_path = ROOT_DIR / '.env'
+logger.info(f".env file exists: {env_file_path.exists()}")
+
+# Also check parent directory .env
+parent_env_path = ROOT_DIR.parent / '.env'  
+logger.info(f"Parent .env file exists: {parent_env_path.exists()}")
+
 # Global instances
 luno_api_key = os.environ.get('LUNO_API_KEY', '')
 luno_api_secret = os.environ.get('LUNO_API_SECRET', '')
 
-logger.info(f"Loading Luno credentials - API Key: {'*' * (len(luno_api_key) - 4) + luno_api_key[-4:] if luno_api_key else 'NOT SET'}")
-logger.info(f"Loading Luno credentials - API Secret: {'*' * (len(luno_api_secret) - 4) + luno_api_secret[-4:] if luno_api_secret else 'NOT SET'}")
+logger.info(f"Final API Key loaded: '{luno_api_key}'")
+logger.info(f"Final API Secret loaded: '{luno_api_secret}'")
+logger.info(f"API Key length: {len(luno_api_key)}")
+logger.info(f"API Secret length: {len(luno_api_secret)}")
 
 if not luno_api_key or not luno_api_secret:
     logger.error("CRITICAL: Luno API credentials not set in environment variables!")
