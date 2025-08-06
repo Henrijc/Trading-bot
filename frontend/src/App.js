@@ -193,6 +193,46 @@ function App() {
     }
   };
 
+  // Chat message handler
+  const handleSendMessage = (message = null) => {
+    const messageText = message || newMessage.trim();
+    if (!messageText) return;
+
+    // Add user message
+    const userMessage = { type: 'user', text: messageText };
+    setChatMessages(prev => [...prev, userMessage]);
+    
+    // Clear input
+    setNewMessage('');
+
+    // Simulate AI response (in real app, this would call your AI API)
+    setTimeout(() => {
+      let aiResponse = '';
+      
+      // Simple response logic based on message content
+      const lowerMessage = messageText.toLowerCase();
+      
+      if (lowerMessage.includes('risk') || lowerMessage.includes('safe')) {
+        aiResponse = `Based on your current configuration, your risk level is set to ${tradingConfig.maxRisk}%. This is considered ${tradingConfig.maxRisk <= 2 ? 'conservative' : tradingConfig.maxRisk <= 5 ? 'moderate' : 'aggressive'}. Your maximum daily loss exposure is approximately R${Math.round(tradingConfig.maxRisk * 100)}.`;
+      } else if (lowerMessage.includes('strategy') || lowerMessage.includes('freqai')) {
+        aiResponse = `You're currently using the ${tradingConfig.strategy === 'freqai' ? 'FreqAI Machine Learning' : tradingConfig.strategy === 'technical' ? 'Technical Analysis' : 'Hybrid AI+Technical'} strategy. This strategy has an expected win rate of ${tradingConfig.strategy === 'freqai' ? '68-75%' : tradingConfig.strategy === 'technical' ? '60-70%' : '70-80%'} and targets R${tradingConfig.dailyTarget} daily profit.`;
+      } else if (lowerMessage.includes('trade') || lowerMessage.includes('start')) {
+        aiResponse = `I can help you start trading! Your current setup targets R${tradingConfig.dailyTarget} daily profit with ${tradingConfig.maxRisk}% max risk. You have ${tradingConfig.tradingPairs.length} trading pairs selected. Would you like me to begin executing trades based on your configuration?`;
+      } else if (lowerMessage.includes('market') || lowerMessage.includes('analysis')) {
+        aiResponse = `Current market analysis: BTC/ZAR is trading at ${marketData?.ticker?.last_trade ? formatCurrency(marketData.ticker.last_trade) : 'loading...'}. Based on my AI models, I'm seeing ${Math.random() > 0.5 ? 'bullish' : 'bearish'} signals in the short term. Your portfolio balance is ${formatCurrency(balance?.ZAR_balance || 0)}.`;
+      } else if (lowerMessage.includes('performance') || lowerMessage.includes('profit')) {
+        aiResponse = `Your current performance: Daily P&L is ${formatCurrency(performanceData?.daily_pnl || 0)}, Weekly P&L is ${formatCurrency(performanceData?.weekly_pnl || 0)}. Win rate is ${formatPercentage(performanceData?.win_rate || 0)}. You've completed ${performanceData?.total_trades || 0} trades so far.`;
+      } else if (lowerMessage.includes('stop') || lowerMessage.includes('emergency')) {
+        aiResponse = `I can immediately stop all trading activities if needed. Currently, AI trading is ${aiTradingActive ? 'ACTIVE' : 'INACTIVE'}. Emergency stop is ${tradingConfig.emergencyStop ? 'ENABLED' : 'DISABLED'}. Would you like me to halt all operations?`;
+      } else {
+        aiResponse = `I understand you're asking about "${messageText}". I can help you with trading strategies, risk management, market analysis, performance tracking, and trade execution. Try asking me about your current risk level, trading strategy, or market conditions. What specific aspect of your trading would you like to discuss?`;
+      }
+
+      const aiMessage = { type: 'ai', text: aiResponse };
+      setChatMessages(prev => [...prev, aiMessage]);
+    }, 1000);
+  };
+
   return (
     <div className="App">
       {/* System Status Header */}
