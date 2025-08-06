@@ -79,7 +79,7 @@ const TradingControls = ({
                 </>
               ) : (
                 <>
-                  <span className="btn-icon">▶</span>
+                  START
                   Start AI Trading
                 </>
               )}
@@ -97,7 +97,7 @@ const TradingControls = ({
                 </>
               ) : (
                 <>
-                  <span className="btn-icon">⏸</span>
+                  STOP
                   Stop AI Trading
                 </>
               )}
@@ -109,7 +109,6 @@ const TradingControls = ({
             onClick={handleEmergencyStop}
             disabled={isStopping}
           >
-            <span className="btn-icon">🛑</span>
             EMERGENCY STOP
           </button>
         </div>
@@ -122,7 +121,6 @@ const TradingControls = ({
               className="control-btn config-btn"
               onClick={() => setShowConfigModal(true)}
             >
-              <span className="btn-icon">⚙</span>
               Advanced Config
             </button>
 
@@ -130,7 +128,6 @@ const TradingControls = ({
               className="control-btn manual-btn"
               onClick={() => setShowManualTradeModal(true)}
             >
-              <span className="btn-icon">📈</span>
               Manual Trade
             </button>
 
@@ -138,7 +135,6 @@ const TradingControls = ({
               className="control-btn chat-btn"
               onClick={() => setShowChatModal(true)}
             >
-              <span className="btn-icon">💬</span>
               Chat with AI
             </button>
           </div>

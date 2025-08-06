@@ -90,7 +90,7 @@ const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) =
           </div>
           <div className="rev-status">
             <span className={`status-indicator ${aiTradingActive ? 'active' : 'inactive'}`}>
-              {aiTradingActive ? '● AI TRADING ACTIVE' : '○ AI STANDBY'}
+              {aiTradingActive ? 'AI TRADING ACTIVE' : 'AI STANDBY'}
             </span>
           </div>
         </div>
@@ -150,9 +150,9 @@ const MetricsRevCounter = ({ performanceData, aiTradingActive, systemHealth }) =
                 ? 'healthy' : 'warning'}`}>
                 {systemHealth.services?.luno === 'connected' && 
                  systemHealth.services?.database === 'connected' 
-                 ? '● OPTIMAL' : '⚠ CHECK'}
+                 ? 'OPTIMAL' : 'CHECK'}
               </span>
-            ) : '○ LOADING'}
+            ) : 'LOADING'}
           </div>
           <div className="metric-subtitle">Status</div>
         </div>
