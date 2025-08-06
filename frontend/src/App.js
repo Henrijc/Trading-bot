@@ -1501,6 +1501,34 @@ function App() {
         </div>
       </div>
 
+      {/* Phase 3: Charts, Metrics & Trading Controls */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
+        {/* Trading Controls */}
+        <TradingControls
+          aiTradingActive={aiTradingActive}
+          setAiTradingActive={setAiTradingActive}
+          setShowConfigModal={setShowConfigModal}
+          setShowChatModal={setShowChatModal}
+          setShowManualTradeModal={setShowManualTradeModal}
+          onStartTrading={startAITrading}
+          onStopTrading={stopAITrading}
+        />
+
+        {/* Professional Trading Charts */}
+        <TradingCharts
+          performanceData={performanceData}
+          marketData={marketData}
+          trades={trades}
+        />
+
+        {/* Metrics & Rev Counter */}
+        <MetricsRevCounter
+          performanceData={performanceData}
+          aiTradingActive={aiTradingActive}
+          systemHealth={systemHealth}
+        />
+      </div>
+
       {/* Manual Trading Modal */}
       {showManualTradeModal && (
         <div style={{ 
