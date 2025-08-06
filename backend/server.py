@@ -28,13 +28,22 @@ load_dotenv(ROOT_DIR / '.env')
 # Import our custom modules
 from luno_integration.luno_client import LunoClient
 from probability_engine.goal_calculator import GoalProbabilityCalculator
-# Temporarily disabled due to dependency issues
-# from ai_strategies.freqai_strategy import FreqAITradingStrategy
-# from freqtrade.freqtrade_controller import FreqTradeController
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Re-enable FreqTrade and AI strategy
+try:
+    from ai_strategies.freqai_strategy import FreqAITradingStrategy
+    from freqtrade.freqtrade_controller import FreqTradeController
+    AI_DEPENDENCIES_AVAILABLE = True
+    logger.info("AI dependencies loaded successfully")
+except ImportError as e:
+    logger.error(f"AI dependencies not available: {e}")
+    FreqAITradingStrategy = None
+    FreqTradeController = None
+    AI_DEPENDENCIES_AVAILABLE = False
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
