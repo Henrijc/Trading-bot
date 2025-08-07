@@ -57,13 +57,16 @@ try:
     class SimplifiedFreqAIStrategy:
         def __init__(self):
             self.is_active = False
+            self.is_trading_active = False  # Add missing attribute
             
         async def start_trading(self):
             self.is_active = True
+            self.is_trading_active = True
             logger.info("Simplified FreqAI strategy activated")
             
         async def stop_trading(self):
             self.is_active = False
+            self.is_trading_active = False
             logger.info("Simplified FreqAI strategy deactivated")
             
         async def get_signal(self, pair: str):
